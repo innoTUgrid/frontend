@@ -1,0 +1,21 @@
+<ng-container *ngIf="subComponent === 'autarky'">
+    <app-autarky [props]="props"></app-autarky>
+</ng-container>
+<ng-container *ngIf="subComponent === 'co2-savings'">
+    <app-co2-savings [props]="props"></app-co2-savings>
+</ng-container>
+<ng-container *ngIf="subComponent === 'cost-savings'">
+    <app-cost-savings [props]="props"></app-cost-savings>
+</ng-container>
+<ng-container *ngIf="subComponent === 'self-consumption'">
+    <app-self-consumption [props]="props"></app-self-consumption>
+</ng-container>
+<ng-container *ngIf="subComponent === 'kpi-wrapper'">
+    <app-kpi-wrapper [props]="props"></app-kpi-wrapper>
+</ng-container>
+<ng-container *ngIf="subComponent === 'energy-mix'">
+    <app-energy-mix-diagram [props]="props"></app-energy-mix-diagram>
+</ng-container>
+<ng-container *ngIf="subComponent === 'production-consumption'">
+    <app-production-consumption-diagram [props]="props"></app-production-consumption-diagram>
+</ng-container>
