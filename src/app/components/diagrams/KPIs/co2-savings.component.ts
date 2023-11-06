@@ -1,6 +1,6 @@
 
 import { Component, Input } from '@angular/core';
-import { Props } from '../../props';
+import { Props } from '../../../types/props';
 
 @Component({
   selector: 'app-co2-savings',

@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { Props } from '../../props';
+import { Props } from '../../../types/props';
 
 @Component({
   selector: 'app-kpi-wrapper',
   template: `
-    <div class="kpi-wrapper" *ngIf="showKPIs">
+    <div class="tiling-container" *ngIf="showKPIs">
     <ng-container *ngFor="let kpi of kpis">
         <app-autarky *ngIf="kpi === 'autarky'" [props]="props"></app-autarky>
         <app-cost-savings *ngIf="kpi === 'cost-savings'" [props]="props"></app-cost-savings>
@@ -13,20 +13,6 @@ import { Props } from '../../props';
     </ng-container>
     </div>
   `,
-  styles: [
-    `
-      .kpi-wrapper {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-        height: 100px;
-        background-color: #ffffff;
-        border: 1px solid #000000;
-      }
-    `,
-  ],
 })
 export class KpiWrapperComponent {
   showKPIs = true;

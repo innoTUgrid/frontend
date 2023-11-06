@@ -1,3 +1,3 @@
-export type Props = {
+export interface Props {
     value: number|number[];
 }
