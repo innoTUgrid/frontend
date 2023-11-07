@@ -8,7 +8,7 @@ import { NavbarComponent } from './components/navigation/navbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCommonModule } from '@angular/material/core';
+import { MatCommonModule, MatOptionModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { TilingWrapperComponent } from './components/tiling-wrapper.component';
 import { AutarykComponent } from './components/diagrams/KPIs/autarky.component';
@@ -19,6 +19,9 @@ import { DashboardComponent } from './views/dashboard.component';
 import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper.component';
 import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram.component';
 import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { HighchartsChartModule } from 'highcharts-angular';
+
 
 @NgModule({
   declarations: [
@@ -42,7 +45,10 @@ import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diag
     MatListModule,
     MatIconModule,
     MatCommonModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatOptionModule,
+    MatButtonToggleModule,
+    HighchartsChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]
