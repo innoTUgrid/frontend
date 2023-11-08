@@ -1,27 +1,72 @@
-# Frontend
+# InnoTUGrid fronend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.9.
+Welcome to the Angular Frontend for Data Visualization of Microgrids! This project is set up using the Angular CLI and allows you to create interactive data visualizations for microgrids. Follow the instructions below to get started with development.
 
-## Development server
+## Prerequisites
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Before you begin, ensure you have the following prerequisites installed on your system:
 
-## Code scaffolding
+- Node.js and npm: Make sure you have Node.js and npm installed. You can download and install them from [https://nodejs.org/](https://nodejs.org/).
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Getting Started
 
-## Build
+1. Clone this repository to your local machine:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+   ```bash
+   git clone https://github.com/innoTUgrid/frontend.git
+   ```
 
-## Running unit tests
+2. Navigate to the project directory:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+   ```bash
+   cd frontend
+   ```
 
-## Running end-to-end tests
+3. Install project dependencies:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+   ```bash
+   npm install
+   ```
 
-## Further help
+## Development Server
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To start the development server run:
+
+```bash
+npm run start
+```
+
+It will automatically reload the application when you make changes to the source code. The application will be available at `http://localhost:4200/`.
+
+## Building for Production
+
+When you're ready to build your application for production, you can use the following command:
+
+```bash
+npm run build
+```
+
+This will generate optimized production-ready files in the `dist/` directory.
+
+## Project Structure
+
+The project structure follows Angular CLI conventions. Key directories and files include:
+
+- `src/app/`: Contains the Angular application code.
+- `src/app/components/`: Location for custom components.
+- `src/app/services/`: Location for services. Here the data is fetched from the api and calculated for the visualization.
+- `src/assets/`: Store static assets such as images and data files.
+- `src/app/views/`: Location for the pages that use the components from the components folder. The URLs for the pages are defined in the `src/app/app-routing.module.ts`
+- `angular.json`: Angular CLI configuration file.
+
+## Further Help
+
+This project leverages the following libraries for data visualization and UI components:
+
+- [Highcharts](https://www.highcharts.com/): A powerful charting library for creating interactive and visually appealing charts.
+
+- [Angular Material](https://material.angular.io/): A UI component library that follows the Material Design guidelines and provides a set of high-quality UI components for Angular applications.
+
+Also refer to the [Angular documentation](https://angular.io/).
+
+Happy coding! 🚀
