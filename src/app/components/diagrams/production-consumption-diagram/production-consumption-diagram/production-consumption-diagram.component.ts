@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
@@ -33,10 +33,41 @@ export class ProductionConsumptionDiagramComponent {
     this.updateInterval(this.interval)
   }
 
+
+  chartExporting = {
+    enabled: true,
+    buttons: {
+      customButton1: {
+        text: 'Week',
+        onclick: () => {
+          this.updateInterval("week")
+        },
+        y: 30,
+        theme: {
+          fill: this.interval === 'week' ? '#f7f7f7' : '#ffffff',
+        },
+      },
+      customButton2: {
+        text: 'Day',
+        onclick: () => {
+          this.updateInterval("day")
+        },
+        y: 30,
+        theme: {
+          fill: this.interval === 'day' ? '#f7f7f7' : '#ffffff',
+        },
+      }
+    }
+  }
+
   updateInterval(interval: string) {
     this.interval = interval
     // use the update function
     if (this.chart) {
+      const buttonSelectedColor = '#f0f0f0';
+      this.chartExporting.buttons.customButton1.theme.fill = this.interval === 'week' ? buttonSelectedColor : '#ffffff';
+      this.chartExporting.buttons.customButton2.theme.fill = this.interval === 'day' ? buttonSelectedColor : '#ffffff';
+      
       const productionDataSeries = this.interval === "day" ? [...this.production] : [406292, 260000, 107000, 68300, 27500, 14500, 15541]
       const consumptionDataSeries = this.interval === "day" ? [...this.consumption] : [51086, 136000, 5500, 141000, 107180, 77000, 55551]
       this.chart?.update({
@@ -60,8 +91,11 @@ export class ProductionConsumptionDiagramComponent {
             data: consumptionDataSeries,
             type: 'column'
           }
-        ]
+        ],
+        exporting:this.chartExporting
       }, true, true, true)
+
+      
     }
   }
 
@@ -86,27 +120,7 @@ export class ProductionConsumptionDiagramComponent {
     tooltip: {
       valueSuffix: ' ppm'
     },
-    exporting: {
-      enabled: true,
-      buttons: {
-        customButton1: {
-          text: 'Week',
-          onclick: () => {
-            this.updateInterval("week")
-          },
-          y: 30,
-        },
-        customButton2: {
-          text: 'Day',
-          useHTML: true,
-          onclick: () => {
-            this.updateInterval("day")
-          },
-          y: 27,
-        }
-      }
-      
-    }
+    exporting: this.chartExporting,
   }
 
   ngOnInit(): void {
