@@ -1,29 +1,22 @@
 import { Component, Input } from '@angular/core';
 import { Props } from '../../types/props';
-import { Options } from 'highcharts';
 import * as Highcharts from 'highcharts';
+import HC_exporting from 'highcharts/modules/exporting';
+import HC_exportData from 'highcharts/modules/export-data';
+
 @Component({
   selector: 'app-production-consumption-diagram',
   template: `
-  <div class="prod-cons-diagram">
-    <mat-button-toggle-group [value]="interval" (change)="intervalChanged($event)">
-      <mat-button-toggle value="day">Day</mat-button-toggle>
-      <mat-button-toggle value="week">Week</mat-button-toggle>
-    </mat-button-toggle-group>
+  <mat-card-content>
     <highcharts-chart
       [Highcharts]="Highcharts"
       [options]="chartProperties"
       [(update)]="updateFlag"
-      style="width: 400px; height: 400px; display: block;"
+      style="display: block;"
     ></highcharts-chart>
-  </div>
+  </mat-card-content>
   `,
-  styles: [`
-  .prod-cons-diagram {
-    width: 100%;
-    height: 100%;
-  }
-  `]
+  styleUrls: ['./production-consumption-diagram.component.scss']
 
 })
 export class ProductionConsumptionDiagramComponent {
@@ -31,33 +24,38 @@ export class ProductionConsumptionDiagramComponent {
 
   Highcharts: typeof Highcharts = Highcharts; // required
 
-  days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+  days = ["Mon", "Tue", "Wed", "Th", "Fri", "Sat", "Sun"]
   // 4 hourly
-  hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00"]
+  hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"]
   
   interval = "day"
   updateFlag = false
 
-  intervalChanged(event: any) {
-    this.interval = event.value
-    this.xAxis.categories = this.interval == "day" ? this.days : this.hours
+  updateInterval(interval: string) {
+    this.interval = interval
+    // use the update function
+    this.xAxis.categories = this.interval == "day" ? this.hours : this.days
     this.updateFlag = true
   }
 
   xAxis: Highcharts.XAxisOptions = {
-    categories: this.days,
+    categories: this.hours,
     crosshair: true,
     accessibility: {
       description: 'Days of the week'
     } 
   }
 
-  chartProperties: Options = {
+  chartProperties: Highcharts.Options = {
     chart: {
-      type: 'column'
+      type: 'column',
+      events: {
+
+      }
     },
     title: {
-      text: 'Production and Consumption'
+      text: 'Production and Consumption',
+      margin: 50
     },
     credits: {
       enabled: false
@@ -75,15 +73,41 @@ export class ProductionConsumptionDiagramComponent {
     series: [
       {
           name: 'Production',
-          data: [406292, 260000, 107000, 68300, 27500, 14500],
+          data: [406292, 260000, 107000, 68300, 27500, 14500, 15541],
           type: 'column'
       },
       {
           name: 'Consumption',
-          data: [51086, 136000, 5500, 141000, 107180, 77000],
+          data: [51086, 136000, 5500, 141000, 107180, 77000, 55551],
           type: 'column'
       }
-  ]
+    ],
+    exporting: {
+      enabled: true,
+      buttons: {
+        customButton1: {
+          text: 'Week',
+          onclick: () => {
+            this.updateInterval("week")
+          },
+          y: 30,
+        },
+        customButton2: {
+          text: 'Day',
+          useHTML: true,
+          onclick: () => {
+            this.updateInterval("day")
+          },
+          y: 27,
+        }
+      }
+      
+    }
+  }
+
+  constructor() {
+    HC_exporting(Highcharts);
+    HC_exportData(Highcharts);
   }
 
 }

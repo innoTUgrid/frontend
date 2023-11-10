@@ -21,7 +21,8 @@ import { ProductionConsumptionDiagramComponent } from './components/diagrams/pro
 import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { HighchartsChartModule } from 'highcharts-angular';
-
+import {MatCardModule} from '@angular/material/card'; 
+import {MatButtonModule} from '@angular/material/button'; 
 
 @NgModule({
   declarations: [
@@ -48,7 +49,9 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatSidenavModule,
     MatOptionModule,
     MatButtonToggleModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    MatCardModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
