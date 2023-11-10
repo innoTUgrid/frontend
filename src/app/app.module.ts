@@ -10,29 +10,29 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCommonModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import { TilingWrapperComponent } from './components/tiling-wrapper.component';
-import { AutarykComponent } from './components/diagrams/KPIs/autarky.component';
-import { CO2SavingsComponent } from './components/diagrams/KPIs/co2-savings.component';
-import { CostSavingsComponent } from './components/diagrams/KPIs/cost-savings.component';
-import { SelfConsumptionComponent } from './components/diagrams/KPIs/self-consumption.component';
-import { DashboardComponent } from './views/dashboard.component';
-import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper.component';
-import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram.component';
-import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram.component';
+import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper/kpi-wrapper/kpi-wrapper.component';
+import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram/production-consumption-diagram/production-consumption-diagram.component';
+import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram/energy-mix-diagram.component';
+import { AutarkyKPIComponent } from './components/diagrams/KPIs/autarky/autarky-kpi/autarky-kpi.component';
+import { Co2SavingsKPIComponent } from './components/diagrams/KPIs/co2-savings/co2-savings-kpi/co2-savings-kpi.component';
+import { CostSavingsKPIComponent } from './components/diagrams/KPIs/cost-savings/cost-savings-kpi/cost-savings-kpi.component';
+import { SelfConsumptionKPIComponent } from './components/diagrams/KPIs/self-consumption/self-consumption-kpi/self-consumption-kpi.component';
+import { TilingWraperComponent } from './components/diagrams/tiling-wraper/tiling-wraper.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    TilingWrapperComponent,
-    AutarykComponent,
-    CO2SavingsComponent,
-    CostSavingsComponent,
-    SelfConsumptionComponent,
     DashboardComponent,
     KpiWrapperComponent,
     ProductionConsumptionDiagramComponent,
-    EnergyMixDiagramComponent
+    EnergyMixDiagramComponent,
+    AutarkyKPIComponent,
+    Co2SavingsKPIComponent,
+    CostSavingsKPIComponent,
+    SelfConsumptionKPIComponent,
+    TilingWraperComponent
   ],
   imports: [
     BrowserModule,
