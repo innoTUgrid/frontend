@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NavbarComponent } from './components/navigation/navbar.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,6 +18,7 @@ import { Co2SavingsKPIComponent } from './components/diagrams/KPIs/co2-savings/c
 import { CostSavingsKPIComponent } from './components/diagrams/KPIs/cost-savings/cost-savings-kpi/cost-savings-kpi.component';
 import { SelfConsumptionKPIComponent } from './components/diagrams/KPIs/self-consumption/self-consumption-kpi/self-consumption-kpi.component';
 import { TilingWraperComponent } from './components/diagrams/tiling-wraper/tiling-wraper.component';
+import { NavbarComponent } from './components/navigation/navbar.component';
 
 @NgModule({
   declarations: [
