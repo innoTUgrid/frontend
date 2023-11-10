@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import { Props } from 'src/app/types/props';
+import { KpiService } from 'src/app/services/kpi.service';
 
 @Component({
   selector: 'app-production-consumption-diagram',
@@ -12,6 +13,11 @@ import { Props } from 'src/app/types/props';
 })
 export class ProductionConsumptionDiagramComponent {
   @Input() props: Props = {value: 75};
+  kpiService: KpiService = inject(KpiService);
+  production: number[] = []
+  consumption: number[] = []
+
+  chart: Highcharts.Chart|undefined
 
   Highcharts: typeof Highcharts = Highcharts; // required
 
@@ -22,11 +28,9 @@ export class ProductionConsumptionDiagramComponent {
   interval = "day"
   updateFlag = false
 
-  updateInterval(interval: string) {
-    this.interval = interval
-    // use the update function
-    this.xAxis.categories = this.interval == "day" ? this.hours : this.days
-    this.updateFlag = true
+  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    this.chart = chart;
+    this.updateInterval(this.interval)
   }
 
   xAxis: Highcharts.XAxisOptions = {
@@ -34,15 +38,37 @@ export class ProductionConsumptionDiagramComponent {
     crosshair: true,
     accessibility: {
       description: 'Days of the week'
-    } 
+    }
   }
+
+  updateInterval(interval: string) {
+    this.interval = interval
+    // use the update function
+    if (this.chart) {
+      this.xAxis.categories = this.interval == "day" ? this.hours : this.days
+      this.chart?.update({
+        xAxis: this.xAxis,
+        series: [
+          {
+              name: 'Production',
+              data: this.interval == "day" ? this.production : [406292, 260000, 107000, 68300, 27500, 14500, 15541],
+              type: 'column'
+          },
+          {
+              name: 'Consumption',
+              data: this.interval == "day" ? this.consumption : [51086, 136000, 5500, 141000, 107180, 77000, 55551],
+              type: 'column'
+          }
+        ]
+      }, true, true, true)
+      console.log("updating interval")
+    }
+  }
+
 
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'column',
-      events: {
-
-      }
     },
     title: {
       text: 'Production and Consumption',
@@ -61,18 +87,6 @@ export class ProductionConsumptionDiagramComponent {
       valueSuffix: ' ppm'
     },
     xAxis: this.xAxis,
-    series: [
-      {
-          name: 'Production',
-          data: [406292, 260000, 107000, 68300, 27500, 14500, 15541],
-          type: 'column'
-      },
-      {
-          name: 'Consumption',
-          data: [51086, 136000, 5500, 141000, 107180, 77000, 55551],
-          type: 'column'
-      }
-    ],
     exporting: {
       enabled: true,
       buttons: {
@@ -94,6 +108,21 @@ export class ProductionConsumptionDiagramComponent {
       }
       
     }
+  }
+
+  ngOnInit(): void {
+    // Subscribe to autarkyKPI$ observable to get real-time updates
+    this.kpiService.consumptionData$.subscribe((consumption) => {
+      this.consumption = consumption;
+    });
+
+    this.kpiService.consumptionData$.subscribe((production) => {
+      this.production = production;
+    });
+
+    // Trigger the computation of autarkyKPI (for later)
+    this.kpiService.computeConsumptionData();
+    this.kpiService.computeProductionData();
   }
 
   constructor() {
