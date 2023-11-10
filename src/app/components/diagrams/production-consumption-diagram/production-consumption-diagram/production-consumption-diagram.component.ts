@@ -1,21 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { Props } from '../../types/props';
 import * as Highcharts from 'highcharts';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
+import { Props } from 'src/app/types/props';
 
 @Component({
   selector: 'app-production-consumption-diagram',
-  template: `
-  <mat-card-content>
-    <highcharts-chart
-      [Highcharts]="Highcharts"
-      [options]="chartProperties"
-      [(update)]="updateFlag"
-      style="display: block;"
-    ></highcharts-chart>
-  </mat-card-content>
-  `,
+  templateUrl: './production-consumption-diagram.component.html',
   styleUrls: ['./production-consumption-diagram.component.scss']
 
 })

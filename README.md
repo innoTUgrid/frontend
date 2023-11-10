@@ -65,6 +65,8 @@ This project leverages the following libraries for data visualization and UI com
 
 - [Highcharts](https://www.highcharts.com/): A powerful charting library for creating interactive and visually appealing charts.
 
+- [highcharts-angular](https://github.com/highcharts/highcharts-angular): The official wrapper of Highcharts for angular.
+
 - [Angular Material](https://material.angular.io/): A UI component library that follows the Material Design guidelines and provides a set of high-quality UI components for Angular applications.
 
 Also refer to the [Angular documentation](https://angular.io/).
