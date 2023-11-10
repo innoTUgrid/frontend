@@ -1,3 +1,46 @@
-.sidebar{
-    width: 300px;
+.logo{
+    transform: scale(1);
+    margin: 2vw 1vw 1vw 2vw;
 }
+
+.mat-drawer-container {
+    background-color: white;
+}
+
+.mat-sidenav{
+    background-color: #FAFAFC;
+    width: 13vw;
+
+    .material-symbols-outlined {
+        padding: 1vw;
+        vertical-align: middle;
+    }
+
+}  
+
+.selected-menu-item {
+    background-color: transparent; /* Set the background color of the item */
+    position: relative;
+  }
+
+  .selected-menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.5vw; 
+    height: 100%; 
+    background-color: #C4C9FF;
+  }
+  
+  .selected-menu-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: #C4C9FF; 
+    opacity: 0.3; 
+    z-index: -1;
+  }

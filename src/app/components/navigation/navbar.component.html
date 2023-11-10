@@ -1,4 +1,20 @@
-<div class="sidebar">
-    Drawer content
-</div>
-  
+<mat-sidenav-container fullscreen>
+    <mat-sidenav [opened]="true" mode="side">
+      <mat-nav-list>
+        <div class="logo">
+            <img src="./assets/logo.svg">
+        </div>
+        <span *ngFor="let menuItem of menuItems" (click)="selectMenuItem(menuItem.name)" [class.selected-menu-item]="isSelected(menuItem.name)">
+            <a mat-list-item  [routerLink]="menuItem.route">
+                <span class="entry">
+                  <span class="material-symbols-outlined">{{menuItem.icon}}</span>
+                  <span>{{menuItem.name}}</span>
+                </span>
+              </a>
+        </span>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <app-dashboard></app-dashboard>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
