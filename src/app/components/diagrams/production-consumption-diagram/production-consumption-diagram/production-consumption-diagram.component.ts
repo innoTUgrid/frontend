@@ -21,7 +21,7 @@ export class ProductionConsumptionDiagramComponent {
 
   Highcharts: typeof Highcharts = Highcharts; // required
 
-  days = ["Mon", "Tue", "Wed", "Th", "Fri", "Sat", "Sun"]
+  days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   // 4 hourly
   hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"]
   
@@ -33,35 +33,35 @@ export class ProductionConsumptionDiagramComponent {
     this.updateInterval(this.interval)
   }
 
-  xAxis: Highcharts.XAxisOptions = {
-    categories: this.hours,
-    crosshair: true,
-    accessibility: {
-      description: 'Days of the week'
-    }
-  }
-
   updateInterval(interval: string) {
     this.interval = interval
     // use the update function
     if (this.chart) {
-      this.xAxis.categories = this.interval == "day" ? this.hours : this.days
+      const productionDataSeries = this.interval === "day" ? [...this.production] : [406292, 260000, 107000, 68300, 27500, 14500, 15541]
+      const consumptionDataSeries = this.interval === "day" ? [...this.consumption] : [51086, 136000, 5500, 141000, 107180, 77000, 55551]
       this.chart?.update({
-        xAxis: this.xAxis,
+        xAxis: {
+          id: 'xAxis', // update xAxis and do not create a new one
+          categories: this.interval === "day" ? this.hours : this.days,
+          accessibility: {
+            description: this.interval === "day" ? '4 hourly' : 'Days of the week'
+          },
+        },
         series: [
           {
-              name: 'Production',
-              data: this.interval == "day" ? this.production : [406292, 260000, 107000, 68300, 27500, 14500, 15541],
-              type: 'column'
+            id: 'production-series',
+            name: 'Production',
+            data: productionDataSeries,
+            type: 'column'
           },
           {
-              name: 'Consumption',
-              data: this.interval == "day" ? this.consumption : [51086, 136000, 5500, 141000, 107180, 77000, 55551],
-              type: 'column'
+            id: 'consumption-series',
+            name: 'Consumption',
+            data: consumptionDataSeries,
+            type: 'column'
           }
         ]
       }, true, true, true)
-      console.log("updating interval")
     }
   }
 
@@ -86,7 +86,6 @@ export class ProductionConsumptionDiagramComponent {
     tooltip: {
       valueSuffix: ' ppm'
     },
-    xAxis: this.xAxis,
     exporting: {
       enabled: true,
       buttons: {

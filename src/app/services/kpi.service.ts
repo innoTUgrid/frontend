@@ -8,12 +8,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class KpiService {
 
   // Production data
-  private productionData:number[] = [1,2,3,4,5,6];
+  private productionData:number[] = [1,2,3,4,5,6,7];
   private productionData$$:BehaviorSubject<number[]> = new BehaviorSubject<number[]>(this.productionData);
   public readonly productionData$:Observable<number[]> = this.productionData$$.asObservable();
 
   // Consumption data
-  private consumptionData:number[] = [4,3,2,1,0];
+  private consumptionData:number[] = [4,3,2,1,0,5,6];
   private consumptionData$$:BehaviorSubject<number[]>  = new BehaviorSubject<number[]>(this.consumptionData);
   public readonly consumptionData$:Observable<number[]> = this.consumptionData$$.asObservable();
 
