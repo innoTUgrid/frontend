@@ -1,10 +1,11 @@
 import { Component, Input, inject } from '@angular/core';
-import { Props } from '../../types/props';
+import { Props } from 'src/app/types/props';
 import { KpiService } from 'src/app/services/kpi.service';
 
 @Component({
   selector: 'app-energy-mix-diagram',
-  template: '<div>energy mix: {{ this.energyMix }}</div>',
+  templateUrl: './energy-mix-diagram.component.html',
+  styleUrls: ['./energy-mix-diagram.component.scss']
 })
 export class EnergyMixDiagramComponent {
   @Input() props: Props = {value: [10,20,30]};
@@ -14,3 +15,5 @@ export class EnergyMixDiagramComponent {
     return this.kpiService.computeEnergyMixKpi();
   }
 }
+
+
