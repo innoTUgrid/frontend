@@ -1,3 +1,7 @@
+:host {
+    --nav-drawer-width: 300px; /* Adjust this value to match the width of your navigation drawer */
+}
+
 .sidebar{
-    width: 300px;
+    width: var(--nav-drawer-width);
 }

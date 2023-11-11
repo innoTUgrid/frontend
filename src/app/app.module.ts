@@ -22,6 +22,8 @@ import { TilingWraperComponent } from './components/diagrams/tiling-wraper/tilin
 import { HighchartsChartModule } from 'highcharts-angular';
 import {MatCardModule} from '@angular/material/card'; 
 import {MatButtonModule} from '@angular/material/button'; 
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,8 @@ import {MatButtonModule} from '@angular/material/button';
     HighchartsChartModule,
     MatCardModule,
     MatButtonModule,
+    MatMenuModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]
