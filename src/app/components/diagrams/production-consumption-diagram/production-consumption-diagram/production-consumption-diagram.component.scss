@@ -9,11 +9,6 @@
     text-transform: uppercase;
 }
 
-.selected {
-    background-color: mat-color($frontend-primary);
-    color: mat-contrast($frontend-primary, default-contrast);
-}
-
 .menu-buttons {
     display:flex; 
     flex-direction: column;
