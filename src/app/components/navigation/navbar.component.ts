@@ -20,6 +20,11 @@ export class NavbarComponent {
     { name: 'Add view', icon: 'add_circle', route: '/addview' }
   ];
 
+  public menuItemsOrg: MenuItem[] = [
+    { name: 'Settings', icon: 'settings', route: '/settings' },
+    { name: 'Info', icon: 'info', route: '/info' },
+  ];
+
   selectedMenuItem: string = 'Overview'
 
 

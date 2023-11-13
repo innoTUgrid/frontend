@@ -15,11 +15,18 @@
         padding: 1vw;
         vertical-align: middle;
     }
-
 }  
 
+.bottom-icons{
+    position: relative;
+    bottom: -18vw;
+    span{
+        color: #828282;
+    }
+}
+
 .selected-menu-item {
-    background-color: transparent; /* Set the background color of the item */
+    background-color: transparent;
     position: relative;
   }
 
