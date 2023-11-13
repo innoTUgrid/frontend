@@ -1,39 +1,9 @@
-<mat-card style="width: 500px;" [ngClass]="{'fullscreen': isCardExpanded}">
-    <mat-card-header>
-        <mat-card-title>Production and Consumption</mat-card-title>
-    </mat-card-header>
-    <mat-card-actions>
-        <button class="diagram-button" [color]="interval === 'day' ? 'primary' : ''" mat-flat-button (click)="updateInterval('day')">Day</button>
-        <button class="diagram-button" [color]="interval === 'week' ? 'primary' : ''" mat-flat-button (click)="updateInterval('week')">Week</button>
-        
-        <span class="spacer"></span>
-        
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-            <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu" class="transparent-menu">
-            <div class="menu-buttons">
-                <button mat-mini-fab matTooltip="View in Fullscreen" matTooltipPosition="left" (click)="isCardExpanded = !isCardExpanded">
-                    <mat-icon>fullscreen</mat-icon>
-                </button>
-    
-                <button mat-mini-fab matTooltip="Export Chart" matTooltipPosition="left">
-                    <mat-icon>download</mat-icon>
-                </button>
-    
-                <button mat-mini-fab matTooltip="View Data Table" matTooltipPosition="left">
-                    <mat-icon>table</mat-icon>
-                </button>
-            </div>
-        </mat-menu>
-          
-    </mat-card-actions> 
-    <mat-card-content>
-        <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="chartProperties"
-            [callbackFunction]="chartCallback"
-            style="display: block;"
-        ></highcharts-chart>
-    </mat-card-content>
-</mat-card>
+<mat-card-content>
+    <highcharts-chart
+        [Highcharts]="Highcharts"
+        [options]="chartProperties"
+        [(update)]="updateFlag"
+        [callbackFunction]="chartCallback"
+        style="display: block;"
+    ></highcharts-chart>
+</mat-card-content>

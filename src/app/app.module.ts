@@ -12,7 +12,10 @@ import { MatCommonModule, MatOptionModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper/kpi-wrapper/kpi-wrapper.component';
+// the first has a custom header the second path uses the default highcharts header
+// you have to restart the dev server to see the changes
 import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram/production-consumption-diagram/production-consumption-diagram.component';
+// import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram/production-consumption-diagram-custom-header/production-consumption-diagram.component';
 import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram/energy-mix-diagram.component';
 import { AutarkyKPIComponent } from './components/diagrams/KPIs/autarky/autarky-kpi/autarky-kpi.component';
 import { Co2SavingsKPIComponent } from './components/diagrams/KPIs/co2-savings/co2-savings-kpi/co2-savings-kpi.component';
