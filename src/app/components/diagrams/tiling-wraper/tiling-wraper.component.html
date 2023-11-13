@@ -1,22 +1,23 @@
-<p>tiling-wraper works!</p>
-<ng-container *ngIf="subComponent === 'autarky'">
-    <app-autarky-kpi [props]="props"></app-autarky-kpi>
-</ng-container>
-<ng-container *ngIf="subComponent === 'co2-savings'">
-    <app-co2-savings-kpi [props]="props"></app-co2-savings-kpi>
-</ng-container>
-<ng-container *ngIf="subComponent === 'cost-savings'">
-    <app-cost-savings-kpi [props]="props"></app-cost-savings-kpi>
-</ng-container>
-<ng-container *ngIf="subComponent === 'self-consumption'">
-    <app-self-consumption-kpi [props]="props"></app-self-consumption-kpi>
-</ng-container>
-<ng-container *ngIf="subComponent === 'kpi-wrapper'">
-    <app-kpi-wrapper [props]="props"></app-kpi-wrapper>
-</ng-container>
-<ng-container *ngIf="subComponent === 'energy-mix'">
-    <app-energy-mix-diagram [props]="props"></app-energy-mix-diagram>
-</ng-container>
-<ng-container *ngIf="subComponent === 'production-consumption'">
-    <app-production-consumption-diagram [props]="props"></app-production-consumption-diagram>
-</ng-container>
+<mat-card>
+    <ng-container *ngIf="subComponent === 'autarky'">
+        <app-autarky-kpi [props]="props"></app-autarky-kpi>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'co2-savings'">
+        <app-co2-savings-kpi [props]="props"></app-co2-savings-kpi>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'cost-savings'">
+        <app-cost-savings-kpi [props]="props"></app-cost-savings-kpi>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'self-consumption'">
+        <app-self-consumption-kpi [props]="props"></app-self-consumption-kpi>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'kpi-wrapper'">
+        <app-kpi-wrapper [props]="props"></app-kpi-wrapper>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'energy-mix'">
+        <app-energy-mix-diagram [props]="props"></app-energy-mix-diagram>
+    </ng-container>
+    <ng-container *ngIf="subComponent === 'production-consumption'">
+        <app-production-consumption-diagram [props]="props"></app-production-consumption-diagram>
+    </ng-container>
+</mat-card>

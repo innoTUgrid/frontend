@@ -4,12 +4,10 @@ import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import { Props } from 'src/app/types/props';
 import { KpiService } from 'src/app/services/kpi.service';
-
 @Component({
   selector: 'app-production-consumption-diagram',
   templateUrl: './production-consumption-diagram.component.html',
-  styleUrls: ['./production-consumption-diagram.component.scss']
-
+  styleUrls: ['./production-consumption-diagram.component.scss'],
 })
 export class ProductionConsumptionDiagramComponent {
   @Input() props: Props = {value: 75};
@@ -26,6 +24,7 @@ export class ProductionConsumptionDiagramComponent {
   hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"]
   
   interval = "day"
+  isCardExpanded = false
   updateFlag = false
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
@@ -92,7 +91,7 @@ export class ProductionConsumptionDiagramComponent {
             type: 'column'
           }
         ],
-        exporting:this.chartExporting
+        // exporting:this.chartExporting
       }, true, true, true)
 
       
@@ -105,7 +104,7 @@ export class ProductionConsumptionDiagramComponent {
       type: 'column',
     },
     title: {
-      text: 'Production and Consumption',
+      text: '',
       margin: 50
     },
     credits: {
@@ -120,7 +119,7 @@ export class ProductionConsumptionDiagramComponent {
     tooltip: {
       valueSuffix: ' ppm'
     },
-    exporting: this.chartExporting,
+    exporting: {enabled: false},
   }
 
   ngOnInit(): void {

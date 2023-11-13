@@ -1,3 +1,10 @@
+:host {
+    --nav-drawer-width: 13vw; /* Adjust this value to match the width of your navigation drawer */
+}
+
+.sidebar{
+    width: var(--nav-drawer-width);
+}
 .logo{
     transform: scale(1);
     margin: 2vw 1vw 1vw 2vw;
@@ -9,7 +16,7 @@
 
 .mat-sidenav{
     background-color: #FAFAFC;
-    width: 13vw;
+    width: var(--nav-drawer-width);
 
     .material-symbols-outlined {
         padding: 1vw;
