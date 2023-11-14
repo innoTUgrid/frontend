@@ -1,8 +1,8 @@
 <div class="tiling-container" *ngIf="showKPIs">
     <ng-container *ngFor="let kpi of kpis">
-        <app-autarky-kpi *ngIf="kpi === 'autarky'" [props]="props"></app-autarky-kpi>
-        <app-cost-savings-kpi *ngIf="kpi === 'cost-savings'" [props]="props"></app-cost-savings-kpi>
-        <app-co2-savings-kpi *ngIf="kpi === 'co2-savings'" [props]="props"></app-co2-savings-kpi>
         <app-self-consumption-kpi *ngIf="kpi === 'self-consumption'" [props]="props"></app-self-consumption-kpi>
+        <app-autarky-kpi *ngIf="kpi === 'autarky'" [props]="props"></app-autarky-kpi>
+        <app-co2-savings-kpi *ngIf="kpi === 'co2-savings'" [props]="props"></app-co2-savings-kpi>
+        <app-cost-savings-kpi *ngIf="kpi === 'cost-savings'" [props]="props"></app-cost-savings-kpi>
     </ng-container>
 </div>
