@@ -30,7 +30,7 @@ export class PercentChartComponent {
     }
 
     get title(): string {
-        if (this.chartProperties.title && this.chartProperties.title.text !== undefined) {
+        if (this.chartProperties && this.chartProperties.title && this.chartProperties.title.text !== undefined) {
             return this.chartProperties.title.text;
         } 
         return '';
@@ -43,7 +43,7 @@ export class PercentChartComponent {
         return [{
             id: 'main',
             type: 'solidgauge',
-            name: 'Conversion',
+            name: this.title,
             data: [{
                 radius: '112%',
                 innerRadius: '88%',
