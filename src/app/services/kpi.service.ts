@@ -23,7 +23,7 @@ export class KpiService {
   public readonly autarkyKPI$:Observable<number> = this.autarkyKPI$$.asObservable();
 
   // CO2 savings KPI
-  private co2SavingsKPI:number = 0;
+  private co2SavingsKPI:number = 20;
   private co2SavingsKPI$$:BehaviorSubject<number>  = new BehaviorSubject<number>(this.co2SavingsKPI)
   public readonly co2SavingsKPI$:Observable<number> = this.co2SavingsKPI$$.asObservable();
 
@@ -33,7 +33,7 @@ export class KpiService {
   public readonly selfConsumptionKPI$:Observable<number> = this.selfConsumptionKPI$$.asObservable();
 
   // Cost savings KPI
-  private costSavingsKPI:number = 0;
+  private costSavingsKPI:number = 40;
   private costSavingsKPI$$:BehaviorSubject<number>  = new BehaviorSubject<number>(this.costSavingsKPI)
   public readonly costSavingsKPI$:Observable<number> = this.costSavingsKPI$$.asObservable();
 

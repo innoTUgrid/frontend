@@ -28,6 +28,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { NavbarComponent } from './components/navigation/navbar.component';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
+import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/
     CostSavingsKPIComponent,
     SelfConsumptionKPIComponent,
     TilingWraperComponent,
-    PercentChartComponent
+    PercentChartComponent,
+    SingleValueChartComponent
   ],
   imports: [
     BrowserModule,

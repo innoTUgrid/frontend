@@ -11,7 +11,7 @@ SolidGauge(Highcharts);
     styleUrls: ['./percent-chart.component.scss'],
 })
 export class PercentChartComponent {
-    _value: number = 80;
+    _value: number = 0;
     @Input() set value(val: number) {
         this._value = val;
         this.updateChart();
