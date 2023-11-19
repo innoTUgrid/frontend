@@ -58,7 +58,7 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     DataTableSmardComponent,
     DataTableConsumptionHouseBeckerComponent,
     CampusEnergyComponent,
-    CamelCaseToSpacePipe
+    CamelCaseToSpacePipe,
 
     PercentChartComponent,
     SingleValueChartComponent
@@ -81,7 +81,7 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     MatTooltipModule,
 
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
 
     MtxPopoverModule
 
