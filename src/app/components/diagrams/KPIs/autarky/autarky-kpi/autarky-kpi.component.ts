@@ -5,11 +5,11 @@ import { Props } from 'src/app/types/props';
 @Component({
   selector: 'app-autarky-kpi',
   templateUrl: './autarky-kpi.component.html',
-  styleUrls: ['./autarky-kpi.component.scss']
+  styleUrls: ['./autarky-kpi.component.scss'],
 })
 export class AutarkyKPIComponent implements OnInit{
   @Input() props: Props = {value: 75};
-  autarkyKPI: number = 0;
+  autarkyKPI: number = 80;
 
   constructor(private kpiService: KpiService) {}
 
