@@ -1,5 +1,5 @@
 :host {
-    --nav-drawer-width: 13vw; /* Adjust this value to match the width of your navigation drawer */
+    --nav-drawer-width: 13vw;
 }
 
 .sidebar{
@@ -28,7 +28,7 @@
     position: relative;
     bottom: -18vw;
     span{
-        color: #828282;
+        color: gray;
     }
 }
 
