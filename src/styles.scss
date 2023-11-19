@@ -4,6 +4,7 @@
 @use '@angular/material' as mat;
 @use '@ng-matero/extensions' as mtx;
 
+@import 'https://code.highcharts.com/css/highcharts.css';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -29,6 +30,12 @@ $frontend-theme: mat.define-light-theme((
     warn: $frontend-warn,
   )
 ));
+
+:root {
+  --highcharts-color-0: var(-mat-primary);
+  --highcharts-color-1: var(-mat-accent);
+}
+
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
