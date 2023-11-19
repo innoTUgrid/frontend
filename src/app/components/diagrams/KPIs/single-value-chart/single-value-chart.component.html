@@ -1,0 +1,19 @@
+<mat-card class="kpi-card">
+    <mat-card-content class="kpi-content">
+        <mat-icon [fontIcon]="icon" class="kpi-icon"></mat-icon>
+        <span class="kpi-value">{{value}} {{unit}}</span>
+    </mat-card-content>
+
+
+    <mat-card-actions class="kpi-spline">
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="chartProperties"
+            [callbackFunction]="chartCallback"
+        ></highcharts-chart>
+    </mat-card-actions>
+    
+    <mat-card-header class="kpi-footer">
+        <mat-card-title>{{title}}</mat-card-title>
+    </mat-card-header>
+</mat-card>

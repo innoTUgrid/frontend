@@ -27,12 +27,18 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button'; 
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { NavbarComponent } from './components/navigation/navbar.component';
+
 import { DatasetsComponent } from './views/datasets/datasets/datasets.component';
 import { DataTableSmardComponent } from './views/datasets/datasets/smard_50hz/data-table-smard/data-table-smard.component';
 import { DataTableConsumptionHouseBeckerComponent } from './views/datasets/datasets/consumption-house-becker/data-table-consumption-house-becker/data-table-consumption-house-becker.component';
 import { CampusEnergyComponent } from './views/datasets/datasets/campus-energy/campus-energy/campus-energy.component';
 import { MatTableModule } from '@angular/material/table';
+
+import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
+import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
+
 
 @NgModule({
   declarations: [
@@ -47,11 +53,16 @@ import { MatTableModule } from '@angular/material/table';
     CostSavingsKPIComponent,
     SelfConsumptionKPIComponent,
     TilingWraperComponent,
+
     DatasetsComponent,
     DataTableSmardComponent,
     DataTableConsumptionHouseBeckerComponent,
     CampusEnergyComponent,
     CamelCaseToSpacePipe
+
+    PercentChartComponent,
+    SingleValueChartComponent
+
   ],
   imports: [
     BrowserModule,
@@ -68,8 +79,12 @@ import { MatTableModule } from '@angular/material/table';
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
+
     MatTableModule,
     MatPaginatorModule
+
+    MtxPopoverModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

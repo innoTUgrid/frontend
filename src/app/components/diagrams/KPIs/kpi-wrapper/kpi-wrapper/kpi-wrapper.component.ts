@@ -10,5 +10,5 @@ export class KpiWrapperComponent {
   @Input() props: Props = {value: 75};
 
   showKPIs = true;
-  kpis = ['autarky', 'cost-savings', 'co2-savings', 'self-consumption'];
+  kpis = ['cost-savings', 'self-consumption', 'autarky', 'co2-savings'];
 }
