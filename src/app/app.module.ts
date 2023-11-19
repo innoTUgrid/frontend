@@ -26,6 +26,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button'; 
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { NavbarComponent } from './components/navigation/navbar.component';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
@@ -60,7 +61,8 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     MatCardModule,
     MatButtonModule,
     MatMenuModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MtxPopoverModule
   ],
   providers: [],
   bootstrap: [AppComponent]
