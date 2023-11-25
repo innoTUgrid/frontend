@@ -15,11 +15,11 @@ export class CostSavingsKPIComponent implements OnInit{
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.costSavingsKPI$.subscribe((costSavingsKPI) => {
-      this.costSavingsKPI = costSavingsKPI;
-    });
+    // this.kpiService.costSavingsKPI$.subscribe((costSavingsKPI) => {
+    //   this.costSavingsKPI = costSavingsKPI;
+    // });
 
-    // Trigger the computation of KPI (for later)
-    this.kpiService.computeCostSavingsKpi();
+    // // Trigger the computation of KPI (for later)
+    // this.kpiService.computeCostSavingsKpi();
   }
 }

@@ -15,11 +15,11 @@ export class AutarkyKPIComponent implements OnInit{
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.autarkyKPI$.subscribe((autarkyKPI) => {
-      this.autarkyKPI = autarkyKPI;
-    });
+    // this.kpiService.timeSeriesDataFiltered$.subscribe((autarkyKPI) => {
+    //   this.autarkyKPI = autarkyKPI;
+    // });
 
-    // Trigger the computation of autarkyKPI (for later)
-    this.kpiService.computeAutarkyKpi();
+    // // Trigger the computation of autarkyKPI (for later)
+    // this.kpiService.computeAutarkyKpi();
   }
 }

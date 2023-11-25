@@ -15,7 +15,7 @@ export class ProductionConsumptionDiagramComponent {
   @Input() props: Props = {value: 75};
   kpiService: KpiService = inject(KpiService);
   production: number[] = []
-  consumption: number[] = []
+  series: Object[] = []
 
   chart: Highcharts.Chart|undefined
 
@@ -69,7 +69,7 @@ export class ProductionConsumptionDiagramComponent {
       this.chartExporting.buttons.customButton2.theme.fill = this.interval === 'day' ? buttonSelectedColor : '#ffffff';
       
       const productionDataSeries = this.interval === "day" ? [...this.production] : [406292, 260000, 107000, 68300, 27500, 14500, 15541]
-      const consumptionDataSeries = this.interval === "day" ? [...this.consumption] : [51086, 136000, 5500, 141000, 107180, 77000, 55551]
+      const consumptionDataSeries = this.interval === "day" ? [...this.series] : [51086, 136000, 5500, 141000, 107180, 77000, 55551]
       this.chart?.update({
         xAxis: {
           id: 'xAxis', // update xAxis and do not create a new one
@@ -120,22 +120,23 @@ export class ProductionConsumptionDiagramComponent {
     tooltip: {
       valueSuffix: ' ppm'
     },
-    exporting: this.chartExporting,
+    exporting: {enabled: true},
   }
 
   ngOnInit(): void {
-    // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.consumptionData$.subscribe((consumption) => {
-      this.consumption = consumption;
-    });
+    // filter for the data that has the key energyConsumption in the dictionary
+    // then map the values of the data to an array
+    this.kpiService.timeSeriesDataFiltered$.subscribe((data) => {
+      const energy = (data.get('energyConsumption') || []) 
 
-    this.kpiService.consumptionData$.subscribe((production) => {
-      this.production = production;
+      this.series = []
+      const energyTypes = new Set(energy.map(entry => entry.meta.type))
+      for (const type of energyTypes) {
+        const typeData = energy.filter(entry => entry.meta.type === type)
+        this.series.push({"name":type, "data":typeData.map(entry => entry.value)})
+      }
+      this.updateFlag = true
     });
-
-    // Trigger the computation of autarkyKPI (for later)
-    this.kpiService.computeConsumptionData();
-    this.kpiService.computeProductionData();
   }
 
   constructor() {
