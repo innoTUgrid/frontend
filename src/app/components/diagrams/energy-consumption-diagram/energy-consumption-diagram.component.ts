@@ -73,7 +73,7 @@ export class EnergyConsumptionDiagramComponent {
       type: 'column',
     },
     title: {
-      text: 'Energy Consumption',
+      text: 'Consumed Electricity by Source',
       margin: 50
     },
     credits: {
