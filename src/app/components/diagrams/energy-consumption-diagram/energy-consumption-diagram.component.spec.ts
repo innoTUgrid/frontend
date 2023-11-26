@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProductionConsumptionDiagramComponent } from './production-consumption-diagram.component';
+import { ProductionConsumptionDiagramComponent } from './energy-consumption-diagram.component';
 
 describe('ProductionConsumptionDiagramComponent', () => {
   let component: ProductionConsumptionDiagramComponent;

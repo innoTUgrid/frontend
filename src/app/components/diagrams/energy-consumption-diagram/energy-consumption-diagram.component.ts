@@ -6,15 +6,14 @@ import { Props } from 'src/app/types/props';
 import { KpiService } from 'src/app/services/kpi.service';
 
 @Component({
-  selector: 'app-production-consumption-diagram',
-  templateUrl: './production-consumption-diagram.component.html',
-  styleUrls: ['./production-consumption-diagram.component.scss']
+  selector: 'app-energy-consumption-diagram',
+  templateUrl: './energy-consumption-diagram.component.html',
+  styleUrls: ['./energy-consumption-diagram.component.scss']
 
 })
-export class ProductionConsumptionDiagramComponent {
+export class EnergyConsumptionDiagramComponent {
   @Input() props: Props = {value: 75};
   kpiService: KpiService = inject(KpiService);
-  production: number[] = []
   consumption: number[] = []
 
   chart: Highcharts.Chart|undefined
@@ -25,51 +24,21 @@ export class ProductionConsumptionDiagramComponent {
   // 4 hourly
   hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"]
   
-  interval = "day"
+  interval = "week"
   updateFlag = false
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
-    this.updateInterval(this.interval)
+    // this.updateInterval(this.interval)
   }
 
-
-  chartExporting = {
-    enabled: true,
-    buttons: {
-      customButton1: {
-        text: 'Week',
-        onclick: () => {
-          this.updateInterval("week")
-        },
-        y: 30,
-        theme: {
-          fill: this.interval === 'week' ? '#f7f7f7' : '#ffffff',
-        },
-      },
-      customButton2: {
-        text: 'Day',
-        onclick: () => {
-          this.updateInterval("day")
-        },
-        y: 30,
-        theme: {
-          fill: this.interval === 'day' ? '#f7f7f7' : '#ffffff',
-        },
-      }
-    }
-  }
 
   updateInterval(interval: string) {
     this.interval = interval
     // use the update function
     if (this.chart) {
-      const buttonSelectedColor = '#f0f0f0';
-      this.chartExporting.buttons.customButton1.theme.fill = this.interval === 'week' ? buttonSelectedColor : '#ffffff';
-      this.chartExporting.buttons.customButton2.theme.fill = this.interval === 'day' ? buttonSelectedColor : '#ffffff';
-      
-      const productionDataSeries = this.interval === "day" ? [...this.production] : [406292, 260000, 107000, 68300, 27500, 14500, 15541]
-      const consumptionDataSeries = this.interval === "day" ? [...this.consumption] : [51086, 136000, 5500, 141000, 107180, 77000, 55551]
+      const productionDataSeries = [406292, 260000, 107000, 68300, 27500, 14500, 15541]
+      const consumptionDataSeries = [51086, 136000, 5500, 141000, 107180, 77000, 55551]
       this.chart?.update({
         xAxis: {
           id: 'xAxis', // update xAxis and do not create a new one
@@ -92,7 +61,6 @@ export class ProductionConsumptionDiagramComponent {
             type: 'column'
           }
         ],
-        exporting:this.chartExporting
       }, true, true, true)
 
       
@@ -105,37 +73,56 @@ export class ProductionConsumptionDiagramComponent {
       type: 'column',
     },
     title: {
-      text: 'Production and Consumption',
+      text: 'Energy Consumption',
       margin: 50
     },
     credits: {
       enabled: false
     },
+    xAxis: {
+      id: 'xAxis', // update xAxis and do not create a new one
+      categories: this.interval === "day" ? this.hours : this.days,
+      accessibility: {
+        description: this.interval === "day" ? '4 hourly' : 'Days of the week'
+      },
+    },
     yAxis: {
       min: 0,
       title: {
-          text: 'C0\u2082 Emissions (kg)'
+          text: 'Consumption (kWh)'
       }
     },
     tooltip: {
       valueSuffix: ' ppm'
     },
-    exporting: this.chartExporting,
+    exporting: {
+      enabled: true,
+    },
+    plotOptions: {
+      column: {
+          stacking: 'normal',
+          dataLabels: {
+              enabled: true
+          }
+      }
+    },
+    series: [{
+        name: 'Solar Local',
+        data: [3, 5, 1, 13, 2, 8, 9],
+        type: 'column'
+    }, {
+        name: 'Biogas Local',
+        data: [14, 8, 8, 12, 3, 4, 7],
+        type: 'column'
+    }, {
+        name: 'Others',
+        data: [0, 2, 6, 3, 2, 2, 1],
+        type: 'column'
+    }]
   }
 
   ngOnInit(): void {
-    // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.consumptionData$.subscribe((consumption) => {
-      this.consumption = consumption;
-    });
-
-    this.kpiService.consumptionData$.subscribe((production) => {
-      this.production = production;
-    });
-
-    // Trigger the computation of autarkyKPI (for later)
-    this.kpiService.computeConsumptionData();
-    this.kpiService.computeProductionData();
+    
   }
 
   constructor() {
