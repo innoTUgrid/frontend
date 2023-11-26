@@ -12,6 +12,63 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+//colors
+$fill-color-1: #D7FAEE;
+$fill-color-2: #DDEFFC;
+$fill-color-3: #D9DCFF;
+$fill-color-4: #FEF4C7;
+$accent-color: #F47659; //example: bullet points
+$background-color: #FAFAFC;
+$icon-color: #575757;
+$text-color: #2C2E33;
+$white-background: #FFFFFF;
+
+//font styles
+@import url('https://fonts.googleapis.com/css2?family=Lucida+Grande&display=swap');
+
+$custom-font-family: 'Lucida Grande', sans-serif;
+$font-size-default: 16px;
+$font-size-view-header: 1.5625em;
+$font-size-chart-header: 1.125em;
+$font-size-chart-legend: 0.625em;
+$font-size-navigation: 0.875em;
+$font-size-button: 0.6875em;
+
+
+
+//highcharts styling
+
+/* This will re-declare variables globally */
+:root {
+  --highcharts-color-0: #f45b5b;
+}
+/* This will overwrite variables for different charts */
+#container-1 {
+  --highcharts-color-0: #f45b5b;
+}
+#container-2 {
+  --highcharts-color-0: #dedede;
+}
+/* This will use a different variable for some elements, in this case a more
+contrasted color variation for the axis labels */
+.highcharts-axis-labels {
+  fill: var(--highcharts-neutral-color-100);
+}
+/* Example of individual components overriding variables */
+.highcharts-title {
+  fill: black;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+
+
+$primary-font-color: #333;
+
+
+
+
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
@@ -31,10 +88,6 @@ $frontend-theme: mat.define-light-theme((
   )
 ));
 
-:root {
-  --highcharts-color-0: var(-mat-primary);
-  --highcharts-color-1: var(-mat-accent);
-}
 
 
 // Include theme styles for core and each component used in your app.
@@ -44,16 +97,3 @@ $frontend-theme: mat.define-light-theme((
 @include mtx.all-component-themes($frontend-theme);
 
 /* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.tiling-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-  border: 1px solid;
-}

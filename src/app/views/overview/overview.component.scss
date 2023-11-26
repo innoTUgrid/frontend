@@ -1,10 +1,23 @@
+@import '/src/styles.scss';
+
 h2{
-    margin: 2vw;
+    font-size: $font-size-view-header;
+    font-weight: normal;
+    margin: 1em;
 }
 
-.container-top {
+.container-top{
     display: flex;
-    flex-direction: row;
-    flex-wrap:wrap;
-    justify-content: space-around;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    gap: 10px 30px; 
+}
+
+.item{
+    width: 34em;
+    height: 24em;
+    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
+    border-radius: 0.75em;
+    margin-bottom: 1em;
+    padding: 2em;
 }

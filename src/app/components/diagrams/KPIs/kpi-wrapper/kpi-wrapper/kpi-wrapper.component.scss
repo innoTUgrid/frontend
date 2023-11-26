@@ -1,0 +1,13 @@
+.tiling-container{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+   
+}
+
+.item{
+    width: 15em;
+    height: 12em;
+    margin-bottom: 1em;
+    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
+}

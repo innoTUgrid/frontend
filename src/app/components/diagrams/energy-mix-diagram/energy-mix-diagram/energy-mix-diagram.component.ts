@@ -7,6 +7,8 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsData from 'highcharts/modules/data';
 import HighchartsAccessibility from 'highcharts/modules/accessibility';
 
+
+
 HighchartsExporting(Highcharts);
 HighchartsData(Highcharts);
 HighchartsAccessibility(Highcharts);
@@ -49,7 +51,6 @@ export class EnergyMixDiagramComponent implements OnInit{
           text: 'CO2 Emissions',
         },
       },
-      colors: ['#FFA500', '#808080', '#000000'],
       series: [
         {
           name: 'Total',
