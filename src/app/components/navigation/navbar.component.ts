@@ -25,7 +25,7 @@ export class NavbarComponent {
     { name: 'Info', icon: 'info', route: '/info' },
   ];
 
-  selectedMenuItem: string = 'Overview'
+  selectedMenuItem: string = ''
 
 
   isSelected(menuItemName: string): boolean {

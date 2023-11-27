@@ -1,7 +1,4 @@
-<mat-card 
-    [mtxPopoverTriggerFor]="popover"
-    mtxPopoverTriggerOn="hover"
-    #popoverTrigger="mtxPopoverTrigger"
+<mat-card style="box-shadow: none;"
 >
     <mat-card-content>
         <highcharts-chart
@@ -9,10 +6,20 @@
             [options]="chartProperties"
             [(update)]="updateFlag"
             [callbackFunction]="chartCallback"
-            style="display: block;"
+            style="display: block; transform: scale(0.8); margin-top: -3.4em;"
         ></highcharts-chart>
     </mat-card-content>
 </mat-card>
+
+<!--
+    <mat-card style="box-shadow: none;"
+    [mtxPopoverTriggerFor]="popover"
+    mtxPopoverTriggerOn="hover"
+    #popoverTrigger="mtxPopoverTrigger"
+> insert to the top of the html file
+
+
+
 
 <mtx-popover 
     #popover="mtxPopover"
@@ -29,3 +36,4 @@
         <img src="assets/self-consumption.png" alt="self-consumption.png">
     </div>
 </mtx-popover>
+-->

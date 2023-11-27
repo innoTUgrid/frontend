@@ -1,4 +1,4 @@
-<mat-card>
+<div>
     <ng-container *ngIf="subComponent === 'autarky'">
         <app-autarky-kpi [props]="props"></app-autarky-kpi>
     </ng-container>
@@ -20,4 +20,4 @@
     <ng-container *ngIf="subComponent === 'production-consumption'">
         <app-production-consumption-diagram [props]="props"></app-production-consumption-diagram>
     </ng-container>
-</mat-card>
+</div>
