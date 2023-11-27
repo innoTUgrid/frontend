@@ -1,0 +1,11 @@
+<mat-card style="box-shadow: none;">
+    <mat-card-content>
+        <highcharts-chart
+            [Highcharts]="Highcharts"
+            [options]="chartProperties"
+            [(update)]="updateFlag"
+            [callbackFunction]="chartCallback"
+            style="display: block; transform: scale(0.8); margin-top: -3.4em;"
+        ></highcharts-chart>
+    </mat-card-content>
+</mat-card>
