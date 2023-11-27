@@ -1,19 +1,20 @@
 <mat-card class="kpi-card" style="box-shadow: none;">
-    <mat-card-content class="kpi-content">
+    <mat-card-header class="kpi-content">
         <mat-icon [fontIcon]="icon" class="kpi-icon"></mat-icon>
         <span class="kpi-value">{{value}} {{unit}}</span>
-    </mat-card-content>
+    </mat-card-header>
 
 
-    <mat-card-actions class="kpi-spline">
+    <mat-card-content mat-card-image class="kpi-spline">
         <highcharts-chart
             [Highcharts]="Highcharts"
             [options]="chartProperties"
             [callbackFunction]="chartCallback"
+            style="width: 100%; height: 100%; display: block;"
         ></highcharts-chart>
-    </mat-card-actions>
+    </mat-card-content>
     
-    <mat-card-header class="kpi-footer">
+    <mat-card-footer class="kpi-footer">
         <mat-card-title>{{title}}</mat-card-title>
-    </mat-card-header>
+    </mat-card-footer>
 </mat-card>

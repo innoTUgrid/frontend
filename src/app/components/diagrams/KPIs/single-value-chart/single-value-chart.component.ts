@@ -25,7 +25,6 @@ export class SingleValueChartComponent {
     chart: {
       styledMode: true,
       type: 'spline',
-      height: "50%",
     },
     title: {text:''},
     exporting:{enabled:false},
