@@ -12,10 +12,7 @@ import { MatCommonModule, MatOptionModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { OverviewComponent } from './views/overview/overview.component';
 import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper/kpi-wrapper/kpi-wrapper.component';
-// the first has a custom header the second path uses the default highcharts header
-// you have to restart the dev server to see the changes
-import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram/production-consumption-diagram/production-consumption-diagram.component';
-// import { ProductionConsumptionDiagramComponent } from './components/diagrams/production-consumption-diagram/production-consumption-diagram-custom-header/production-consumption-diagram.component';
+import { EnergyConsumptionDiagramComponent } from './components/diagrams/energy-consumption-diagram/energy-consumption-diagram.component';
 import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram/energy-mix-diagram.component';
 import { AutarkyKPIComponent } from './components/diagrams/KPIs/autarky/autarky-kpi/autarky-kpi.component';
 import { Co2SavingsKPIComponent } from './components/diagrams/KPIs/co2-savings/co2-savings-kpi/co2-savings-kpi.component';
@@ -39,6 +36,7 @@ import { MatTableModule } from '@angular/material/table';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -46,7 +44,7 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     NavbarComponent,
     OverviewComponent,
     KpiWrapperComponent,
-    ProductionConsumptionDiagramComponent,
+    EnergyConsumptionDiagramComponent,
     EnergyMixDiagramComponent,
     AutarkyKPIComponent,
     Co2SavingsKPIComponent,
@@ -62,7 +60,6 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
 
     PercentChartComponent,
     SingleValueChartComponent
-
   ],
   imports: [
     BrowserModule,
@@ -83,7 +80,8 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     MatTableModule,
     MatPaginatorModule,
 
-    MtxPopoverModule
+    MtxPopoverModule,
+    MatGridListModule
 
   ],
   providers: [],
