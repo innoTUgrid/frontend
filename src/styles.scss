@@ -36,43 +36,10 @@ $font-size-button: 0.6875em;
 
 
 
-//highcharts styling
-
-/* This will re-declare variables globally */
-:root {
-  --highcharts-color-0: #f45b5b;
-}
-/* This will overwrite variables for different charts */
-#container-1 {
-  --highcharts-color-0: #f45b5b;
-}
-#container-2 {
-  --highcharts-color-0: #dedede;
-}
-/* This will use a different variable for some elements, in this case a more
-contrasted color variation for the axis labels */
-.highcharts-axis-labels {
-  fill: var(--highcharts-neutral-color-100);
-}
-/* Example of individual components overriding variables */
-.highcharts-title {
-  fill: black;
-  font-size: 26px;
-  font-weight: bold;
-}
-
-
-
-$primary-font-color: #333;
-
-
-
-
-
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$frontend-primary: mat.define-palette(mat.$indigo-palette);
+$frontend-primary: mat.define-palette(mat.$red-palette);
 $frontend-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
@@ -88,6 +55,10 @@ $frontend-theme: mat.define-light-theme((
   )
 ));
 
+:root {
+  --highcharts-color-0: red;
+  --highcharts-color-1: blue;
+}
 
 
 // Include theme styles for core and each component used in your app.
@@ -95,5 +66,3 @@ $frontend-theme: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($frontend-theme);
 @include mtx.all-component-themes($frontend-theme);
-
-/* You can add global styles to this file, and also import other style files */

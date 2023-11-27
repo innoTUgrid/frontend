@@ -3,21 +3,21 @@
 h2{
     font-size: $font-size-view-header;
     font-weight: normal;
-    margin: 1em;
+    margin-left: 2em;
 }
 
 .container-top{
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     justify-content: space-evenly;
-    gap: 10px 30px; 
+    width: 100%;
+    
 }
 
 .item{
-    width: 34em;
-    height: 24em;
+    min-width: 35em;
     box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
     border-radius: 0.75em;
-    margin-bottom: 1em;
-    padding: 2em;
+    margin-bottom: 0;
+    padding: 2em 2em 0 2em;
 }

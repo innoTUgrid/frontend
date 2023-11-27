@@ -1,13 +1,30 @@
-.tiling-container{
+ .flex-container {
     display: flex;
-    flex-flow: row wrap;
-    justify-content: space-evenly;
-   
-}
 
-.item{
-    width: 15em;
-    height: 12em;
-    margin-bottom: 1em;
-    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
-}
+    
+  }
+  
+  .item {
+    flex: 1;
+    transform: scale(0.6);
+    margin-top: -7em;
+  }
+
+  .line{
+    margin-top: - 4.2em;
+    transform: scale(0.7);
+  }
+  
+  .flex-column {
+    display: flex;
+    flex-direction: row;
+   
+  }
+  
+  .sub-item {
+    flex: 1; 
+    margin-top: -50px;
+    margin-right: 40px; 
+    transform: scale(0.75);
+  }
+  

@@ -51,6 +51,7 @@ export class EnergyMixDiagramComponent implements OnInit{
           text: 'CO2 Emissions',
         },
       },
+      
       series: [
         {
           name: 'Total',

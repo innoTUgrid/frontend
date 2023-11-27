@@ -3,7 +3,7 @@
 
 .logo{
     transform: scale(1);
-    margin: 2vw 1vw 1vw 2vw;
+    margin: 1em 2em 1em 1em;
 }
 
 .mat-drawer-container {
@@ -12,11 +12,13 @@
 
 .mat-sidenav{
     background-color: $background-color;
-    width: var(--nav-drawer-width);
+    width: 15em;
     font-size: $font-size-navigation;
+    padding: 0.5em;
+
 
     .material-symbols-outlined {
-        padding: 1em;
+        padding-right: 0.5em;
         vertical-align: middle;
     }
 }  
