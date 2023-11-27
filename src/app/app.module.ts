@@ -36,6 +36,7 @@ import { MatTableModule } from '@angular/material/table';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { SingleValueChartComponent } from './components/diagrams/KPIs/single-val
     MatTableModule,
     MatPaginatorModule,
 
-    MtxPopoverModule
+    MtxPopoverModule,
+    MatGridListModule
 
   ],
   providers: [],

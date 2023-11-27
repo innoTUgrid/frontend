@@ -12,10 +12,34 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+//colors
+$fill-color-1: #D7FAEE;
+$fill-color-2: #DDEFFC;
+$fill-color-3: #D9DCFF;
+$fill-color-4: #FEF4C7;
+$accent-color: #F47659; //example: bullet points
+$background-color: #FAFAFC;
+$icon-color: #575757;
+$text-color: #2C2E33;
+$white-background: #FFFFFF;
+
+//font styles
+@import url('https://fonts.googleapis.com/css2?family=Lucida+Grande&display=swap');
+
+$custom-font-family: 'Lucida Grande', sans-serif;
+$font-size-default: 16px;
+$font-size-view-header: 1.5625em;
+$font-size-chart-header: 1.125em;
+$font-size-chart-legend: 0.625em;
+$font-size-navigation: 0.875em;
+$font-size-button: 0.6875em;
+
+
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$frontend-primary: mat.define-palette(mat.$indigo-palette);
+$frontend-primary: mat.define-palette(mat.$red-palette);
 $frontend-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
@@ -32,8 +56,8 @@ $frontend-theme: mat.define-light-theme((
 ));
 
 :root {
-  --highcharts-color-0: var(-mat-primary);
-  --highcharts-color-1: var(-mat-accent);
+  --highcharts-color-0: red;
+  --highcharts-color-1: blue;
 }
 
 
@@ -42,18 +66,3 @@ $frontend-theme: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($frontend-theme);
 @include mtx.all-component-themes($frontend-theme);
-
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.tiling-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap;
-  width: 100%;
-  border: 1px solid;
-}
