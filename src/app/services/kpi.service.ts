@@ -26,24 +26,28 @@ export class KpiService {
   private timeInterval:TimeInterval = [new Date("2019-01-01T00:00:00.000Z"), new Date("2019-01-01T01:00:00.000Z")];
   private timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
 
+  timeSeriesDataFiltered:TimeSeriesDataDictionary = new Map<string, TimeSeriesData>();
   timeSeriesDataFiltered$: Observable<TimeSeriesDataDictionary> = combineLatest([
     this.timeSeriesData$$,
     this.timeInterval$$,
   ]).pipe(
     map(([data, timeInterval]) => {
+      const filteredData = new Map<string, TimeSeriesData>();
       for (const [key, value] of data.entries()) {
-        data.set(key, this.filterDataForTimeInterval(value, timeInterval));
+        filteredData.set(key, this.filterDataForTimeInterval(value, timeInterval));
       }
-      return data; 
+      return filteredData;
     })
   );
 
   constructor() {
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
     this.timeSeriesData$$.subscribe((data) => {
+      console.log("all data")
       console.log(data)
     });
     this.timeSeriesDataFiltered$.subscribe((data) => {
+      console.log("filtered data")
       console.log(data)
     });
     this.loadTimeSeriesData();
@@ -55,7 +59,7 @@ export class KpiService {
     const convertedData = value.map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }));
     this.timeSeriesData.set(key, convertedData);
     this.timeSeriesData$$.next(this.timeSeriesData);
-    this.timeInterval$$.next(this.timeInterval);
+    this.timeInterval$$.next([new Date("2019-01-01T01:00:00.000Z"), new Date("2019-01-01T02:00:00.000Z")]);
   }
 
   filterDataForTimeInterval(data:TimeSeriesData, timeInterval:TimeInterval):TimeSeriesData {
