@@ -31,7 +31,6 @@ export class EnergyMixDiagramComponent implements OnInit{
   }
 
   private initChart() {
-    const energyMixData = this.kpiService.computeEnergyMixKpi();
   
     Highcharts.chart({
       chart: {
