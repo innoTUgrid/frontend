@@ -21,18 +21,32 @@ HighchartsAccessibility(Highcharts);
 export class EnergyMixDiagramComponent implements OnInit{
   @Input() props: Props = { value: [10, 20, 30] };
   kpiService: KpiService;
-
+  
+  green = '';
+  yellow = '';
+  orange = '';
+  color3 = '';
+  color4 = '';
+  
   constructor(kpiService: KpiService) {
     this.kpiService = kpiService;
   }
 
   ngOnInit() {
+    this.green = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
+    this.yellow = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-5').trim();
+    this.orange = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
+    this.color3 = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-3').trim();
+    this.color4 = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
+    console.log(this.green)
     this.initChart();
   }
 
   private initChart() {
     const energyMixData = this.kpiService.computeEnergyMixKpi();
-  
+    
+
+    
     Highcharts.chart({
       chart: {
         type: 'area',
@@ -51,11 +65,16 @@ export class EnergyMixDiagramComponent implements OnInit{
           text: 'CO2 Emissions',
         },
       },
-      
+      //colors: [this.green, this.yellow, this.orange],
+
       series: [
         {
           name: 'Total',
-          type: 'area', // Specify the type for each series
+          type: 'area', 
+          color: this.green,
+          marker:{
+            lineColor: this.green,
+          },
           data: [
             38000 + 22534,
             37300 + 23599,
@@ -73,7 +92,11 @@ export class EnergyMixDiagramComponent implements OnInit{
         },
         {
           name: 'Scope 1',
-          type: 'area', // Specify the type for each series
+          type: 'area', 
+          color: this.yellow,
+          marker:{
+            lineColor: this.yellow,
+          },
           data: [
             38000,
             37300,
@@ -91,7 +114,11 @@ export class EnergyMixDiagramComponent implements OnInit{
         },
         {
           name: 'Scope 2',
-          type: 'area', // Specify the type for each series
+          type: 'area',
+          color: this.orange,
+          marker:{
+            lineColor: this.orange,
+          },
           data: [
                 22534,
                 23599,
@@ -108,6 +135,8 @@ export class EnergyMixDiagramComponent implements OnInit{
             ],
         },
       ],
+
+      
 
     });
   }

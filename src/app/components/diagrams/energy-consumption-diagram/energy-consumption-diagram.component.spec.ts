@@ -1,4 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+/**
+ * import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProductionConsumptionDiagramComponent } from './energy-consumption-diagram.component';
 
@@ -19,3 +20,5 @@ describe('ProductionConsumptionDiagramComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+ */

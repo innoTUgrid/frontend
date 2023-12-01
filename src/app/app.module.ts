@@ -37,6 +37,21 @@ import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
+import { CommandBarComponent } from './components/command-bar/command-bar/command-bar.component';
+
+
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatNativeDateModule} from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+
+
+import { FormsModule } from '@angular/forms';  // Import FormsModule
+
+
+
+
 
 @NgModule({
   declarations: [
@@ -59,7 +74,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     CamelCaseToSpacePipe,
 
     PercentChartComponent,
-    SingleValueChartComponent
+    SingleValueChartComponent,
+    CommandBarComponent
   ],
   imports: [
     BrowserModule,
@@ -81,7 +97,13 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatPaginatorModule,
 
     MtxPopoverModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    FormsModule 
 
   ],
   providers: [],
