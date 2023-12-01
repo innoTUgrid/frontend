@@ -1,6 +1,8 @@
 
 import { Component, Input } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import HC_exporting from 'highcharts/modules/exporting';
+import HC_exportData from 'highcharts/modules/export-data';
 
 @Component({
   selector: 'app-single-value-chart',
@@ -8,49 +10,79 @@ import * as Highcharts from 'highcharts';
   styleUrls: ['./single-value-chart.component.scss']
 })
 export class SingleValueChartComponent {
-  @Input() value: number = 0;
-  @Input() title: string = '';
+  _value: number = 0;
+  @Input() set value(value: number) {
+    this._value = value;
+    this.updateSubtitle()
+  }
+  get value(): number {
+    return this._value;
+  }
+
+  @Input() set title(value: string) {
+    this.chartProperties.title!.text = value;
+    this.updateFlag = true;
+  }
+  get title(): string {
+    return this.chartProperties.title!.text!;
+  }
+  
+  _unit: string = '';
+  @Input() set unit(value: string) {
+    this._unit = value;
+    this.updateSubtitle()
+  }
+  get unit(): string {
+    return this._unit;
+  }
+
   @Input() icon: string = '';
-  @Input() unit: string = '';
   @Input() trend: number = 0;
   Highcharts: typeof Highcharts = Highcharts; // required
+  updateFlag: boolean = false;
 
   get changeIcon(): string {
     if (this.trend == 0) return 'trending_flat'
     return this.trend > 0 ? 'trending_up' : 'trending_down';
   }
-  
+
+  subtitle: Highcharts.SubtitleOptions = {
+    text: '',
+    useHTML: true,
+    style: {
+      fontSize: '20px',
+      fontWeight: 'bold',
+      color: 'black',
+    }
+  }
+
   chart?: Highcharts.Chart
   chartProperties: Highcharts.Options= {
     chart: {
-      styledMode: true,
       type: 'spline',
     },
-    title: {text:''},
-    exporting:{enabled:false},
+    title: {
+      text:'',
+      verticalAlign: 'bottom',
+      align: 'center',
+    },
+    subtitle: this.subtitle,
+
+    exporting:{
+      enabled:true,
+    },
     credits:{enabled: false},
     legend:{enabled:false},
-    pane:{},
     tooltip:{enabled:false},
     series: [
       {
         type: 'spline',
         enableMouseTracking: false,
-        dataLabels: {
-          enabled: false
-        },
-        data: [1, 2, 2, 4, 5]
-      }
-    ],
-    yAxis: {
-      visible: false,
-      title: {
-        text:''
+        data: [1, 2, 2, 4, 5],
       },
-    },
-    xAxis: {
-      visible: false
-    },
+    ],
+    yAxis: {visible: false,},
+    xAxis: {visible: false,},
     plotOptions: {
       series: {
         marker: {
@@ -61,12 +93,17 @@ export class SingleValueChartComponent {
 
   }
 
-  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    this.chart = chart;
-    this.updateChart()
+  updateSubtitle() {
+    this.subtitle.text = this.value.toString() + ' ' + this.unit;
+    this.updateFlag = true;
   }
 
-  updateChart() {
+  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    this.chart = chart;
+  }
 
+  constructor() {
+    HC_exporting(Highcharts);
+    HC_exportData(Highcharts);
   }
 }
