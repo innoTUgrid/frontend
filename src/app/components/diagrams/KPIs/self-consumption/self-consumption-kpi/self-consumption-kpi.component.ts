@@ -15,11 +15,11 @@ export class SelfConsumptionKPIComponent implements OnInit{
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.selfConsumptionKPI$.subscribe((selfConsumptionKPI) => {
-      this.selfConsumptionKPI = selfConsumptionKPI;
-    });
+    // this.kpiService.selfConsumptionKPI$.subscribe((selfConsumptionKPI) => {
+    //   this.selfConsumptionKPI = selfConsumptionKPI;
+    // });
 
-    // Trigger the computation of KPI (for later)
-    this.kpiService.computeSelfConsumptionKpi();
+    // // Trigger the computation of KPI (for later)
+    // this.kpiService.computeSelfConsumptionKpi();
   }
 }

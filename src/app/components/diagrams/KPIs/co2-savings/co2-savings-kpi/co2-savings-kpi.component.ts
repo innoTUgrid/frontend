@@ -15,11 +15,11 @@ export class Co2SavingsKPIComponent implements OnInit {
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates
-    this.kpiService.co2SavingsKPI$.subscribe((co2SavingsKPI) => {
-      this.co2SavingsKPI = co2SavingsKPI;
-    });
+    // this.kpiService.co2SavingsKPI$.subscribe((co2SavingsKPI) => {
+    //   this.co2SavingsKPI = co2SavingsKPI;
+    // });
 
-    // Trigger the computation of KPI (for later)
-    this.kpiService.computeCO2SavingsKpi();
+    // // Trigger the computation of KPI (for later)
+    // this.kpiService.computeCO2SavingsKpi();
   }
 }

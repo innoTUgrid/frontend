@@ -1,9 +1,11 @@
-import { Component, Input, ViewChild, inject } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import { Component, Input, inject } from '@angular/core';
+import * as Highcharts from 'highcharts/highstock';
+import { Props } from 'src/app/types/props';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
-import { Props } from 'src/app/types/props';
 import { KpiService } from 'src/app/services/kpi.service';
+import { TimeSeriesDataDictionary } from 'src/app/types/time-series-data.model';
+import { KPIs } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -12,61 +14,34 @@ import { KpiService } from 'src/app/services/kpi.service';
 
 })
 export class EnergyConsumptionDiagramComponent {
-  @Input() props: Props = {value: 75};
+  Highcharts: typeof Highcharts = Highcharts; // required
   kpiService: KpiService = inject(KpiService);
-  consumption: number[] = []
+  @Input() props: Props = {value: 75};
 
   chart: Highcharts.Chart|undefined
 
-  Highcharts: typeof Highcharts = Highcharts; // required
-
-  days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-  // 4 hourly
-  hours = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "24:00"]
-  
-  interval = "week"
   updateFlag = false
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
-    // this.updateInterval(this.interval)
   }
 
 
-  updateInterval(interval: string) {
-    this.interval = interval
-    // use the update function
-    if (this.chart) {
-      const productionDataSeries = [406292, 260000, 107000, 68300, 27500, 14500, 15541]
-      const consumptionDataSeries = [51086, 136000, 5500, 141000, 107180, 77000, 55551]
-      this.chart?.update({
-        xAxis: {
-          id: 'xAxis', // update xAxis and do not create a new one
-          categories: this.interval === "day" ? this.hours : this.days,
-          accessibility: {
-            description: this.interval === "day" ? '4 hourly' : 'Days of the week'
-          },
-        },
-        series: [
-          {
-            id: 'production-series',
-            name: 'Production',
-            data: productionDataSeries,
-            type: 'column'
-          },
-          {
-            id: 'consumption-series',
-            name: 'Consumption',
-            data: consumptionDataSeries,
-            type: 'column'
-          }
-        ],
-      }, true, true, true)
-
-      
-    }
+  xAxis: Highcharts.XAxisOptions = {
+    id: 'xAxis', // update xAxis and do not create a new one
+    // title: {text:'Time'},
+    type: 'datetime',
+    dateTimeLabelFormats: {
+      minute: '%H:%M',
+    },
   }
 
+  dataGrouping: Highcharts.DataGroupingOptionsObject = {
+    approximation: 'sum',
+    enabled: true,
+    forced: true,
+    units: [['day', [1]]]
+  }
 
   chartProperties: Highcharts.Options = {
     chart: {
@@ -79,17 +54,11 @@ export class EnergyConsumptionDiagramComponent {
     credits: {
       enabled: false
     },
-    xAxis: {
-      id: 'xAxis', // update xAxis and do not create a new one
-      categories: this.interval === "day" ? this.hours : this.days,
-      accessibility: {
-        description: this.interval === "day" ? '4 hourly' : 'Days of the week'
-      },
-    },
+    xAxis: this.xAxis,
     yAxis: {
       min: 0,
       title: {
-          text: 'Consumption (kWh)'
+        text: 'Consumption (kWh)'
       }
     },
     tooltip: {
@@ -100,29 +69,57 @@ export class EnergyConsumptionDiagramComponent {
     },
     plotOptions: {
       column: {
-          stacking: 'normal',
-          dataLabels: {
-              enabled: true
-          }
+        stacking: 'normal',
+        dataLabels: {
+          enabled: true
+        },
+
+        dataGrouping: this.dataGrouping,
       }
     },
-    series: [{
-        name: 'Solar Local',
-        data: [3, 5, 1, 13, 2, 8, 9],
-        type: 'column'
-    }, {
-        name: 'Biogas Local',
-        data: [14, 8, 8, 12, 3, 4, 7],
-        type: 'column'
-    }, {
-        name: 'Others',
-        data: [0, 2, 6, 3, 2, 2, 1],
-        type: 'column'
-    }]
   }
 
   ngOnInit(): void {
-    
+    this.kpiService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+      const energy = data.get(KPIs.ENERGY_CONSUMPTION)
+      if (!energy) {
+        return
+      }
+
+      const series: Array<Highcharts.SeriesColumnOptions> = []
+      const energyTypes = new Set(energy.map(entry => entry.meta.type))
+      for (const type of energyTypes) {
+        const typeData = energy.filter(entry => entry.meta.type === type)
+        series.push({
+          name: type,
+          id: type, 
+          data:typeData.map(entry => ([entry.time.getTime(), entry.value])),
+          type: 'column'
+        })
+      }
+      if (this.chart) {
+        this.chart.update({
+          series: series
+        })
+      } else {
+        this.chartProperties.series = series
+        this.updateFlag = true
+      }
+    });
+
+    this.kpiService.timeInterval$$.subscribe((timeInterval) => {
+      if (this.chart) {
+        this.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), false);
+        this.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        this.chart.axes[0].setDataGrouping(this.dataGrouping, true)
+        // update also data grouping depending of timeInterval.step and timeInterval.stepUnit
+      } else {
+        this.xAxis.min = timeInterval.start.getTime();
+        this.xAxis.max = timeInterval.end.getTime();
+        this.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        this.updateFlag = true
+      }
+    });
   }
 
   constructor() {
