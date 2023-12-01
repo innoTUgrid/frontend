@@ -44,10 +44,10 @@ export class KpiService {
     })
 
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
-    this.timeSeriesData$$.subscribe((data) => {
-      console.log("all data")
-      console.log(data)
-    });
+    // this.timeSeriesData$$.subscribe((data) => {
+    //   console.log("all data")
+    //   console.log(data)
+    // });
     this.loadTimeSeriesData();
   }
 
@@ -57,23 +57,23 @@ export class KpiService {
     const convertedData = value.map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }));
     this.timeSeriesData.set(key, convertedData);
     this.timeSeriesData$$.next(this.timeSeriesData);
-    const interval = this.timeInterval$$
-    setTimeout(function() {
-      interval.next({
-        start:new Date("2019-01-01T01:00:00.000Z"),
-        end:new Date("2019-01-01T02:00:00.000Z"),
-        step:15,
-        stepUnit:"minute"
-      });
-    }, 5000);
-    setTimeout(function() {
-      interval.next({
-        start:new Date("2019-01-01T02:00:00.000Z"),
-        end:new Date("2019-01-01T03:00:00.000Z"),
-        step:30,
-        stepUnit:"minute"
-      });
-    }, 10000);
+    // const interval = this.timeInterval$$
+    // setTimeout(function() {
+    //   interval.next({
+    //     start:new Date("2019-01-01T01:00:00.000Z"),
+    //     end:new Date("2019-01-01T02:00:00.000Z"),
+    //     step:15,
+    //     stepUnit:"minute"
+    //   });
+    // }, 5000);
+    // setTimeout(function() {
+    //   interval.next({
+    //     start:new Date("2019-01-01T02:00:00.000Z"),
+    //     end:new Date("2019-01-01T03:00:00.000Z"),
+    //     step:30,
+    //     stepUnit:"minute"
+    //   });
+    // }, 10000);
   }
 
 }
