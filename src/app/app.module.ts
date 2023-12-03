@@ -36,6 +36,7 @@ import { MatTableModule } from '@angular/material/table';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 import { ReportingComponent } from './views/reporting/reporting/reporting.component';
+import { GriComponent } from './views/reporting/reporting/gri/gri/gri.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
 
@@ -61,8 +62,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
 
     PercentChartComponent,
     SingleValueChartComponent,
-    ReportingComponent
-
+    ReportingComponent,
+    GriComponent
+    
   ],
   imports: [
     BrowserModule,
