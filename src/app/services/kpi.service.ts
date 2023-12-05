@@ -21,26 +21,7 @@ export class KpiService {
 
   constructor() {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
-      // delta update of time series data
-      for (let key in data) {
-        const newSeries = data.get(key);
-        if (!newSeries) break
-
-        const currentSeries = this.timeSeriesData.get(key);
-        if (currentSeries) {
-          // merge both series. newSeries has newer values for the interval this.timeInterval
-          const start = this.timeInterval.start.getTime();
-          const end = this.timeInterval.end.getTime();
-          const newSeriesFiltered = newSeries.filter(entry => entry.time.getTime() < start || entry.time.getTime() > end);
-          const currentSeriesFiltered = currentSeries.filter(entry => entry.time.getTime() < start || entry.time.getTime() > end);
-          const mergedSeries = [...newSeriesFiltered, ...currentSeriesFiltered];
-          mergedSeries.sort((a, b) => a.time.getTime() - b.time.getTime());
-          this.timeSeriesData.set(key, mergedSeries);
-        } else {
-          // if it is not, then set timeSeriesData[key] to data[key]
-          this.timeSeriesData.set(key, newSeries);
-        }
-      }
+      this.timeSeriesData = data;
     })
 
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
