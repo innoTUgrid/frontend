@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { KpiService } from 'src/app/services/kpi.service';
+import { KPI } from 'src/app/types/kpi.model';
 import { Props } from 'src/app/types/props';
 
 @Component({
@@ -10,6 +11,7 @@ import { Props } from 'src/app/types/props';
 export class SelfConsumptionKPIComponent implements OnInit{
   @Input() props: Props = {value: 75};
   selfConsumptionKPI: number = 0;
+  kpiName: KPI = KPI.AUTARKY;
 
   constructor(private kpiService: KpiService) {}
 
