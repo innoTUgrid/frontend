@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 // import json
 import * as testData from './data/readKPIs.json';
-
+import { HttpClient } from '@angular/common/http';
 import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval } from '../types/time-series-data.model';
+
+import { environment } from '@env/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,7 @@ export class KpiService {
   private timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:15, stepUnit:"minute"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
       // delta update of time series data
       for (let key in data) {
@@ -50,6 +52,12 @@ export class KpiService {
     // });
     this.loadTimeSeriesData();
   }
+
+  fetchDataFromApi(kpi: string): Observable<TimeSeriesDataDictionary> {
+    return this.http.get<TimeSeriesDataDictionary>(`${environment.apiUrl}/kpi/${kpi}`);
+  }
+
+
 
   loadTimeSeriesData():void {
     const key = 'energyConsumption'
