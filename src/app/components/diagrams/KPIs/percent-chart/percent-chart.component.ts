@@ -15,7 +15,15 @@ SolidGauge(Highcharts);
 })
 export class PercentChartComponent implements HighchartsDiagram {
     kpiService: KpiService = inject(KpiService);
-    value: number = 0;
+    _value: number = 0;
+    get value(): number {
+        return this._value
+    }
+
+    set value(value: number) {
+        this._value = value
+        this.updateChart()
+    }
 
     @Input() kpiName: KPI = KPI.AUTARKY;
 
@@ -41,16 +49,14 @@ export class PercentChartComponent implements HighchartsDiagram {
     chart: Highcharts.Chart | undefined
     xAxis: Highcharts.XAxisOptions = {
         min: 0,
-        max: 100,
+        max: 1,
         minorTickInterval: null,
-
-        // make the values of the xAxis be percent values
-        // labels: {
-        //     formatter: function () {
-        //         const number = Number.parseFloat(this.value.toString())
-        //         return (number * 100).toString();
-        //     },
-        // },
+        labels: {
+            formatter: function () {
+                const number = Number.parseFloat(this.value.toString())
+                return (number * 100).toString();
+            },
+        },
     }
 
     dataGrouping: Highcharts.DataGroupingOptionsObject = {
@@ -109,7 +115,12 @@ export class PercentChartComponent implements HighchartsDiagram {
                     borderWidth: 0,
                     verticalAlign: 'middle',
                     y: 0,
-                    format: '{y} %',
+                    formatter: function () {
+                        if (this.y) {
+                            return Math.round(this.y * 100) + ' %'
+                        }
+                        return this.y
+                    },
                     style: {
                         fontSize: '2em'
                     }
@@ -132,38 +143,21 @@ export class PercentChartComponent implements HighchartsDiagram {
     }
 
     updateChart() {
-        if (this.chartProperties.series && this.chartProperties.series[0]) {
+        if (this.chart) {
 
             this.chart?.update({
                 title: this.chartProperties.title,
                 series: this.series,
-            })
+            }, true, true, true)
+        } else {
+            this.chartProperties.title = this.chartProperties.title
+            this.chartProperties.series = this.series
+            this.updateFlag = true
         }
     }
 
     constructor() {
-        this.kpiService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-            const energy = data.get(this.kpiName)
-            if (!energy) {
-                return
-            }
-            
-            let avg = 0
-            for (const datapoint of energy) {
-                avg += datapoint.value
-            }
-            avg /= energy.length
-            this.value = Math.round(avg * 100)
-
-            if (this.chart) {
-                this.chart.update({
-                    series: this.series,
-                }, true, true, true)
-            } else { // this is only reachable for code that uses highcharts-angular
-            this.chartProperties.series = this.series
-            this.updateFlag = true
-            }
-        });
+        this.kpiService.subscribeSingleValueDiagram(this, this.kpiName);
     }
     
 }

@@ -1,26 +1,49 @@
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import { KpiService } from 'src/app/services/kpi.service';
+import { KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-single-value-chart',
   templateUrl: './single-value-chart.component.html',
   styleUrls: ['./single-value-chart.component.scss']
 })
-export class SingleValueChartComponent {
-  @Input() value: number = 0;
+export class SingleValueChartComponent implements SingleValueDiagram {
+  kpiService: KpiService = inject(KpiService);
+  _value: number = 0;
+  @Input() set value (value: number) {
+    this._value = value;
+    this.updateChart();
+  }
+  get value(): number {
+    return this._value;
+  }
+
+  get valueFormatted(): string {
+    // only 2 digits after comma
+    return this.value.toFixed(2);
+  }
+
   @Input() title: string = '';
   @Input() icon: string = '';
   @Input() unit: string = '';
-  @Input() trend: number = 0;
+  @Input() kpiName: KPI = KPI.AUTARKY;
   Highcharts: typeof Highcharts = Highcharts; // required
 
-  get changeIcon(): string {
-    if (this.trend == 0) return 'trending_flat'
-    return this.trend > 0 ? 'trending_up' : 'trending_down';
+
+  xAxis: Highcharts.XAxisOptions = {visible: false};
+  dataGrouping: Highcharts.DataGroupingOptionsObject = {
+    approximation: 'sum',
+    enabled: true,
+    forced: true,
+    units: [['day', [1]]]
   }
-  
-  chart?: Highcharts.Chart
+  updateFlag: boolean = false;
+  seriesType: SeriesTypes = 'spline';
+  colors: string[] = [];
+
+  chart: Highcharts.Chart | undefined
   chartProperties: Highcharts.Options= {
     chart: {
       styledMode: true,
@@ -32,41 +55,34 @@ export class SingleValueChartComponent {
     legend:{enabled:false},
     pane:{},
     tooltip:{enabled:false},
-    series: [
-      {
-        type: 'spline',
-        enableMouseTracking: false,
-        dataLabels: {
-          enabled: false
-        },
-        data: [1, 2, 2, 4, 5]
-      }
-    ],
     yAxis: {
       visible: false,
       title: {
         text:''
       },
     },
-    xAxis: {
-      visible: false
-    },
+    xAxis: this.xAxis,
     plotOptions: {
       series: {
         marker: {
           enabled: false
         },
+        dataGrouping: this.dataGrouping,
       }
     },
 
   }
 
-  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    this.chart = chart;
-    this.updateChart()
-  }
-
   updateChart() {
 
+  }
+
+  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    this.chart = chart;
+  }
+
+  constructor() {
+    this.kpiService.subscribeSingleValueDiagram(this, this.kpiName, false);
+    this.kpiService.subscribeEnergyDiagram(this, this.kpiName)
   }
 }

@@ -13,4 +13,8 @@ export interface HighchartsDiagram {
     colors: string[]
 }
 
+export interface SingleValueDiagram extends HighchartsDiagram {
+    value: number
+}
+
 export type SeriesTypes = "area" | "column" | "line" | "spline" | "solidgauge"

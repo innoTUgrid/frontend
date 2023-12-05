@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import * as testData from './data/readKPIs.json';
 
 import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval } from '../types/time-series-data.model';
-import { HighchartsDiagram, KPI as KPI } from '../types/kpi.model';
+import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +34,7 @@ export class KpiService {
   }
 
   // energy subscription
-  subscribeEnergyDiagram(diagram: HighchartsDiagram, kpiName: KPI, updateTimeInterval: boolean = true) {
+  subscribeEnergyDiagram(diagram: HighchartsDiagram, kpiName: KPI) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const energy = data.get(kpiName)
       if (!energy) {
@@ -78,6 +78,22 @@ export class KpiService {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.updateFlag = true
       }
+    });
+  }
+
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, kpiName: KPI, average: boolean = true) {
+    this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+      const energy = data.get(kpiName)
+      if (!energy) {
+          return
+      }
+      
+      let sum = 0
+      for (const datapoint of energy) {
+          sum += datapoint.value
+      }
+      if (average) sum /= energy.length
+      diagram.value = sum
     });
   }
 
