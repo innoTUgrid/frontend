@@ -48,7 +48,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 
 import { FormsModule } from '@angular/forms';  // Import FormsModule
-
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 
 
@@ -103,7 +103,8 @@ import { FormsModule } from '@angular/forms';  // Import FormsModule
     MatInputModule,
     MatNativeDateModule,
     MatSelectModule,
-    FormsModule 
+    FormsModule,
+    MatButtonToggleModule 
 
   ],
   providers: [],

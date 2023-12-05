@@ -18,7 +18,7 @@ $fill-color-2: #DDEFFC;
 $fill-color-3: #D9DCFF;
 $fill-color-4: #FEF4C7;
 $accent-color: #F47659; //example: bullet points
-$background-color: #FAFAFC;
+$background-color: #FAFAFC; //from mock-up #FAFAFC
 $icon-color: #575757;
 $text-color: #2C2E33;
 $white-background: #FFFFFF;
@@ -56,18 +56,21 @@ $frontend-theme: mat.define-light-theme((
 ));
 
 //colors for highcharts. Pallette: https://coolors.co/palette/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
-$hc-green-light: #90BE6D;
-$hc-green-medium: #43AA8B;
-$hc-green-dark: #4D908E;
-$hc-blue-light: #90BE6D;
-$hc-blue-medium: #577590;
-$hc-yellow: #F9C74F;
+$hc-green-light: #90BE6D; // biomas
+$hc-green-medium: #43AA8B; // other renewables
+$hc-green-dark: #4D908E; // wind off shore
+$hc-blue-light: #277DA1; // hydro power
+$hc-blue-medium: #577590; // wind onshore
+$hc-yellow: #F9C74F; // solar
 $hc-orange-light: #F8961E;
 $hc-orange-medium: #F9844A;
 $hc-orange-dark: #F3722C;
 $hc-red: #F94144;
-$hc-brown: #db7c26;
-$hc-gray: #bfbdc1;
+$hc-brown: #db7c26; // braunkohle
+$hc-gray: #bfbdc1; // natural gas
+$hc-gray-dark: #908e98; // other conventials
+$hc-black: #000000; // hard coal
+$hc-blue-very-dark: #3f3179; // pump storage
 
 :root {
   --highcharts-color-0:  #{$hc-green-light} !important;

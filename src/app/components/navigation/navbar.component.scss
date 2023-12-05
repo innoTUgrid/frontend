@@ -8,10 +8,12 @@
 
 .mat-drawer-container {
     background-color: $white-background;
+   
 }
 
 .mat-sidenav{
     background-color: $background-color;
+    border: none !important;
     width: 15em;
     font-size: $font-size-navigation;
     padding: 0.5em;

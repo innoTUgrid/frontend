@@ -71,6 +71,7 @@ export class EnergyConsumptionDiagramComponent {
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'column',
+      styledMode: true
     },
     title: {
       text: 'Consumed Electricity by Source',
@@ -118,7 +119,8 @@ export class EnergyConsumptionDiagramComponent {
         name: 'Others',
         data: [0, 2, 6, 3, 2, 2, 1],
         type: 'column'
-    }]
+    }],
+   
   }
 
   ngOnInit(): void {

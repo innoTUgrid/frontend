@@ -1,24 +1,30 @@
 <div id="command-bar" class="flex-container">
-    <mat-form-field>
+  <mat-button-toggle-group  name="recentPeriodToDisplay" style="width: 50%; min-width: 650px; height: 3em">
+    <mat-button-toggle value="today" style="width: 25%" >Today</mat-button-toggle>
+    <mat-button-toggle value="last7Days" style="width: 25%" >Last 7 days</mat-button-toggle>
+    <mat-button-toggle value="Last31Days" style="width: 25%" >Last 31 days</mat-button-toggle>
+    <mat-button-toggle value="lastYear" style="width: 25%" >Last year</mat-button-toggle>
+  </mat-button-toggle-group>
+    <mat-form-field style="margin-top: 1em ">
       <mat-label>Granularity:</mat-label>
       <mat-select [(ngModel)]="selectedGranularity">
         <mat-option value="year">Year</mat-option>
         <mat-option value="quarter">Quarter</mat-option>
         <mat-option value="month">Month</mat-option>
+        <mat-option value="week">Week</mat-option>
         <mat-option value="day">Day</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field style="margin-top: 1em ">
         <mat-label>Enter a date range</mat-label>
         <mat-date-range-input [rangePicker]="picker">
           <input matStartDate placeholder="Start date">
           <input matEndDate placeholder="End date">
         </mat-date-range-input>
-        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
       </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="applyFilters()">Apply</button>
+    <button mat-flat-button color="primary" (click)="applyFilters()">Apply filter</button>
   </div>

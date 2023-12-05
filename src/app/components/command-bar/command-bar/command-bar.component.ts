@@ -11,7 +11,6 @@ export class CommandBarComponent {
   endDate: string = '';
 
   applyFilters() {
-    // Add logic here to handle the selected granularity and time interval
     console.log('Granularity:', this.selectedGranularity);
     console.log('Start Date:', this.startDate);
     console.log('End Date:', this.endDate);
