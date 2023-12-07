@@ -51,7 +51,10 @@ export class PercentChartComponent implements HighchartsDiagram {
         min: 0,
         max: 1,
         minorTickInterval: null,
+
+        
         labels: {
+            enabled: false,
             formatter: function () {
                 const number = Number.parseFloat(this.value.toString())
                 return (number * 100).toString();

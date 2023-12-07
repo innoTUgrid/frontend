@@ -1,6 +1,6 @@
 
 import { Component, Input, inject } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import * as Highcharts from 'highcharts/highstock';
 import { KpiService } from 'src/app/services/kpi.service';
 import { KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 
@@ -14,7 +14,6 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   _value: number = 0;
   @Input() set value (value: number) {
     this._value = value;
-    this.updateChart();
   }
   get value(): number {
     return this._value;
@@ -67,13 +66,10 @@ export class SingleValueChartComponent implements SingleValueDiagram {
         marker: {
           enabled: false
         },
+        enableMouseTracking: false,
         dataGrouping: this.dataGrouping,
       }
     },
-
-  }
-
-  updateChart() {
 
   }
 
