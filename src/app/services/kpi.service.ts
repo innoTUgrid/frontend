@@ -114,43 +114,6 @@ export class KpiService {
       this.timeSeriesData.set(key, convertedData);
     }
     this.timeSeriesData$$.next(this.timeSeriesData);
-    const interval = this.timeInterval$$
-    const timeSeriesDataSubject = this.timeSeriesData$$
-    const timeSeriesData = this.timeSeriesData
-    setTimeout(function() {
-      // interval.next({
-        //   start:new Date("2019-01-01T01:00:00.000Z"),
-        //   end:new Date("2019-01-01T02:00:00.000Z"),
-        //   step:15,
-        //   stepUnit:"minute"
-      // });
-      const map = new Map<string, TimeSeriesDataPoint[]>();
-      for (const key of keys) {
-      const data = timeSeriesData.get(key);
-      if (data) {
-      map.set(key, data.slice(0,data.length/2));
-      }
-      }
-      timeSeriesDataSubject.next(map);
-      console.log(map)
-    }, 2500);
-    setTimeout(function() {
-      // interval.next({
-        //   start:new Date("2019-01-01T02:00:00.000Z"),
-        //   end:new Date("2019-01-01T03:00:00.000Z"),
-        //   step:30,
-        //   stepUnit:"minute"
-      // });
-      const map = new Map<string, TimeSeriesDataPoint[]>();
-      for (const key of keys) {
-      const data = timeSeriesData.get(key);
-      if (data) {
-      map.set(key, data.slice(data.length/2, data.length));
-      }
-      }
-      timeSeriesDataSubject.next(map);
-      console.log(map)
-    }, 5000);
   }
 
 }
