@@ -36,7 +36,10 @@ import { MatTableModule } from '@angular/material/table';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 import {MatGridListModule} from '@angular/material/grid-list';
+import { InfoviewComponent } from './views/infoview/infoview.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +62,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
     CamelCaseToSpacePipe,
 
     PercentChartComponent,
-    SingleValueChartComponent
+    SingleValueChartComponent,
+
+    InfoviewComponent
   ],
   imports: [
     BrowserModule,
@@ -81,8 +86,9 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatPaginatorModule,
 
     MtxPopoverModule,
-    MatGridListModule
+    MatGridListModule,
 
+    PdfViewerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
