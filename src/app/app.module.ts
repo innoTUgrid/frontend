@@ -37,6 +37,8 @@ import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-view.component';
+import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
 import { InfoviewComponent } from './views/infoview/infoview.component';
@@ -64,7 +66,9 @@ import { InfoviewComponent } from './views/infoview/infoview.component';
     PercentChartComponent,
     SingleValueChartComponent,
 
-    InfoviewComponent
+    InfoviewComponent,
+    EnergyFlowDiagramComponent,
+    EnergyFlowViewComponent,
   ],
   imports: [
     BrowserModule,
