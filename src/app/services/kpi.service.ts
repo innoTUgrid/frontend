@@ -38,6 +38,7 @@ export class KpiService {
     }
 
     if (newTimeInterval != this.timeInterval) {
+      this.timeInterval = newTimeInterval
       this.timeInterval$$.next(newTimeInterval)
     }
   }
@@ -76,7 +77,7 @@ export class KpiService {
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.chart) {
+      if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
         diagram.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), true, true);
