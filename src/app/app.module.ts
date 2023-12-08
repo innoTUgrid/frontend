@@ -36,6 +36,9 @@ import { MatTableModule } from '@angular/material/table';
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 
+import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-view.component';
+import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
+
 import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
@@ -59,7 +62,10 @@ import {MatGridListModule} from '@angular/material/grid-list';
     CamelCaseToSpacePipe,
 
     PercentChartComponent,
-    SingleValueChartComponent
+    SingleValueChartComponent,
+
+    EnergyFlowDiagramComponent,
+    EnergyFlowViewComponent,
   ],
   imports: [
     BrowserModule,

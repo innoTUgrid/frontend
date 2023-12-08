@@ -17,6 +17,7 @@ export class NavbarComponent {
     { name: 'Comparison', icon: 'compare_arrows', route: '/comparison' },
     { name: 'Reporting', icon: 'assignment', route: '/reporting' },
     { name: 'Datasets', icon: 'dataset', route: '/datasets' },
+    { name: 'Energy Flow', icon: 'timeline', route: '/energyflow' },
     { name: 'Add view', icon: 'add_circle', route: '/addview' }
   ];
 
