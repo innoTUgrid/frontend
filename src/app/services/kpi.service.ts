@@ -28,6 +28,21 @@ export class KpiService {
     this.loadTimeSeriesData();
   }
 
+  updateTimeInterval(timeInterval: TimeInterval): void {
+    // only update valid values
+    const newTimeInterval = {
+      start: (timeInterval.start && !isNaN(timeInterval.start.getTime())) ? timeInterval.start : this.timeInterval.start,
+      end: (timeInterval.end && !isNaN(timeInterval.end.getTime())) ? timeInterval.end : this.timeInterval.end,
+      step: (timeInterval.step) ? timeInterval.step : this.timeInterval.step,
+      stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : this.timeInterval.stepUnit,
+    }
+
+    if (newTimeInterval != this.timeInterval) {
+      this.timeInterval = newTimeInterval
+      this.timeInterval$$.next(newTimeInterval)
+    }
+  }
+
   subscribeEnergyDiagram(diagram: HighchartsDiagram, kpiName: KPI) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const energy = data.get(kpiName)
@@ -62,7 +77,7 @@ export class KpiService {
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.chart) {
+      if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
         diagram.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), true, true);
