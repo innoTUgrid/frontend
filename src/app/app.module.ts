@@ -42,6 +42,18 @@ import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-di
 
 import {MatGridListModule} from '@angular/material/grid-list';
 import { InfoviewComponent } from './views/infoview/infoview.component';
+import { CommandBarComponent } from './components/command-bar/command-bar/command-bar.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
+import {MatDatepickerModule} from '@angular/material/datepicker';
+ import {MatInputModule} from '@angular/material/input';
+ import {MatFormFieldModule} from '@angular/material/form-field';
+ import {MatNativeDateModule} from '@angular/material/core';
+ import { MatSelectModule } from '@angular/material/select';
+
+import { FormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
@@ -62,13 +74,13 @@ import { InfoviewComponent } from './views/infoview/infoview.component';
     DataTableConsumptionHouseBeckerComponent,
     CampusEnergyComponent,
     CamelCaseToSpacePipe,
-
     PercentChartComponent,
     SingleValueChartComponent,
 
     InfoviewComponent,
     EnergyFlowDiagramComponent,
     EnergyFlowViewComponent,
+    CommandBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,18 +92,23 @@ import { InfoviewComponent } from './views/infoview/infoview.component';
     MatCommonModule,
     MatSidenavModule,
     MatOptionModule,
+    MatInputModule,
     HighchartsChartModule,
     MatCardModule,
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
-
+    MatButtonToggleModule,
     MatTableModule,
+    MatFormFieldModule,
     MatPaginatorModule,
-
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatButtonToggleModule, 
     MtxPopoverModule,
     MatGridListModule,
-
+    FormsModule,
     PdfViewerModule
   ],
   providers: [],
