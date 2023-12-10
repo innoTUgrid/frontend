@@ -26,31 +26,25 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { NavbarComponent } from './components/navigation/navbar.component';
-
 import { DatasetsComponent } from './views/datasets/datasets/datasets.component';
 import { DataTableSmardComponent } from './views/datasets/datasets/smard_50hz/data-table-smard/data-table-smard.component';
 import { DataTableConsumptionHouseBeckerComponent } from './views/datasets/datasets/consumption-house-becker/data-table-consumption-house-becker/data-table-consumption-house-becker.component';
 import { CampusEnergyComponent } from './views/datasets/datasets/campus-energy/campus-energy/campus-energy.component';
 import { MatTableModule } from '@angular/material/table';
-
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
-
 import {MatGridListModule} from '@angular/material/grid-list';
 import { CommandBarComponent } from './components/command-bar/command-bar/command-bar.component';
-
-
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatNativeDateModule} from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
-
-
-import { FormsModule } from '@angular/forms';  // Import FormsModule
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-
-
+import { MomentModule } from 'ngx-moment';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 @NgModule({
@@ -66,13 +60,11 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     CostSavingsKPIComponent,
     SelfConsumptionKPIComponent,
     TilingWraperComponent,
-
     DatasetsComponent,
     DataTableSmardComponent,
     DataTableConsumptionHouseBeckerComponent,
     CampusEnergyComponent,
     CamelCaseToSpacePipe,
-
     PercentChartComponent,
     SingleValueChartComponent,
     CommandBarComponent
@@ -92,10 +84,8 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
-
     MatTableModule,
     MatPaginatorModule,
-
     MtxPopoverModule,
     MatGridListModule,
     MatDatepickerModule,
@@ -104,10 +94,18 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatNativeDateModule,
     MatSelectModule,
     FormsModule,
-    MatButtonToggleModule 
-
+    MatButtonToggleModule,
+    MomentModule, 
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatMomentDateModule
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en' },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

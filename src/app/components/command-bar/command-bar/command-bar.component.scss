@@ -4,15 +4,64 @@
     position: sticky;
     z-index: 3000;
     top: 0;
-    display: flex;
-    justify-content:left;
-    align-items: center;
-    margin-bottom: 20px;
-  
     background-color: $background-color; 
   }
 
   .flex-container {
     display: flex;
-    gap: 15px;
+    gap: 1%;
+    display: flex;
+    justify-content:left;
+    align-items: center;
+    margin-bottom: 1%;
+    
   }
+
+  #recent-period-selection{
+    width: 50%; 
+    min-width: 40em; 
+  }
+
+  #recent-period-selection > mat-button-toggle{
+    width: 25%;
+  
+  }
+
+  #granularity-selection{
+    margin-top: 1.3vh;
+    max-width: 20em;
+    min-width: 9em;
+    width: 30%;
+  }
+
+  #time-interval-selection{
+    margin-top: 1.3vh;
+    max-width: 20em;
+    min-width: 17em;
+    width: 30%;
+  }
+
+  #single-date-selection{
+    margin-top: 1.3vh;
+    max-width: 20em;
+    min-width: 17em;
+    width: 30%;
+  }
+
+  #apply-filter-button{
+    width: 30%;
+    max-width: 8em;
+    height: 3em;
+    min-width: 6.25em;
+    font-size:medium;
+  }
+
+  #reset-filter-button{
+    width: 30%;
+    max-width: 8em;
+    height: 3em;
+    min-width: 6.25em;
+    font-size:medium;
+    margin-right: 1%;
+  }
+
