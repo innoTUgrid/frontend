@@ -9,7 +9,6 @@ import { Props } from 'src/app/types/props';
 })
 export class Co2SavingsKPIComponent implements OnInit {
   @Input() props: Props = {value: 75};
-  co2SavingsKPI: number = 0;
 
   constructor(private kpiService: KpiService) {}
 
