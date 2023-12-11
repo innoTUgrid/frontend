@@ -43,7 +43,7 @@ export class KpiService {
     }
   }
 
-  subscribeEnergyDiagram(diagram: HighchartsDiagram, kpiName: KPI) {
+  subscribeSeries(diagram: HighchartsDiagram, kpiName: KPI) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const energy = data.get(kpiName)
       if (!energy) {
@@ -90,7 +90,7 @@ export class KpiService {
     });
   }
 
-  updateSingleValueDiagram(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
+  updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
     let sum = 0
       for (const datapoint of data) {
           sum += datapoint.value
@@ -106,7 +106,7 @@ export class KpiService {
           return
       }
       
-      this.updateSingleValueDiagram(kpiData, diagram, average)
+      this.updateSingleValue(kpiData, diagram, average)
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
@@ -117,7 +117,7 @@ export class KpiService {
 
       // filter out data that is not in the time interval
       const filteredData = kpiData.filter(entry => entry.time >= timeInterval.start && entry.time <= timeInterval.end)
-      this.updateSingleValueDiagram(filteredData, diagram, average)
+      this.updateSingleValue(filteredData, diagram, average)
     })
   }
 

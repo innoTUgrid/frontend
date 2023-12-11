@@ -83,7 +83,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   }
 
   ngOnInit(): void {
-    this.kpiService.subscribeEnergyDiagram(this, KPI.ENERGY_CONSUMPTION);
+    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
   constructor() {

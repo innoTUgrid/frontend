@@ -81,6 +81,6 @@ export class SingleValueChartComponent implements SingleValueDiagram {
 
   constructor() {
     this.kpiService.subscribeSingleValueDiagram(this, this.kpiName, false);
-    this.kpiService.subscribeEnergyDiagram(this, this.kpiName)
+    this.kpiService.subscribeSeries(this, this.kpiName)
   }
 }

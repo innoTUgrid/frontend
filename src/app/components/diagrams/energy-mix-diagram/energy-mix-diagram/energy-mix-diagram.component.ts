@@ -50,7 +50,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     this.color4 = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
     this.initChart();
 
-    this.kpiService.subscribeEnergyDiagram(this, KPI.ENERGY_CONSUMPTION);
+    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {
