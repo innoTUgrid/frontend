@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { KpiService } from 'src/app/services/kpi.service';
 import {Granularity} from 'src/app/types/granularity.model'
+import { TimeInterval, TimeUnit } from 'src/app/types/time-series-data.model';
 
 @Component({
   selector: 'app-command-bar',
@@ -7,6 +9,7 @@ import {Granularity} from 'src/app/types/granularity.model'
   styleUrls: ['./command-bar.component.scss']
 })
 export class CommandBarComponent {
+  kpiService: KpiService = inject(KpiService)
   recentPeriodToDisplay='';
   selectedGranularity: string = '';
   sortedGranularities: Granularity[] = [Granularity.HOUR, Granularity.DAY, Granularity.WEEK, Granularity.MONTH, Granularity.QUARTER, Granularity.YEAR];
@@ -27,6 +30,16 @@ export class CommandBarComponent {
     console.log('Granularity:', this.selectedGranularity);
     console.log('Start Date:', this.startDate);
     console.log('End Date:', this.endDate);
+
+    if (this.startDate && this.endDate) {
+      const timeInterval: TimeInterval = {
+        start:this.startDate,
+        end:this.endDate,
+        step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
+        stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
+      }
+      this.kpiService.timeInterval$$.next(timeInterval)
+    }
   }
 
   resetFilters(){

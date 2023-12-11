@@ -78,7 +78,7 @@ export class PercentChartComponent implements HighchartsDiagram {
             type: this.seriesType,
             name: this.title,
             data: [{
-                y: this.value,
+                y: (isNaN(this.value)) ? 0 : this.value,
             }],
         }]
     }
