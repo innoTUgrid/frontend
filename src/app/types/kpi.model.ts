@@ -13,7 +13,7 @@ export interface HighchartsDiagram {
     colors: string[]
 }
 
-export interface SingleValueDiagram extends HighchartsDiagram {
+export interface SingleValueDiagram {
     value: number
 }
 
