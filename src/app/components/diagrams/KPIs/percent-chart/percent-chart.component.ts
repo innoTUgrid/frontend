@@ -4,7 +4,7 @@ import HighchartsMore from 'highcharts/highcharts-more';
 import SolidGauge from 'highcharts/modules/solid-gauge';
 import NoData from 'highcharts/modules/no-data-to-display'
 import { KpiService } from 'src/app/services/kpi.service';
-import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
+import { HighchartsDiagram, KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
 NoData(Highcharts);
@@ -14,7 +14,7 @@ NoData(Highcharts);
     templateUrl: './percent-chart.component.html',
     styleUrls: ['./percent-chart.component.scss'],
 })
-export class PercentChartComponent implements HighchartsDiagram {
+export class PercentChartComponent implements HighchartsDiagram, SingleValueDiagram {
     kpiService: KpiService = inject(KpiService);
     _value: number = 0;
     get value(): number {

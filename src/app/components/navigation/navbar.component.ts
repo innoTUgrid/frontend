@@ -1,6 +1,6 @@
 import { Component, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { KpiService } from 'src/app/services/kpi.service';
 import { MenuItem } from 'src/app/types/menu-item.model';
 import { TimeUnit } from 'src/app/types/time-series-data.model';
@@ -29,18 +29,12 @@ export class NavbarComponent {
     { name: 'Info', icon: 'info', route: '/info' },
   ];
 
-  selectedMenuItem: string = ''
-
-
-  isSelected(menuItemName: string): boolean {
-    return this.selectedMenuItem == menuItemName
+  isSelected(routeName: string): boolean {
+    return this.router.url == routeName
   }
 
-  selectMenuItem(menuItemName: string): void {
-    this.selectedMenuItem = menuItemName;
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
   }
-
-  constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
