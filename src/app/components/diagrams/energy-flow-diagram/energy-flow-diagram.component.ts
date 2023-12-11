@@ -36,10 +36,10 @@ export class EnergyFlowDiagramComponent {
             keys: ['from', 'to', 'weight'],
     
             data: [
-                ['Solar', 'Microgrid 1', 3],
-                ['Wind', 'Microgrid 1', 1],
-                ['Coal', 'Microgrid 1', 2],
-                ['Biomass', 'Microgrid 1', 4],
+                ['Solar', 'Microgrid 1', 6],
+                ['Wind', 'Microgrid 1', 2],
+                ['Coal', 'Microgrid 1', 3],
+                ['Biomass', 'Microgrid 1', 6],
 
 
                 ['Solar', 'Microgrid 2', 3],
