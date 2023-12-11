@@ -2,11 +2,12 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import HighchartsMore from 'highcharts/highcharts-more';
 import SolidGauge from 'highcharts/modules/solid-gauge';
+import NoData from 'highcharts/modules/no-data-to-display'
 import { KpiService } from 'src/app/services/kpi.service';
 import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
-import { TimeSeriesDataDictionary } from 'src/app/types/time-series-data.model';
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
+NoData(Highcharts);
 
 @Component({
     selector: 'app-percent-chart',
@@ -33,7 +34,6 @@ export class PercentChartComponent implements HighchartsDiagram {
                 this.chartProperties.title = {};
             }
             this.chartProperties.title.text = value;
-            this.series[0].name = value;
             this.updateChart();
         }
     }
@@ -73,12 +73,13 @@ export class PercentChartComponent implements HighchartsDiagram {
     colors: string[] = [];
     
     get series(): Highcharts.SeriesOptionsType[] {
+        if (isNaN(this.value)) return []
         return [{
             id: 'main',
             type: this.seriesType,
             name: this.title,
             data: [{
-                y: (isNaN(this.value)) ? 0 : this.value,
+                y: this.value,
             }],
         }]
     }

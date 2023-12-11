@@ -3,6 +3,8 @@ import { Component, Input, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { KpiService } from 'src/app/services/kpi.service';
 import { KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
+import NoData from 'highcharts/modules/no-data-to-display'
+NoData(Highcharts);
 
 @Component({
   selector: 'app-single-value-chart',
