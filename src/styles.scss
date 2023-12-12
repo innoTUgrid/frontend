@@ -68,7 +68,7 @@ $hc-red: #F94144;
 $hc-brown: #db7c26; // braunkohle
 $hc-gray: #bfbdc1; // natural gas
 $hc-gray-dark: #908e98; // other conventials
-$hc-black: #000000; // hard coal
+$hc-black: #000000; // hard coal 
 $hc-blue-very-dark: #3f3179; // pump storage
 
 :root {
@@ -81,9 +81,12 @@ $hc-blue-very-dark: #3f3179; // pump storage
   --highcharts-color-6: #{$hc-orange-light} !important;
   --highcharts-color-7:#{$hc-orange-medium} !important;
   --highcharts-color-8: #{$hc-orange-dark} !important;
-  --highcharts-color-9: #{$hc-red} !important;
-  --highcharts-color-10: #{$hc-brown} !important;
+  --highcharts-color-9: #{$hc-brown} !important;
+  --highcharts-color-10: #{$hc-red} !important;
   --highcharts-color-11: #{$hc-gray} !important;
+  --highcharts-color-12: #{$hc-gray-dark} !important;
+  --highcharts-color-13: #{$hc-black} !important;
+  --highcharts-color-14: #{$hc-blue-very-dark} !important;
 }
 
 
