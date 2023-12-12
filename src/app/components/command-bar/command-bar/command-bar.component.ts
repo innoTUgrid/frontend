@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { KpiService } from 'src/app/services/kpi.service';
 import {Granularity} from 'src/app/types/granularity.model'
 import { TimeInterval, TimeUnit } from 'src/app/types/time-series-data.model';
@@ -18,7 +19,7 @@ export class CommandBarComponent {
   endDate: Date | null = null;
   singleDate: Date | null = null;
 
-
+  timeInterval?: TimeInterval
 
   // today --> granularity: only allowed hour --> current day, disabled
   // last 7 day --> daily, hourly --> last week range, disabled
@@ -32,13 +33,13 @@ export class CommandBarComponent {
     console.log('End Date:', this.endDate);
 
     if (this.startDate && this.endDate) {
-      const timeInterval: TimeInterval = {
+      this.timeInterval = {
         start:this.startDate,
         end:this.endDate,
         step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
         stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
       }
-      this.kpiService.timeInterval$$.next(timeInterval)
+      this.kpiService.timeInterval$$.next(this.timeInterval)
     }
   }
 
@@ -87,5 +88,29 @@ export class CommandBarComponent {
     return (
       this.recentPeriodToDisplay === 'today'
     );
+  }
+
+  constructor(private activatedRoute: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const timeInterval = {
+        start: new Date(params['start']),
+        end: new Date(params['end']),
+        step: +params['step'], // convert to number
+        stepUnit: params['stepUnit'] as TimeUnit
+      };
+
+      this.kpiService.updateTimeInterval(timeInterval);
+    });
+
+    this.kpiService.timeInterval$$.subscribe(timeInterval => {
+      if (timeInterval != this.timeInterval) {
+        this.timeInterval = timeInterval;
+        this.startDate = timeInterval.start;
+        this.endDate = timeInterval.end;
+        this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
+      }
+    });
   }
 }

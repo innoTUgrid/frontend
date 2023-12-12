@@ -1,9 +1,7 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { ActivatedRoute, Router } from '@angular/router';
-import { KpiService } from 'src/app/services/kpi.service';
+import { Router } from '@angular/router';
 import { MenuItem } from 'src/app/types/menu-item.model';
-import { TimeUnit } from 'src/app/types/time-series-data.model';
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +10,6 @@ import { TimeUnit } from 'src/app/types/time-series-data.model';
 })
 export class NavbarComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
-  kpiService: KpiService = inject(KpiService);
 
   public menuItems: MenuItem[] = [
     { name: 'Overview', icon: 'gallery_thumbnail', route: '/overview' },
@@ -33,23 +30,7 @@ export class NavbarComponent {
     return this.router.url == routeName
   }
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
-  }
-
-  ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      const timeInterval = {
-        start: new Date(params['start']),
-        end: new Date(params['end']),
-        step: +params['step'], // convert to number
-        stepUnit: params['stepUnit'] as TimeUnit
-      };
-
-      this.kpiService.updateTimeInterval(timeInterval);
-    });
-
-  }
-
+  constructor(private router: Router) {}
 }
 
 
