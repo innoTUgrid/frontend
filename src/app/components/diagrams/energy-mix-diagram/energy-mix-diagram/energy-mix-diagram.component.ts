@@ -23,14 +23,14 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   @Input() props: Props = { value: [10, 20, 30] };
   kpiService: KpiService;
 
-  green = '';
-  yellow = '';
-  orange = '';
+  solarColor = '';
+  windColor = '';
+  biogasColor = '';
   color3 = '';
   color4 = '';
 
   chart: Highcharts.Chart | undefined;
-  colors: string[] = [this.green, this.yellow, this.orange, this.color3, this.color4];
+  colors: string[] = [this.solarColor, this.windColor, this.biogasColor, this.color3, this.color4];
   seriesType: SeriesTypes = 'area';
   
   constructor(kpiService: KpiService) {
@@ -43,11 +43,6 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   get updateFlag(): boolean { return false};
 
   ngOnInit() {
-    this.green = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
-    this.yellow = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-5').trim();
-    this.orange = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
-    this.color3 = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-3').trim();
-    this.color4 = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
     this.initChart();
 
     this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
@@ -72,6 +67,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     chart: {
       type: 'area',
       renderTo: 'energyMixChart',
+      
     },
     title: {
       text: 'Energy-mix',
@@ -88,78 +84,9 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     plotOptions: {
       area: {
         dataGrouping: this.dataGrouping,
+        stacking: 'normal',
       }
     },
-
-    series: [
-      {
-        name: 'Total',
-        type: 'area', 
-        color: this.green,
-        marker:{
-          lineColor: this.green,
-        },
-        data: [
-          [new Date("2019-01-02T00:00:00.000Z"),38000 + 22534],
-          [new Date("2019-01-02T01:00:00.000Z"),37300 + 23599],
-          // 37892 + 24533,
-          // 38564 + 25195,
-          // 36770 + 25896,
-          // 36026 + 27635,
-          // 34978 + 29173,
-          // 35657 + 32646,
-          // 35620 + 35686,
-          // 35971 + 37709,
-          // 36409 + 39143,
-          // 36435 + 36829,    
-      ]
-      },
-      {
-        name: 'Scope 1',
-        type: 'area', 
-        color: this.yellow,
-        marker:{
-          lineColor: this.yellow,
-        },
-        data: [
-          [new Date("2019-01-02T00:00:00.000Z"),38000],
-          [new Date("2019-01-02T01:00:00.000Z"),37300],
-          // 37892,
-          // 38564,
-          // 36770,
-          // 36026,
-          // 34978,
-          // 35657,
-          // 35620,
-          // 35971,
-          // 36409,
-          // 36435,
-      ],
-      },
-      {
-        name: 'Scope 2',
-        type: 'area',
-        color: this.orange,
-        marker:{
-          lineColor: this.orange,
-        },
-        data: [
-              [new Date("2019-01-02T00:00:00.000Z"), 22534],
-              // plus an hour
-              [new Date("2019-01-02T01:00:00.000Z") , 23599],
-              // 24533,
-              // 25195,
-              // 25896,
-              // 27635,
-              // 29173,
-              // 32646,
-              // 35686,
-              // 37709,
-              // 39143,
-              // 36829,
-          ],
-      },
-    ],
   };
 
   private initChart() {

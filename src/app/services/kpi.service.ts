@@ -19,6 +19,19 @@ export class KpiService {
   timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:15, stepUnit:"minute"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
 
+  biogasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
+  biomassColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-1').trim();
+  otherRenewablesColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-2').trim();
+  windOffshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-3').trim();
+  hydroPowerColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
+  windOnshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-5').trim();
+  solarColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
+  brownCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-7').trim();
+  naturalGasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-8').trim();
+  otherConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-9').trim();
+  hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
+  pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
+
   constructor() {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
       this.timeSeriesData = data;
@@ -43,6 +56,38 @@ export class KpiService {
     }
   }
 
+  defineColors(type: string): string {
+    switch (type) {
+        case 'biogas':
+            return this.biogasColor;
+        case 'biomass':
+            return this.biomassColor;
+        case 'other-renewables':
+            return this.otherRenewablesColor;
+        case 'wind-offshore':
+            return this.windOffshoreColor;
+        case 'hydro-power':
+            return this.hydroPowerColor;
+        case 'wind-onshore':
+            return this.windOnshoreColor;
+        case 'solar':
+            return this.solarColor;
+        case 'brown-coal':
+            return this.brownCoalColor;
+        case 'natural-gas':
+            return this.naturalGasColor;
+        case 'other-conventionals':
+            return this.otherConventionalColor;
+        case 'hard-coal':
+            return this.hardCoalColor;
+        case 'pump-storage':
+            return this.pumpStorageColor;
+        default:
+            return '';
+    }
+  }
+
+
   subscribeSeries(diagram: HighchartsDiagram, kpiName: KPI) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const energy = data.get(kpiName)
@@ -54,15 +99,14 @@ export class KpiService {
       const energyTypes = new Set(energy.map(entry => entry.meta.type))
       for (const type of energyTypes) {
         const typeData = energy.filter(entry => entry.meta.type === type)
-        const color = (diagram.colors.length > series.length) ? diagram.colors[series.length] : undefined
         series.push({
-          name: type,
+          name: this.splitDiagramTypeIfNeeded(type),
           id: type, 
           data:typeData.map(entry => ([entry.time.getTime(), entry.value])),
           type: diagram.seriesType,
-          color: color,
+          color: this.defineColors(type),
           marker:{
-            lineColor: color,
+            lineColor: this.defineColors(type),
           },
         })
       }
@@ -88,6 +132,14 @@ export class KpiService {
         diagram.updateFlag = true
       }
     });
+  }
+
+  splitDiagramTypeIfNeeded(type: string): string {
+    if (type.includes('-')) {
+      return type.split('-').join(' ');
+    } else {
+      return type;
+    }
   }
 
   updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
