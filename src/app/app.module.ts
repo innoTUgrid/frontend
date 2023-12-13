@@ -42,7 +42,7 @@ import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-vi
 import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
-import {TableBasicExample} from './views/reporting/reporting/gri/gri-table';
+import {TableBasicExample} from './views/reporting/reporting/gri/gri-table.component';
 
 
 import { InfoviewComponent } from './views/infoview/infoview.component';
@@ -85,6 +85,9 @@ import { FormsModule } from '@angular/forms';
     EnergyFlowDiagramComponent,
     EnergyFlowViewComponent,
     CommandBarComponent,
+
+    ReportingComponent,
+    TableBasicExample
   ],
   imports: [
     BrowserModule,

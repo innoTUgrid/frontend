@@ -4,8 +4,8 @@ import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'gri-table',
-  styleUrls: ['./gri-table.scss'],
-  templateUrl: 'gri-table.html',
+  styleUrls: ['./gri-table.component.scss'],
+  templateUrl: 'gri-table.component.html',
 })
 
 export class TableBasicExample {
