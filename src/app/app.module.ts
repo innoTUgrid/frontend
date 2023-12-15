@@ -52,7 +52,13 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  import { MatSelectModule } from '@angular/material/select';
 
 import { FormsModule } from '@angular/forms';
+import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { EmissionsComparisonColumnChartComponent } from './components/diagrams/emissions-comparison-column-chart/emissions-comparison-column-chart.component';
+import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-co2-emissions-chart/yearly-co2-emissions-chart.component';
+import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
 
 
 @NgModule({
@@ -81,6 +87,10 @@ import { FormsModule } from '@angular/forms';
     EnergyFlowDiagramComponent,
     EnergyFlowViewComponent,
     CommandBarComponent,
+    ComparisonViewComponent,
+    EmissionsComparisonColumnChartComponent,
+    YearlyCo2EmissionsChartComponent,
+    GaugeSeriesCo2ComparisonComponent,
   ],
   imports: [
     BrowserModule,
@@ -109,7 +119,11 @@ import { FormsModule } from '@angular/forms';
     MtxPopoverModule,
     MatGridListModule,
     FormsModule,
-    PdfViewerModule
+    PdfViewerModule,
+
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
