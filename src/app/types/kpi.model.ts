@@ -1,6 +1,7 @@
 export enum KPI {
     ENERGY_CONSUMPTION = "energyConsumption",
     AUTARKY = "autarky",
+    SELF_CONSUMPTION = "selfConsumption"
 }
 
 export interface HighchartsDiagram {

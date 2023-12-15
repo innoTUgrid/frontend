@@ -11,7 +11,7 @@ import { Props } from 'src/app/types/props';
 export class SelfConsumptionKPIComponent implements OnInit{
   @Input() props: Props = {value: 75};
   selfConsumptionKPI: number = 0;
-  kpiName: KPI = KPI.AUTARKY;
+  kpiName: KPI = KPI.SELF_CONSUMPTION;
 
   constructor(private kpiService: KpiService) {}
 

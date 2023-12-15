@@ -45,15 +45,12 @@ export class KpiService {
     this.loadTimeSeriesData();
   }
 
-  async fetchKPIData(kpi: string) {
-    this.http.get<KPIResult>(`${environment.apiUrl}/v1/kpi/${kpi}/`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+  async fetchKPIData(kpi: string, timeInterval: TimeInterval) {
+    const url = `${environment.apiUrl}/v1/kpi/${kpi}/`;
+    this.http.get<KPIResult>(url, {
       params: {
-        start: this.timeInterval.start.toISOString(),
-        end: this.timeInterval.end.toISOString(),
+        start: timeInterval.start.toISOString(),
+        end: timeInterval.end.toISOString(),
       }
     })
     .subscribe((kpiValue) => {
@@ -62,7 +59,10 @@ export class KpiService {
         [kpi, [
           {type:kpi, name:kpiValue.name, data:[
             {
-              time:new Date(), value:kpiValue.value, meta:{unit:kpiValue.unit, consumption:true}
+              time:new Date(), 
+              value:kpiValue.value, 
+              meta:{unit:kpiValue.unit? kpiValue.unit : undefined, consumption:true},
+              timeRange: {start:new Date(kpiValue.from_timestamp), end:new Date(kpiValue.to_timestamp), step:15, stepUnit:"minute"}
             }
           ]}
         ]]
@@ -195,7 +195,7 @@ export class KpiService {
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      this.fetchKPIData(kpiName)
+      this.fetchKPIData(kpiName, timeInterval)
 
       // const kpiData = this.timeSeriesData.get(kpiName)
       // if (!kpiData) {
@@ -213,15 +213,16 @@ export class KpiService {
 
   loadTimeSeriesData():void {
     const keys: Array<KPI> = [KPI.ENERGY_CONSUMPTION, KPI.AUTARKY]
+    const data = testData as any
     for (const key of keys) {
-      const value = testData[key];
-      const energyTypes = new Set(value.map(entry => entry.meta.type))
+      const value = data[key];
+      const energyTypes: Set<string> = new Set(value.map((entry: any) => entry.meta.type))
       const series: TimeSeriesData[] = []
       for (const type of energyTypes) {
         const typeData: TimeSeriesData = {
-          name:type,
+          name: type,
           type: type,
-          data: value.filter(entry => entry.meta.type === type).map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }))
+          data: value.filter((entry: any) => entry.meta.type === type).map((entry: any) => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }))
         }
         series.push(typeData)
       }

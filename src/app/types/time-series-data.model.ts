@@ -17,7 +17,7 @@ export class TimeSeriesDataDictionary extends Map<string, TimeSeriesData[]> {
 export type KPIResult = {
   value:number;
   name:string;
-  unit?:string;
+  unit:string|null;
   from_timestamp:string;
   to_timestamp:string;
 }
