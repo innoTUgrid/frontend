@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 // import json
 import * as testData from './data/readKPIs.json';
 import { HttpClient } from '@angular/common/http';
-import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval } from '../types/time-series-data.model';
+import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval, TimeSeriesData, KPIResult } from '../types/time-series-data.model';
 import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
 
 import { environment } from '@env/environment';
@@ -15,8 +15,8 @@ import { environment } from '@env/environment';
 export class KpiService {
 
   // time series data dictionary which contains all the data for all kpis
-  timeSeriesData:TimeSeriesDataDictionary = new Map<string, TimeSeriesDataPoint[]>();
-  timeSeriesData$$:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new Map<string, TimeSeriesDataPoint[]>());
+  timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
+  timeSeriesData$$:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new TimeSeriesDataDictionary());
 
   timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:1, stepUnit:"hour"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
@@ -36,15 +36,40 @@ export class KpiService {
 
   constructor(private http: HttpClient) {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
-      this.timeSeriesData = data;
+      for (const [key, value] of data) {
+        this.timeSeriesData.set(key, value)
+      }
     })
 
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
     this.loadTimeSeriesData();
   }
 
-  fetchDataFromApi(kpi: string): Observable<TimeSeriesDataDictionary> {
-    return this.http.get<TimeSeriesDataDictionary>(`${environment.apiUrl}/kpi/${kpi}`);
+  async fetchKPIData(kpi: string) {
+    this.http.get<KPIResult>(`${environment.apiUrl}/v1/kpi/${kpi}/`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      params: {
+        start: this.timeInterval.start.toISOString(),
+        end: this.timeInterval.end.toISOString(),
+      }
+    })
+    .subscribe((kpiValue) => {
+      console.log(kpiValue)
+      const newData = new TimeSeriesDataDictionary([
+        [kpi, [
+          {type:kpi, name:kpiValue.name, data:[
+            {
+              time:new Date(), value:kpiValue.value, meta:{unit:kpiValue.unit, consumption:true}
+            }
+          ]}
+        ]]
+      ]);
+
+      this.timeSeriesData$$.next(newData);
+    });
   }
 
 
@@ -102,27 +127,25 @@ export class KpiService {
         return
       }
 
-      const series: Array<Highcharts.SeriesOptionsType> = []
-      const energyTypes = new Set(energy.map(entry => entry.meta.type))
-      for (const type of energyTypes) {
-        const typeData = energy.filter(entry => entry.meta.type === type)
-        series.push({
-          name: this.splitDiagramTypeIfNeeded(type),
-          id: type, 
-          data:typeData.map(entry => ([entry.time.getTime(), entry.value])),
+      const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
+      for (const series of energy) {
+        highchartsSeries.push({
+          name: this.splitDiagramTypeIfNeeded(series.type),
+          id: series.type, 
+          data:series.data.map(entry => ([entry.time.getTime(), entry.value])),
           type: diagram.seriesType,
-          color: this.defineColors(type),
+          color: this.defineColors(series.type),
           marker:{
-            lineColor: this.defineColors(type),
+            lineColor: this.defineColors(series.type),
           },
         })
       }
       if (diagram.chart) {
         diagram.chart.update({
-          series: series
+          series: highchartsSeries
         }, true, true, true)
       } else { // this is only reachable for code that uses highcharts-angular
-        diagram.chartProperties.series = series
+        diagram.chartProperties.series = highchartsSeries
         diagram.updateFlag = true
       }
     });
@@ -154,7 +177,7 @@ export class KpiService {
       for (const datapoint of data) {
           sum += datapoint.value
       }
-      if (average) sum /= data.length
+      if (average && data.length > 0) sum /= data.length
       diagram.value = sum
   }
 
@@ -162,21 +185,29 @@ export class KpiService {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const kpiData = data.get(kpiName)
       if (!kpiData) {
-          return
+        return
       }
-      
-      this.updateSingleValue(kpiData, diagram, average)
+
+      if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${kpiName}`)
+      const series = kpiData.map(entry => entry.data).flat()
+
+      this.updateSingleValue(series, diagram, average)
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      const kpiData = this.timeSeriesData.get(kpiName)
-      if (!kpiData) {
-          return
-      }
+      this.fetchKPIData(kpiName)
 
-      // filter out data that is not in the time interval
-      const filteredData = kpiData.filter(entry => entry.time >= timeInterval.start && entry.time <= timeInterval.end)
-      this.updateSingleValue(filteredData, diagram, average)
+      // const kpiData = this.timeSeriesData.get(kpiName)
+      // if (!kpiData) {
+      //   return
+      // }
+
+      // if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${kpiName}`)
+      // const series = kpiData.map(entry => entry.data).flat()
+
+      // // filter out data that is not in the time interval
+      // const filteredSeries = series.filter(entry => entry.time >= timeInterval.start && entry.time <= timeInterval.end)
+      // this.updateSingleValue(filteredSeries, diagram, average)
     })
   }
 
@@ -184,8 +215,17 @@ export class KpiService {
     const keys: Array<KPI> = [KPI.ENERGY_CONSUMPTION, KPI.AUTARKY]
     for (const key of keys) {
       const value = testData[key];
-      const convertedData = value.map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }));
-      this.timeSeriesData.set(key, convertedData);
+      const energyTypes = new Set(value.map(entry => entry.meta.type))
+      const series: TimeSeriesData[] = []
+      for (const type of energyTypes) {
+        const typeData: TimeSeriesData = {
+          name:type,
+          type: type,
+          data: value.filter(entry => entry.meta.type === type).map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }))
+        }
+        series.push(typeData)
+      }
+      this.timeSeriesData.set(key, series);
     }
     this.timeSeriesData$$.next(this.timeSeriesData);
   }
