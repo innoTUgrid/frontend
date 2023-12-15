@@ -65,7 +65,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
       }
     },
     tooltip: {
-      valueSuffix: ' ppm'
+      valueSuffix: ' kWh'
     },
     exporting: {
       enabled: true,
