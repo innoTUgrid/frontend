@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { KpiService } from 'src/app/services/kpi.service';
-import { Props } from 'src/app/types/props';
 
 @Component({
   selector: 'app-cost-savings-kpi',
@@ -8,7 +7,6 @@ import { Props } from 'src/app/types/props';
   styleUrls: ['./cost-savings-kpi.component.scss']
 })
 export class CostSavingsKPIComponent implements OnInit{
-  @Input() props: Props = {value: 75};
 
   constructor(private kpiService: KpiService) {}
 

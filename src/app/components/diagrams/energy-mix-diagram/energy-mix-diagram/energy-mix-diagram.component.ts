@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Props } from 'src/app/types/props';
 import { KpiService } from 'src/app/services/kpi.service';
 
 import * as Highcharts from 'highcharts/highstock';
@@ -20,7 +19,6 @@ HighchartsAccessibility(Highcharts);
   styleUrls: ['./energy-mix-diagram.component.scss']
 })
 export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
-  @Input() props: Props = { value: [10, 20, 30] };
   kpiService: KpiService;
 
   solarColor = '';
