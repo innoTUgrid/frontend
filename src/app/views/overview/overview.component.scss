@@ -6,18 +6,36 @@ h2{
     margin-left: 2em;
 }
 
-.container-top{
+.diagram-container{
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-evenly;
     width: 100%;
-    
+}
+
+.page-container {
+  width: 100%;
+  height: 100%;
 }
 
 .item{
-    min-width: 35em;
-    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
-    border-radius: 0.75em;
-    margin-bottom: 0;
-    padding: 2em 2em 0 2em;
+    flex: 1 1 100px;
+    // min-width: 35em;
+    // box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.04); 
+    // border-radius: 0.75em;
+    // margin-bottom: 0;
+    // padding: 2em 2em 0 2em;
 }
+
+//   .item {
+//     flex: 1;
+//     transform: scale(0.6);
+//     margin-top: -7em;
+//   }
+
+  // .line{
+  //   margin-top: - 4.2em;
+  //   transform: scale(0.7);
+  //   height: 20em;
+  //   width: 20em;
+  // }
