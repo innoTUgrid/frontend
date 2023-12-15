@@ -38,15 +38,15 @@ export class EnergyFlowDiagramComponent {
             nodes: [
                 {
                     id: 'Solar',
-                    colorIndex: 5
+                    colorIndex: 6
                 },
                 {
                     id: 'Wind',
-                    colorIndex: 4
+                    colorIndex: 5
                 },
                 {
                     id: 'Brown Coal',
-                    colorIndex: 9
+                    colorIndex: 7
 
                 },
                 {
@@ -73,17 +73,17 @@ export class EnergyFlowDiagramComponent {
             ],
 
             data: [
-                { from: 'Solar', to: 'Microgrid 1', weight: 6, colorIndex: 5},
-                { from: 'Wind', to: 'Microgrid 1', weight: 2, colorIndex: 4},
-                { from: 'Brown Coal', to: 'Microgrid 1', weight: 3, colorIndex: 9},
+                { from: 'Solar', to: 'Microgrid 1', weight: 6, colorIndex: 6},
+                { from: 'Wind', to: 'Microgrid 1', weight: 2, colorIndex: 5},
+                { from: 'Brown Coal', to: 'Microgrid 1', weight: 3, colorIndex: 7},
                 { from: 'Biomass', to: 'Microgrid 1', weight: 6, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 2', weight: 3, colorIndex: 5},
-                { from: 'Wind', to: 'Microgrid 2', weight: 1, colorIndex: 4},
-                { from: 'Brown Coal', to: 'Microgrid 2', weight: 2, colorIndex: 9},
+                { from: 'Solar', to: 'Microgrid 2', weight: 3, colorIndex: 6},
+                { from: 'Wind', to: 'Microgrid 2', weight: 1, colorIndex: 5},
+                { from: 'Brown Coal', to: 'Microgrid 2', weight: 2, colorIndex: 7},
                 { from: 'Biomass', to: 'Microgrid 2', weight: 4, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 3', weight: 3, colorIndex: 5},
-                { from: 'Wind', to: 'Microgrid 3', weight: 1, colorIndex: 4},
-                { from: 'Brown Coal', to: 'Microgrid 3', weight: 2, colorIndex: 9},
+                { from: 'Solar', to: 'Microgrid 3', weight: 3, colorIndex: 6},
+                { from: 'Wind', to: 'Microgrid 3', weight: 1, colorIndex: 5},
+                { from: 'Brown Coal', to: 'Microgrid 3', weight: 2, colorIndex: 7},
                 { from: 'Biomass', to: 'Microgrid 3', weight: 4, colorIndex: 0},
                 { from: 'Microgrid 1', to: 'Total Consumption', weight: 10, colorIndex: 3},
                 { from: 'Microgrid 2', to: 'Total Consumption', weight: 10, colorIndex: 3},
