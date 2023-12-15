@@ -35,6 +35,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   
   constructor(kpiService: KpiService) {
     this.kpiService = kpiService;
+    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
   set updateFlag(value: boolean) {
@@ -45,7 +46,6 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   ngOnInit() {
     this.initChart();
 
-    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {
