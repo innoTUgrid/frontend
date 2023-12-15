@@ -58,7 +58,9 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     },
     title: {
       text: 'Consumed Electricity by Source',
-      margin: 50
+      style: {
+        fontSize: '1em',
+      }
     },
     credits: {
       enabled: false
