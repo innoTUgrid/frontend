@@ -118,6 +118,9 @@ export class KpiService {
         diagram.chartProperties.series = series
         diagram.updateFlag = true
       }
+      if (diagram.onSeriesUpdate) {
+        diagram.onSeriesUpdate()
+      }
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {

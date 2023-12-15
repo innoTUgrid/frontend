@@ -11,6 +11,7 @@ export interface HighchartsDiagram {
     updateFlag: boolean
     seriesType: SeriesTypes
     colors: string[]
+    onSeriesUpdate?: () => void
 }
 
 export interface SingleValueDiagram {
