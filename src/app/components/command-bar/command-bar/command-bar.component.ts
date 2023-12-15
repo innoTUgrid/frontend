@@ -90,9 +90,7 @@ export class CommandBarComponent {
     );
   }
 
-  constructor(private activatedRoute: ActivatedRoute) {}
-
-  ngOnInit(): void {
+  constructor(private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParams.subscribe(params => {
       const timeInterval = {
         start: new Date(params['start']),
@@ -112,5 +110,8 @@ export class CommandBarComponent {
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
       }
     });
+  }
+
+  ngOnInit(): void {
   }
 }
