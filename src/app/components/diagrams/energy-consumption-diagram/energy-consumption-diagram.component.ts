@@ -98,7 +98,6 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
         let sum = 0
         for (const group of groupedData) {
           sum += group.stackTotal
-          console.log(group.stackTotal)
         }
         sum /= groupedData.length
         this.plotLines.value = sum
