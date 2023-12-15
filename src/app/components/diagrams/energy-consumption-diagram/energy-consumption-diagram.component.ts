@@ -27,6 +27,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
+    this.updateAverageLine()
   }
 
 
@@ -46,6 +47,13 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     units: [['day', [1]]]
   }
 
+  plotLines: Highcharts.YAxisPlotLinesOptions = {
+    color: '#FF0000',
+    width: 2,
+    value: 0,
+    zIndex: 5,
+  }
+
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'column',
@@ -62,10 +70,10 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
       min: 0,
       title: {
         text: 'Consumption (kWh)'
-      }
+      },
     },
     tooltip: {
-      valueSuffix: ' ppm'
+      valueSuffix: ' kWh'
     },
     exporting: {
       enabled: true,
@@ -82,14 +90,40 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     },
   }
 
-  ngOnInit(): void {
-    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
+  updateAverageLine() {
+    if (this.chart && this.chart.series && this.chart.series[0]) {
+      const series = this.chart.series[0] as any
+      const groupedData = series.groupedData
+      if (groupedData) {
+        let sum = 0
+        for (const group of groupedData) {
+          sum += group.stackTotal
+          console.log(group.stackTotal)
+        }
+        sum /= groupedData.length
+        this.plotLines.value = sum
+        this.chart.update({
+          yAxis: {
+
+            plotLines: [this.plotLines]
+          }
+        }, true, true, true)
+      }
+    }
   }
 
+  onSeriesUpdate() {
+    this.updateAverageLine()
+  }
+
+  ngOnInit(): void {
+  }
+  
   constructor() {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
+    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
 }

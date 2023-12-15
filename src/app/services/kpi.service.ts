@@ -118,9 +118,20 @@ export class KpiService {
         diagram.chartProperties.series = series
         diagram.updateFlag = true
       }
+      if (diagram.onSeriesUpdate) {
+        diagram.onSeriesUpdate()
+      }
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+      const minuteFormat = '%H:%M'
+      const dayFormat = '%e. %b'
+      diagram.xAxis.dateTimeLabelFormats = {
+        minute: minuteFormat,
+        day: timeInterval.stepUnit === 'day' ? dayFormat : minuteFormat,
+      }
+      diagram.updateFlag = true
+
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
