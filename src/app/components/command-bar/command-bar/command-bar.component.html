@@ -1,0 +1,38 @@
+<div id="command-bar" class="flex-container">
+  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (click)="handleRecentPeriodInput()">
+    <mat-button-toggle value="today">Today</mat-button-toggle>
+    <mat-button-toggle value="last7Days">Last 7 days</mat-button-toggle>
+    <mat-button-toggle value="last31Days">Last 31 days</mat-button-toggle>
+    <mat-button-toggle value="lastYear">Last year</mat-button-toggle>
+  </mat-button-toggle-group>
+  
+  <mat-form-field id="granularity-selection">
+    <mat-label>Granularity:</mat-label>
+    <mat-select [(ngModel)]="selectedGranularity">
+      <mat-option *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
+        {{ granularity }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()">
+    <mat-label>Enter a date range</mat-label>
+    <mat-date-range-input [rangePicker]="pickerInterval">
+      <input matStartDate placeholder="Start date" [(ngModel)]="startDate" [disabled]="recentPeriodToDisplay.length > 0">
+      <input matEndDate placeholder="End date" [(ngModel)]="endDate" [disabled]="recentPeriodToDisplay.length > 0">
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="pickerInterval"></mat-datepicker-toggle>
+    <mat-date-range-picker #pickerInterval></mat-date-range-picker>
+  </mat-form-field>
+  
+  <mat-form-field id="single-date-selection" *ngIf="isSingleDatepickerDisabled()" >
+    <mat-label>Choose a date</mat-label>
+    <input matInput [matDatepicker]="pickerDay" [(ngModel)]="singleDate" [disabled]="recentPeriodToDisplay.length > 0">
+    <mat-datepicker-toggle matIconSuffix [for]="pickerDay"></mat-datepicker-toggle>
+    <mat-datepicker #pickerDay></mat-datepicker>
+  </mat-form-field>
+  
+
+    <button mat-flat-button id="apply-filter-button" color="primary" (click)="applyFilters()">Apply filter</button>
+    <button mat-flat-button id="reset-filter-button" color="accent" (click)="resetFilters()">Reset filter</button>
+  </div>

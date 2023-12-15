@@ -37,7 +37,24 @@ import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
 import { HttpClientModule } from '@angular/common/http';
 
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-view.component';
+import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
+
 import {MatGridListModule} from '@angular/material/grid-list';
+import { InfoviewComponent } from './views/infoview/infoview.component';
+import { CommandBarComponent } from './components/command-bar/command-bar/command-bar.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
+import {MatDatepickerModule} from '@angular/material/datepicker';
+ import {MatInputModule} from '@angular/material/input';
+ import {MatFormFieldModule} from '@angular/material/form-field';
+ import {MatNativeDateModule} from '@angular/material/core';
+ import { MatSelectModule } from '@angular/material/select';
+
+import { FormsModule } from '@angular/forms';
+
+
 
 @NgModule({
   declarations: [
@@ -58,9 +75,13 @@ import {MatGridListModule} from '@angular/material/grid-list';
     DataTableConsumptionHouseBeckerComponent,
     CampusEnergyComponent,
     CamelCaseToSpacePipe,
-
     PercentChartComponent,
-    SingleValueChartComponent
+    SingleValueChartComponent,
+
+    InfoviewComponent,
+    EnergyFlowDiagramComponent,
+    EnergyFlowViewComponent,
+    CommandBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,19 +93,25 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatCommonModule,
     MatSidenavModule,
     MatOptionModule,
+    MatInputModule,
     HighchartsChartModule,
     MatCardModule,
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
-
+    MatButtonToggleModule,
     MatTableModule,
+    MatFormFieldModule,
     MatPaginatorModule,
-
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatButtonToggleModule, 
     MtxPopoverModule,
     MatGridListModule,
-
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    PdfViewerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

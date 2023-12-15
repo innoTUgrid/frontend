@@ -3,9 +3,10 @@ import * as Highcharts from 'highcharts/highstock';
 import { Props } from 'src/app/types/props';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
+import HC_noData from 'highcharts/modules/no-data-to-display'
 import { KpiService } from 'src/app/services/kpi.service';
 import { TimeSeriesDataDictionary } from 'src/app/types/time-series-data.model';
-import { KPIs } from 'src/app/types/kpi.model';
+import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -13,12 +14,14 @@ import { KPIs } from 'src/app/types/kpi.model';
   styleUrls: ['./energy-consumption-diagram.component.scss']
 
 })
-export class EnergyConsumptionDiagramComponent {
+export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   kpiService: KpiService = inject(KpiService);
   @Input() props: Props = {value: 75};
 
   chart: Highcharts.Chart|undefined
+  seriesType: SeriesTypes = 'column';
+  colors: string[] = []
 
   updateFlag = false
 
@@ -80,51 +83,13 @@ export class EnergyConsumptionDiagramComponent {
   }
 
   ngOnInit(): void {
-    this.kpiService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      const energy = data.get(KPIs.ENERGY_CONSUMPTION)
-      if (!energy) {
-        return
-      }
-
-      const series: Array<Highcharts.SeriesColumnOptions> = []
-      const energyTypes = new Set(energy.map(entry => entry.meta.type))
-      for (const type of energyTypes) {
-        const typeData = energy.filter(entry => entry.meta.type === type)
-        series.push({
-          name: type,
-          id: type, 
-          data:typeData.map(entry => ([entry.time.getTime(), entry.value])),
-          type: 'column'
-        })
-      }
-      if (this.chart) {
-        this.chart.update({
-          series: series
-        })
-      } else {
-        this.chartProperties.series = series
-        this.updateFlag = true
-      }
-    });
-
-    this.kpiService.timeInterval$$.subscribe((timeInterval) => {
-      if (this.chart) {
-        this.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), false);
-        this.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        this.chart.axes[0].setDataGrouping(this.dataGrouping, true)
-        // update also data grouping depending of timeInterval.step and timeInterval.stepUnit
-      } else {
-        this.xAxis.min = timeInterval.start.getTime();
-        this.xAxis.max = timeInterval.end.getTime();
-        this.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        this.updateFlag = true
-      }
-    });
+    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
   }
 
   constructor() {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
+    HC_noData(Highcharts);
   }
 
 }

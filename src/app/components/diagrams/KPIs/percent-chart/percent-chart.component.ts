@@ -1,22 +1,32 @@
-import { Component, Input, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import * as Highcharts from 'highcharts/highstock';
 import HighchartsMore from 'highcharts/highcharts-more';
 import SolidGauge from 'highcharts/modules/solid-gauge';
+import NoData from 'highcharts/modules/no-data-to-display'
+import { KpiService } from 'src/app/services/kpi.service';
+import { HighchartsDiagram, KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
+NoData(Highcharts);
 
 @Component({
     selector: 'app-percent-chart',
     templateUrl: './percent-chart.component.html',
     styleUrls: ['./percent-chart.component.scss'],
 })
-export class PercentChartComponent {
+export class PercentChartComponent implements HighchartsDiagram, SingleValueDiagram {
+    kpiService: KpiService = inject(KpiService);
     _value: number = 0;
-    @Input() set value(val: number) {
-        this._value = val;
-        this.updateChart();
+    get value(): number {
+        return this._value
     }
-    get value(): number { return this._value }
+
+    set value(value: number) {
+        this._value = value
+        this.updateChart()
+    }
+
+    @Input() kpiName: KPI = KPI.AUTARKY;
 
     @Input() set title(value: string) {
         if (this.chartProperties) {
@@ -24,7 +34,6 @@ export class PercentChartComponent {
                 this.chartProperties.title = {};
             }
             this.chartProperties.title.text = value;
-            this.series[0].name = value;
             this.updateChart();
         }
     }
@@ -37,27 +46,47 @@ export class PercentChartComponent {
     }
 
     Highcharts: typeof Highcharts = Highcharts; // required
-    chart?: Highcharts.Chart
+    chart: Highcharts.Chart | undefined
+    xAxis: Highcharts.XAxisOptions = {
+        min: 0,
+        max: 1,
+        minorTickInterval: null,
 
-    get series(): Highcharts.SeriesSolidgaugeOptions[] {
+        
+        labels: {
+            enabled: false,
+            formatter: function () {
+                const number = Number.parseFloat(this.value.toString())
+                return (number * 100).toString();
+            },
+        },
+    }
+
+    dataGrouping: Highcharts.DataGroupingOptionsObject = {
+        approximation: 'average',
+        enabled: true,
+        forced: true,
+        groupAll: true,
+      }
+    updateFlag: boolean = false;
+    seriesType: SeriesTypes = "solidgauge";
+    colors: string[] = [];
+    
+    get series(): Highcharts.SeriesOptionsType[] {
+        if (isNaN(this.value)) return []
         return [{
             id: 'main',
-            type: 'solidgauge',
+            type: this.seriesType,
             name: this.title,
             data: [{
-                radius: '112%',
-                innerRadius: '88%',
                 y: this.value,
-                colorIndex: 0
             }],
         }]
-    } 
+    }
 
     chartProperties: Highcharts.Options = {
-
         chart: {
             type: 'solidgauge',
-            styledMode: true,
         },
     
         title: {
@@ -78,28 +107,34 @@ export class PercentChartComponent {
                 borderWidth: 0
             }]
         },
-    
-        yAxis: {
-            min: 0,
-            max: 100,
-            lineWidth: 0,
-            tickPositions: []
-        },
+
+        yAxis:this.xAxis,
     
         plotOptions: {
             solidgauge: {
+                
                 dataLabels: {
                     enabled: true,
                     align: 'center',
                     borderWidth: 0,
                     verticalAlign: 'middle',
                     y: 0,
-                    format: '<h1>{y} %</h1>',
-                    useHTML: true
+                    formatter: function () {
+                        if (this.y) {
+                            return Math.round(this.y * 100) + ' %'
+                        }
+                        return this.y
+                    },
+                    style: {
+                        fontSize: '2em'
+                    }
                 },
                 linecap: 'round',
                 stickyTracking: false,
-                rounded: true
+                rounded: true,
+                radius: '112%',
+                innerRadius: '88%',
+                colorIndex: 0,
             }
         },
         credits: {enabled: false},
@@ -112,14 +147,21 @@ export class PercentChartComponent {
     }
 
     updateChart() {
-        if (this.chartProperties.series && this.chartProperties.series[0]) {
+        if (this.chart) {
 
             this.chart?.update({
                 title: this.chartProperties.title,
                 series: this.series,
-            })
+            }, true, true, true)
+        } else {
+            this.chartProperties.title = this.chartProperties.title
+            this.chartProperties.series = this.series
+            this.updateFlag = true
         }
     }
 
-    constructor() { }
+    constructor() {
+        this.kpiService.subscribeSingleValueDiagram(this, this.kpiName);
+    }
+    
 }

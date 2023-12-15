@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.command-bar {
+    flex: 0 1 auto;
+}
+
+.diagram {
+    flex: 1 1 auto;
+    height: 100%;
+    padding: min(20vh, 20vw);
+}

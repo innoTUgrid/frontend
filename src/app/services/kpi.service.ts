@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 import * as testData from './data/readKPIs.json';
 import { HttpClient } from '@angular/common/http';
 import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval } from '../types/time-series-data.model';
+import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
 
 import { environment } from '@env/environment';
 
@@ -14,42 +15,31 @@ import { environment } from '@env/environment';
 export class KpiService {
 
   // time series data dictionary which contains all the data for all kpis
-  private timeSeriesData:TimeSeriesDataDictionary = new Map<string, TimeSeriesDataPoint[]>();
+  timeSeriesData:TimeSeriesDataDictionary = new Map<string, TimeSeriesDataPoint[]>();
   timeSeriesData$$:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new Map<string, TimeSeriesDataPoint[]>());
 
-  // time interval inited with current day interval that begins
-  private timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:15, stepUnit:"minute"};
+  timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:1, stepUnit:"hour"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
+
+  biogasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
+  biomassColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-1').trim();
+  otherRenewablesColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-2').trim();
+  windOffshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-3').trim();
+  hydroPowerColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
+  windOnshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-5').trim();
+  solarColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
+  brownCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-7').trim();
+  naturalGasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-8').trim();
+  otherConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-9').trim();
+  hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
+  pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
 
   constructor(private http: HttpClient) {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
-      // delta update of time series data
-      for (let key in data) {
-        const newSeries = data.get(key);
-        if (!newSeries) break
-
-        const currentSeries = this.timeSeriesData.get(key);
-        if (currentSeries) {
-          // merge both series. newSeries has newer values for the interval this.timeInterval
-          const start = this.timeInterval.start.getTime();
-          const end = this.timeInterval.end.getTime();
-          const newSeriesFiltered = newSeries.filter(entry => entry.time.getTime() < start || entry.time.getTime() > end);
-          const currentSeriesFiltered = currentSeries.filter(entry => entry.time.getTime() < start || entry.time.getTime() > end);
-          const mergedSeries = [...newSeriesFiltered, ...currentSeriesFiltered];
-          mergedSeries.sort((a, b) => a.time.getTime() - b.time.getTime());
-          this.timeSeriesData.set(key, mergedSeries);
-        } else {
-          // if it is not, then set timeSeriesData[key] to data[key]
-          this.timeSeriesData.set(key, newSeries);
-        }
-      }
+      this.timeSeriesData = data;
     })
 
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
-    // this.timeSeriesData$$.subscribe((data) => {
-    //   console.log("all data")
-    //   console.log(data)
-    // });
     this.loadTimeSeriesData();
   }
 
@@ -58,30 +48,146 @@ export class KpiService {
   }
 
 
+  updateTimeInterval(timeInterval: TimeInterval): void {
+    // only update valid values
+    const newTimeInterval = {
+      start: (timeInterval.start && !isNaN(timeInterval.start.getTime())) ? timeInterval.start : this.timeInterval.start,
+      end: (timeInterval.end && !isNaN(timeInterval.end.getTime())) ? timeInterval.end : this.timeInterval.end,
+      step: (timeInterval.step) ? timeInterval.step : this.timeInterval.step,
+      stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : this.timeInterval.stepUnit,
+    }
+
+    if (newTimeInterval != this.timeInterval) {
+      this.timeInterval = newTimeInterval
+      this.timeInterval$$.next(newTimeInterval)
+    }
+  }
+
+  defineColors(type: string): string {
+    switch (type) {
+        case 'biogas':
+            return this.biogasColor;
+        case 'biomass':
+            return this.biomassColor;
+        case 'other-renewables':
+            return this.otherRenewablesColor;
+        case 'wind-offshore':
+            return this.windOffshoreColor;
+        case 'hydro-power':
+            return this.hydroPowerColor;
+        case 'wind-onshore':
+            return this.windOnshoreColor;
+        case 'solar':
+            return this.solarColor;
+        case 'brown-coal':
+            return this.brownCoalColor;
+        case 'natural-gas':
+            return this.naturalGasColor;
+        case 'other-conventionals':
+            return this.otherConventionalColor;
+        case 'hard-coal':
+            return this.hardCoalColor;
+        case 'pump-storage':
+            return this.pumpStorageColor;
+        default:
+            return '';
+    }
+  }
+
+
+  subscribeSeries(diagram: HighchartsDiagram, kpiName: KPI) {
+    this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+      const energy = data.get(kpiName)
+      if (!energy) {
+        return
+      }
+
+      const series: Array<Highcharts.SeriesOptionsType> = []
+      const energyTypes = new Set(energy.map(entry => entry.meta.type))
+      for (const type of energyTypes) {
+        const typeData = energy.filter(entry => entry.meta.type === type)
+        series.push({
+          name: this.splitDiagramTypeIfNeeded(type),
+          id: type, 
+          data:typeData.map(entry => ([entry.time.getTime(), entry.value])),
+          type: diagram.seriesType,
+          color: this.defineColors(type),
+          marker:{
+            lineColor: this.defineColors(type),
+          },
+        })
+      }
+      if (diagram.chart) {
+        diagram.chart.update({
+          series: series
+        }, true, true, true)
+      } else { // this is only reachable for code that uses highcharts-angular
+        diagram.chartProperties.series = series
+        diagram.updateFlag = true
+      }
+    });
+
+    this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+      if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
+        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
+        diagram.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), true, true);
+      } else { // this is only reachable for code that uses highcharts-angular
+        diagram.xAxis.min = timeInterval.start.getTime();
+        diagram.xAxis.max = timeInterval.end.getTime();
+        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        diagram.updateFlag = true
+      }
+    });
+  }
+
+  splitDiagramTypeIfNeeded(type: string): string {
+    if (type.includes('-')) {
+      return type.split('-').join(' ');
+    } else {
+      return type;
+    }
+  }
+
+  updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
+    let sum = 0
+      for (const datapoint of data) {
+          sum += datapoint.value
+      }
+      if (average) sum /= data.length
+      diagram.value = sum
+  }
+
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, kpiName: KPI, average: boolean = true) {
+    this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+      const kpiData = data.get(kpiName)
+      if (!kpiData) {
+          return
+      }
+      
+      this.updateSingleValue(kpiData, diagram, average)
+    });
+
+    this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+      const kpiData = this.timeSeriesData.get(kpiName)
+      if (!kpiData) {
+          return
+      }
+
+      // filter out data that is not in the time interval
+      const filteredData = kpiData.filter(entry => entry.time >= timeInterval.start && entry.time <= timeInterval.end)
+      this.updateSingleValue(filteredData, diagram, average)
+    })
+  }
 
   loadTimeSeriesData():void {
-    const key = 'energyConsumption'
-    const value = testData[key];
-    const convertedData = value.map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }));
-    this.timeSeriesData.set(key, convertedData);
+    const keys: Array<KPI> = [KPI.ENERGY_CONSUMPTION, KPI.AUTARKY]
+    for (const key of keys) {
+      const value = testData[key];
+      const convertedData = value.map(entry => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }));
+      this.timeSeriesData.set(key, convertedData);
+    }
     this.timeSeriesData$$.next(this.timeSeriesData);
-    // const interval = this.timeInterval$$
-    // setTimeout(function() {
-    //   interval.next({
-    //     start:new Date("2019-01-01T01:00:00.000Z"),
-    //     end:new Date("2019-01-01T02:00:00.000Z"),
-    //     step:15,
-    //     stepUnit:"minute"
-    //   });
-    // }, 5000);
-    // setTimeout(function() {
-    //   interval.next({
-    //     start:new Date("2019-01-01T02:00:00.000Z"),
-    //     end:new Date("2019-01-01T03:00:00.000Z"),
-    //     step:30,
-    //     stepUnit:"minute"
-    //   });
-    // }, 10000);
   }
 
 }
