@@ -148,6 +148,9 @@ export class KpiService {
         diagram.chartProperties.series = highchartsSeries
         diagram.updateFlag = true
       }
+      if (diagram.onSeriesUpdate) {
+        diagram.onSeriesUpdate()
+      }
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
