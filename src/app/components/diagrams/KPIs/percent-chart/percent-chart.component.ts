@@ -91,6 +91,9 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     
         title: {
             text: '',
+            style: {
+                fontSize: '1em',
+            },
             verticalAlign: 'bottom'
         },
     
