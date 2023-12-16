@@ -9,7 +9,7 @@
   <mat-form-field id="granularity-selection">
     <mat-label>Granularity:</mat-label>
     <mat-select [(ngModel)]="selectedGranularity">
-      <mat-option *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
+      <mat-option class="global-font" *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
         {{ granularity }}
       </mat-option>
     </mat-select>

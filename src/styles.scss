@@ -73,6 +73,9 @@ $hc-orange-light: #F8961E;
 $hc-orange-medium: #F9844A;
 $hc-orange-dark: #F3722C;
 $hc-red: #F94144;
+$hc-year-shadow-comparison-chart: #d1d2d9; // has to be inserted in emissions comparison chart 
+$hc-year-comparison-chart: #6494dc; // has to be inserted in emissions comparison chart 
+$hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions comparison chart 
 
 :root {
     --highcharts-color-0: #{$hc-biogas} !important;
@@ -91,6 +94,9 @@ $hc-red: #F94144;
     --highcharts-color-13:#{$hc-orange-medium} !important;
     --highcharts-color-14: #{$hc-orange-dark} !important;
     --highcharts-color-15: #{$hc-red} !important;
+    --highcharts-color-16: #{$hc-year-shadow-comparison-chart} !important;
+    --highcharts-color-17: #{$hc-year-comparison-chart} !important;
+    --highcharts-color-18: #{$hc-mean-comparison-chart} !important;
 }
 
 
