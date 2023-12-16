@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { KpiService } from 'src/app/services/kpi.service';
 import {Granularity} from 'src/app/types/granularity.model'
@@ -14,34 +14,32 @@ export class CommandBarComponent {
   kpiService: KpiService = inject(KpiService)
 
   granularities = Object.values(Granularity);
-  recentPeriodToDisplay='';
   
   selectedGranularity: string = '';
 
   timeInterval!: TimeInterval;
   selectedView?: string | null;
 
-
-  // today --> granularity: only allowed hour --> current day, disabled
-  // last 7 day --> daily, hourly --> last week range, disabled
-  // last 31 day --> weeks, daily --> range, disabled
-  //last year --> quarter, months --> range, disabled
+  recentPeriods: {[k: string]: number} = { 'today': 0, 'last7Days': 7, 'last31Days': 31, 'lastYear': 365};
+  recentPeriodToDisplay = '';
 
   applyFilters(singleDate?: boolean) {
-    console.log('Recent period:', this.recentPeriodToDisplay);
-    console.log('Granularity:', this.selectedGranularity);
-
     this.timeInterval = {
       start: this.timeInterval.start.clone().startOf('day'), 
       end: singleDate ? this.timeInterval.start.clone().endOf('day') : this.timeInterval.end.clone().endOf('day'),
       step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
       stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
     }
-    this.kpiService.timeInterval$$.next(this.timeInterval)
+    // set recent period
+    this.recentPeriodToDisplay = '';
+    if (this.timeInterval.end.isSame(moment().endOf('day'))) {
+      const diff = this.timeInterval.end.diff(this.timeInterval.start, 'days');
+      this.recentPeriodToDisplay = Object.entries(this.recentPeriods).find(([key, value]) => value == diff)?.[0] || '';
+    }
+    this.kpiService.timeInterval$$.next(this.timeInterval);
   }
 
   resetFilters(){
-    this.recentPeriodToDisplay='';
     this.selectedGranularity = '';
 
     // currently set as initial date in KPI service
@@ -56,7 +54,7 @@ export class CommandBarComponent {
 
   handleRecentPeriodInput() {
     let today = moment().endOf('day');
-    let start = moment().startOf('day').subtract({ 'today': 0, 'last7Days': 7, 'last31Days': 31, 'lastYear': 365}[this.recentPeriodToDisplay], 'days');
+    let start = moment().startOf('day').subtract(this.recentPeriods[this.recentPeriodToDisplay], 'days');
     this.timeInterval.start = start;
     this.timeInterval.end = today;
     this.kpiService.timeInterval$$.next(this.timeInterval);

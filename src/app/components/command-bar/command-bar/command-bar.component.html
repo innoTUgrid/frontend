@@ -1,6 +1,6 @@
 <div id="command-bar" class="flex-container">
   
-  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (click)="handleRecentPeriodInput()">
+  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (ngModelChange)="handleRecentPeriodInput()">
     <mat-button-toggle value="today">Today</mat-button-toggle>
     <mat-button-toggle value="last7Days">Last 7 days</mat-button-toggle>
     <mat-button-toggle value="last31Days">Last 31 days</mat-button-toggle>
