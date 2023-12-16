@@ -52,6 +52,15 @@ export class CommandBarComponent {
     this.startDate = null;
     this.endDate = null;
     this.singleDate = null;
+
+    // currently set as initial date in KPI service
+    let timeInterval = {
+      start:new Date("2019-01-01T00:00:00.000Z"),
+      end:new Date("2019-01-01T02:00:00.000Z"),
+      step: 1,
+      stepUnit: "hour" as TimeUnit
+    }
+    this.kpiService.timeInterval$$.next(timeInterval)
   }
 
   handleRecentPeriodInput(){
