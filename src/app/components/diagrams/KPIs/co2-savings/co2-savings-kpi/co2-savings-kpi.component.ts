@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { KPI } from '@app/types/kpi.model';
 import { KpiService } from 'src/app/services/kpi.service';
 
 @Component({
@@ -7,6 +8,8 @@ import { KpiService } from 'src/app/services/kpi.service';
   styleUrls: ['./co2-savings-kpi.component.scss']
 })
 export class Co2SavingsKPIComponent implements OnInit {
+  
+  kpiName: KPI = KPI.CO2_SAVINGS;
 
   constructor(private kpiService: KpiService) {}
 

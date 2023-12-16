@@ -22,6 +22,13 @@ export type KPIResult = {
   to_timestamp:string;
 }
 
+export type TimeSeriesResult = {
+  bucket: string;
+  carrier_name: string;
+  value: number;
+  unit: string;
+}
+
 export type TimeUnit = 'miliseconds' | 'seconds' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 export type TimeInterval = {
   start: Date;

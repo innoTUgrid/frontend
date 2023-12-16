@@ -16,6 +16,7 @@ import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
 export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   kpiService: KpiService = inject(KpiService);
+  kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
 
   chart: Highcharts.Chart|undefined
   seriesType: SeriesTypes = 'column';
@@ -82,7 +83,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
       column: {
         stacking: 'normal',
         dataLabels: {
-          enabled: true
+          enabled: false
         },
 
         dataGrouping: this.dataGrouping,
@@ -122,7 +123,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
-    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
+    this.kpiService.subscribeSeries(this);
   }
 
 }

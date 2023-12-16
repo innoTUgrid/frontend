@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 // import json
 import * as testData from './data/readKPIs.json';
 import { HttpClient } from '@angular/common/http';
-import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval, TimeSeriesData, KPIResult } from '../types/time-series-data.model';
+import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval, TimeSeriesData, KPIResult, TimeSeriesResult } from '../types/time-series-data.model';
 import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
 
 import { environment } from '@env/environment';
@@ -42,7 +42,7 @@ export class KpiService {
     })
 
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
-    this.loadTimeSeriesData();
+    // this.loadTimeSeriesData();
   }
 
   async fetchKPIData(kpi: string, timeInterval: TimeInterval) {
@@ -54,7 +54,6 @@ export class KpiService {
       }
     })
     .subscribe((kpiValue) => {
-      console.log(kpiValue)
       const newData = new TimeSeriesDataDictionary([
         [kpi, [
           {type:kpi, name:kpiValue.name, data:[
@@ -69,6 +68,48 @@ export class KpiService {
       ]);
 
       this.timeSeriesData$$.next(newData);
+    });
+  }
+
+  fetchTimeSeriesData(key: string, timeInterval: TimeInterval) {
+    const url = `${environment.apiUrl}/v1/kpi/${key}/`;
+    this.http.get<TimeSeriesResult[]>(url, {
+      params: {
+        from: timeInterval.start.toISOString(),
+        to: timeInterval.end.toISOString(),
+        interval: '1hour'
+      }
+    })
+    .subscribe((timeSeriesResult: TimeSeriesResult[]) => {
+      const newData = new TimeSeriesDataDictionary();
+      const series: Map<string, TimeSeriesData> = new Map();
+
+      for (const entry of timeSeriesResult) {
+        let data: TimeSeriesDataPoint[];
+        if (!series.has(entry.carrier_name)) {
+          data = []
+          series.set(entry.carrier_name, {
+            name: entry.carrier_name,
+            type: entry.carrier_name,
+            data: data
+          })
+        } else {
+          data = series.get(entry.carrier_name)?.data as TimeSeriesDataPoint[];
+        }
+
+        data.push({
+          time: new Date(entry.bucket),
+          value: entry.value,
+          meta: {
+            unit: entry.unit,
+            consumption: (key === 'consumption') ? true : false
+          }
+        })
+      }
+
+      newData.set(key, Array.from(series.values()))
+      this.timeSeriesData$$.next(newData);
+      console.log(newData)
     });
   }
 
@@ -120,9 +161,9 @@ export class KpiService {
   }
 
 
-  subscribeSeries(diagram: HighchartsDiagram, kpiName: KPI) {
+  subscribeSeries(diagram: HighchartsDiagram) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      const energy = data.get(kpiName)
+      const energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
       if (!energy) {
         return
       }
@@ -154,6 +195,10 @@ export class KpiService {
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+      if (diagram.kpiName) {
+        this.fetchTimeSeriesData(diagram.kpiName, timeInterval)
+      }
+
       const minuteFormat = '%H:%M'
       const dayFormat = '%e. %b'
       diagram.xAxis.dateTimeLabelFormats = {
@@ -192,21 +237,21 @@ export class KpiService {
       diagram.value = sum
   }
 
-  subscribeSingleValueDiagram(diagram: SingleValueDiagram, kpiName: KPI, average: boolean = true) {
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
     this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      const kpiData = data.get(kpiName)
+      const kpiData = (diagram.kpiName) ? data.get(diagram.kpiName) : undefined
       if (!kpiData) {
         return
       }
 
-      if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${kpiName}`)
+      if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${diagram.kpiName}`)
       const series = kpiData.map(entry => entry.data).flat()
 
       this.updateSingleValue(series, diagram, average)
     });
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      this.fetchKPIData(kpiName, timeInterval)
+      if (diagram.kpiName) this.fetchKPIData(diagram.kpiName, timeInterval)
 
       // const kpiData = this.timeSeriesData.get(kpiName)
       // if (!kpiData) {
