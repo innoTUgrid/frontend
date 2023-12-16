@@ -12,7 +12,9 @@
                 </span>
               </a>
         </span>
-        <span *ngFor="let menuItem of menuItemsOrg" class="bottom-icons" [class.selected-menu-item]="isSelected(menuItem.route)">
+      </mat-nav-list>
+      <mat-nav-list class="bottom-list">
+        <span *ngFor="let menuItem of menuItemsOrg" [class.selected-menu-item]="isSelected(menuItem.route)">
             <a mat-list-item  [routerLink]="menuItem.route" >
                 <span class="entry">
                   <span class="material-symbols-outlined">{{menuItem.icon}}</span>

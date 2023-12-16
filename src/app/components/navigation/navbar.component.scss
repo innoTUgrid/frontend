@@ -6,7 +6,7 @@
     margin: 1em 2em 1em 1em;
 }
 
-.mat-drawer-container {
+.mat-sidenav-container {
     background-color: $white-background;
 }
 
@@ -16,6 +16,7 @@
     font-size: $font-size-navigation;
     padding: 0.5em;
     border: none !important;
+    overflow-x: hidden; // fix for small horizontal scroll bar appearing. This can be fixed later with a better solution
 
 
     .material-symbols-outlined {
@@ -24,9 +25,11 @@
     }
 }  
 
-.bottom-icons{
-    position: relative;
-    bottom: -18em;
+.bottom-list{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+
     span{
         color: $text-color;
         opacity: 0.7;
