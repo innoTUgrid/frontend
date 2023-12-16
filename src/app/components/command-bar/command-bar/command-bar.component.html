@@ -1,4 +1,5 @@
 <div id="command-bar" class="flex-container">
+  
   <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (click)="handleRecentPeriodInput()">
     <mat-button-toggle value="today">Today</mat-button-toggle>
     <mat-button-toggle value="last7Days">Last 7 days</mat-button-toggle>
@@ -6,10 +7,10 @@
     <mat-button-toggle value="lastYear">Last year</mat-button-toggle>
   </mat-button-toggle-group>
   
-  <mat-form-field id="granularity-selection">
+  <mat-form-field id="granularity-selection" *ngIf="selectedView=='overview'">
     <mat-label>Granularity:</mat-label>
     <mat-select [(ngModel)]="selectedGranularity">
-      <mat-option *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
+      <mat-option class="select-font" *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
         {{ granularity }}
       </mat-option>
     </mat-select>

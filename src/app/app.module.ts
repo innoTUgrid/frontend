@@ -11,14 +11,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCommonModule, MatOptionModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { OverviewComponent } from './views/overview/overview.component';
-import { KpiWrapperComponent } from './components/diagrams/KPIs/kpi-wrapper/kpi-wrapper/kpi-wrapper.component';
 import { EnergyConsumptionDiagramComponent } from './components/diagrams/energy-consumption-diagram/energy-consumption-diagram.component';
 import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram/energy-mix-diagram.component';
 import { AutarkyKPIComponent } from './components/diagrams/KPIs/autarky/autarky-kpi/autarky-kpi.component';
 import { Co2SavingsKPIComponent } from './components/diagrams/KPIs/co2-savings/co2-savings-kpi/co2-savings-kpi.component';
 import { CostSavingsKPIComponent } from './components/diagrams/KPIs/cost-savings/cost-savings-kpi/cost-savings-kpi.component';
 import { SelfConsumptionKPIComponent } from './components/diagrams/KPIs/self-consumption/self-consumption-kpi/self-consumption-kpi.component';
-import { TilingWraperComponent } from './components/diagrams/tiling-wraper/tiling-wraper.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import {MatCardModule} from '@angular/material/card'; 
 import {MatButtonModule} from '@angular/material/button'; 
@@ -53,7 +51,13 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  import { MatSelectModule } from '@angular/material/select';
 
 import { FormsModule } from '@angular/forms';
+import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { EmissionsComparisonColumnChartComponent } from './components/diagrams/emissions-comparison-column-chart/emissions-comparison-column-chart.component';
+import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-co2-emissions-chart/yearly-co2-emissions-chart.component';
+import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
 
 
 @NgModule({
@@ -61,14 +65,12 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
     NavbarComponent,
     OverviewComponent,
-    KpiWrapperComponent,
     EnergyConsumptionDiagramComponent,
     EnergyMixDiagramComponent,
     AutarkyKPIComponent,
     Co2SavingsKPIComponent,
     CostSavingsKPIComponent,
     SelfConsumptionKPIComponent,
-    TilingWraperComponent,
 
     DatasetsComponent,
     DataTableSmardComponent,
@@ -82,6 +84,10 @@ import { FormsModule } from '@angular/forms';
     EnergyFlowDiagramComponent,
     EnergyFlowViewComponent,
     CommandBarComponent,
+    ComparisonViewComponent,
+    EmissionsComparisonColumnChartComponent,
+    YearlyCo2EmissionsChartComponent,
+    GaugeSeriesCo2ComparisonComponent,
   ],
   imports: [
     BrowserModule,
@@ -111,7 +117,11 @@ import { FormsModule } from '@angular/forms';
     MatGridListModule,
     HttpClientModule,
     FormsModule,
-    PdfViewerModule
+    PdfViewerModule,
+
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatMomentDateModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

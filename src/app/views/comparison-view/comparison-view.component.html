@@ -1,0 +1,33 @@
+<div id="comparison-command-bar" class="flex-container">
+    <mat-form-field id="granularity-selection">
+      <input matInput [matDatepicker]="dp" placeholder="Year" [formControl]="firstYear">
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp
+                      [startView]="'multi-year'"
+                      (yearSelected)="chosenYearHandler($event, dp, 'first')"
+                      (opened)="onDatepickerOpened()"
+                      (closed)="onDatepickerClosed()"
+                      panelClass="period-picker">
+      </mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field id="granularity-selection">
+        <input matInput [matDatepicker]="dp2" placeholder="Year" [formControl]="secondYear">
+        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+        <mat-datepicker #dp2
+                        [startView]="'multi-year'"
+                        (yearSelected)="chosenYearHandler($event, dp2, 'second')"
+                        (opened)="onDatepickerOpened()"
+                        (closed)="onDatepickerClosed()"
+                        panelClass="period-picker">
+        </mat-datepicker>
+      </mat-form-field>
+
+      
+  </div>
+
+  <mat-grid-list cols="3" gutterSize="1.875em" rowHeight="40vh">
+    <mat-grid-tile colspan="2" id="item"> <app-emissions-comparison-column-chart></app-emissions-comparison-column-chart></mat-grid-tile>
+    <mat-grid-tile colspan="1" id="item-after"><app-gauge-series-co2-comparison></app-gauge-series-co2-comparison></mat-grid-tile>
+    <mat-grid-tile colspan="2" id="item"><app-yearly-co2-emissions-chart></app-yearly-co2-emissions-chart></mat-grid-tile>
+  </mat-grid-list>

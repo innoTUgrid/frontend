@@ -1,6 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
-import { Props } from 'src/app/types/props';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import HC_noData from 'highcharts/modules/no-data-to-display'
@@ -17,7 +16,6 @@ import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
 export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   kpiService: KpiService = inject(KpiService);
-  @Input() props: Props = {value: 75};
 
   chart: Highcharts.Chart|undefined
   seriesType: SeriesTypes = 'column';
@@ -60,7 +58,9 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     },
     title: {
       text: 'Consumed Electricity by Source',
-      margin: 50
+      style: {
+        fontSize: '1em',
+      }
     },
     credits: {
       enabled: false
@@ -98,7 +98,6 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
         let sum = 0
         for (const group of groupedData) {
           sum += group.stackTotal
-          console.log(group.stackTotal)
         }
         sum /= groupedData.length
         this.plotLines.value = sum
