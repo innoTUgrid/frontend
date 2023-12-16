@@ -49,7 +49,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
         },
       },
       title: {
-        text: 'CO₂ Emissions of 2023 compared to 2022',
+        text: 'Percentage Comparison of the Change in CO₂ Emissions',
         margin: 20,
         style: {
           fontSize: '0.95em',

@@ -1,5 +1,13 @@
 import { Component } from '@angular/core';
 import * as Highcharts from 'highcharts';
+import HighchartsMore from 'highcharts/highcharts-more';
+import SolidGauge from 'highcharts/modules/solid-gauge';
+import NoData from 'highcharts/modules/no-data-to-display'
+import Exporting from 'highcharts/modules/exporting';
+HighchartsMore(Highcharts);
+SolidGauge(Highcharts);
+NoData(Highcharts);
+Exporting(Highcharts);
 
 @Component({
   selector: 'app-scope-emission-comparision',
@@ -17,10 +25,9 @@ export class ScopeEmissionComparisionComponent {
 
   chartProperties: Highcharts.Options = {
     chart: {
-      type: 'solidgauge',
     },
     title: {
-      text: ''
+      text: 'CO2 Emissions Comparison per Scope'
     },
     tooltip: {
       borderWidth: 0,
@@ -32,12 +39,12 @@ export class ScopeEmissionComparisionComponent {
       pointFormat: '{series.name}<br>{point.x}<br>' +
           '<span style="font-size: 2em; color: {point.color}; <br>' +
           'font-weight: bold">{point.y}</span>',
-      // positioner: function (labelWidth) {
-      //     return {
-      //         x: (this.chart.chartWidth - labelWidth) / 2,
-      //         y: (this.chart.plotHeight / 2) + 15
-      //     };
-      // }
+      positioner: function (labelWidth) {
+          return {
+              x: (this.chart.chartWidth - labelWidth) / 2,
+              y: (this.chart.plotHeight / 2) + 15
+          };
+      }
     },
     yAxis: {
       min: 0,

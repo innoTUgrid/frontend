@@ -35,7 +35,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
       },
     },
     title: {
-      text: `Emissions comparison of year ${this.laterYear} to ${this.earlierYear}`,
+      text: `Monthly CO₂ Emissions Comparison`,
       margin: 50,
       style: {
         fontSize: '0.95em',
