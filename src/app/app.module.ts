@@ -33,6 +33,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
+import { ReportingComponent } from './views/reporting/reporting/reporting.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
@@ -40,6 +41,9 @@ import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-vi
 import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
+import {TableBasicExample} from './views/reporting/reporting/gri/gri-table.component';
+
+
 import { InfoviewComponent } from './views/infoview/infoview.component';
 import { CommandBarComponent } from './components/command-bar/command-bar/command-bar.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
@@ -84,6 +88,9 @@ import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-s
     EnergyFlowDiagramComponent,
     EnergyFlowViewComponent,
     CommandBarComponent,
+
+    ReportingComponent,
+    TableBasicExample,
     ComparisonViewComponent,
     EmissionsComparisonColumnChartComponent,
     YearlyCo2EmissionsChartComponent,
@@ -123,6 +130,7 @@ import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-s
     MatDatepickerModule,
     MatMomentDateModule,
   ],
+  //entryComponents: [TableBasicExample],
   providers: [],
   bootstrap: [AppComponent]
 })
