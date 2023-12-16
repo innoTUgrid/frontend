@@ -1,10 +1,15 @@
 <app-command-bar></app-command-bar>
-<ng-container>
-    <h2>Overview</h2>
-    <div class="container-top"> 
-        <app-tiling-wraper class="item" subComponent="energy-consumption" ></app-tiling-wraper>
-        <app-tiling-wraper class="item" subComponent="energy-mix" ></app-tiling-wraper>   
+<div class="page-container">
+    <h2 class="title">Overview</h2>
+    <div class="diagram-container"> 
+        <app-energy-consumption-diagram class="item top-item"></app-energy-consumption-diagram>
+        <app-energy-mix-diagram class="item top-item"></app-energy-mix-diagram>
     </div>
-    <h2>KPIs</h2>
-    <app-tiling-wraper subComponent="kpi-wrapper"></app-tiling-wraper>  
-</ng-container>
+    <h2 class="title">KPIs</h2>
+    <div class="diagram-container">
+        <app-self-consumption-kpi class="item bottom-item"></app-self-consumption-kpi>
+        <app-autarky-kpi class="item bottom-item"></app-autarky-kpi>
+        <app-co2-savings-kpi class="item bottom-item"></app-co2-savings-kpi>
+        <app-cost-savings-kpi class="item bottom-item"></app-cost-savings-kpi>
+    </div>
+</div>

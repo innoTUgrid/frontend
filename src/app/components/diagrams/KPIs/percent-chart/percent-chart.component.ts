@@ -26,7 +26,18 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
         this.updateChart()
     }
 
-    @Input() kpiName: KPI = KPI.AUTARKY;
+    _kpiName?: KPI;
+
+    @Input() set kpiName(value: KPI | undefined) {
+        this._kpiName = value;
+        if (value) {
+           this.kpiService.fetchKPIData(value, this.kpiService.timeInterval)
+        }
+    }
+
+    get kpiName(): KPI | undefined {  
+        return this._kpiName;
+    }
 
     @Input() set title(value: string) {
         if (this.chartProperties) {
@@ -91,6 +102,9 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     
         title: {
             text: '',
+            style: {
+                fontSize: '1em',
+            },
             verticalAlign: 'bottom'
         },
     
@@ -161,7 +175,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     }
 
     constructor() {
-        this.kpiService.subscribeSingleValueDiagram(this, this.kpiName);
+        this.kpiService.subscribeSingleValueDiagram(this);
     }
     
 }

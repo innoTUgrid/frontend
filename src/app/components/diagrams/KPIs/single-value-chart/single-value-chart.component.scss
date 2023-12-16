@@ -8,7 +8,7 @@
     box-shadow: none;
 }
 .kpi-header {
-    font-size: 3em;
+    font-size: 300%;
 }
 
 .kpi-content {
@@ -16,7 +16,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    font-size: 4em;
+    font-size: 200%;
     height: 100%;
 }
 
@@ -25,4 +25,5 @@
     font-weight: bold;
     text-transform: uppercase;
     font-size: 1em;
+    padding-bottom: 15px;
 }

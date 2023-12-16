@@ -26,9 +26,21 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() title: string = '';
   @Input() icon: string = '';
   @Input() unit: string = '';
-  @Input() kpiName: KPI = KPI.AUTARKY;
+  
+  _kpiName?: KPI;
+
+  @Input() set kpiName(value: KPI | undefined) {
+    this._kpiName = value;
+    if (value) {
+      this.kpiService.fetchKPIData(value, this.kpiService.timeInterval)
+    }
+  }
+
+  get kpiName(): KPI | undefined {  
+    return this._kpiName;
+  }
 
   constructor() {
-    this.kpiService.subscribeSingleValueDiagram(this, this.kpiName, false);
+    this.kpiService.subscribeSingleValueDiagram(this, false);
   }
 }

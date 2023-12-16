@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { KpiService } from 'src/app/services/kpi.service';
 import { KPI } from 'src/app/types/kpi.model';
-import { Props } from 'src/app/types/props';
 
 @Component({
   selector: 'app-autarky-kpi',
@@ -9,7 +8,6 @@ import { Props } from 'src/app/types/props';
   styleUrls: ['./autarky-kpi.component.scss'],
 })
 export class AutarkyKPIComponent implements OnInit{
-  @Input() props: Props = {value: 75};
   autarkyKPI: number = 80;
   kpiName: KPI = KPI.AUTARKY;
 

@@ -1,0 +1,45 @@
+@import '/src/styles.scss';
+
+.period-picker .mat-calendar-period-button {
+    pointer-events: none !important;
+}
+
+.period-picker .mat-calendar-arrow {
+    display: none !important;
+}
+
+.period-picker .mat-calendar-content {
+    display: none !important;
+}
+  
+.period-picker.mat-datetimepicker-open .mat-calendar-content {
+    display: block !important;
+}
+
+#comparison-command-bar{
+    position: sticky;
+    z-index: 3000;
+    top: 0;
+    background-color: $background-color; 
+  }
+
+  .flex-container {
+    display: flex;
+    gap: 1%;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    margin-bottom: 1%;
+    
+  }
+
+
+  #granularity-selection{
+    margin-top: 1.3vh;
+    max-width: 10em;
+    min-width: 5em;
+  }
+
+
+
+

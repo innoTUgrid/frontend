@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { KpiService } from 'src/app/services/kpi.service';
 import { KPI } from 'src/app/types/kpi.model';
-import { Props } from 'src/app/types/props';
 
 @Component({
   selector: 'app-self-consumption-kpi',
@@ -9,9 +8,8 @@ import { Props } from 'src/app/types/props';
   styleUrls: ['./self-consumption-kpi.component.scss']
 })
 export class SelfConsumptionKPIComponent implements OnInit{
-  @Input() props: Props = {value: 75};
   selfConsumptionKPI: number = 0;
-  kpiName: KPI = KPI.AUTARKY;
+  kpiName: KPI = KPI.SELF_CONSUMPTION;
 
   constructor(private kpiService: KpiService) {}
 
