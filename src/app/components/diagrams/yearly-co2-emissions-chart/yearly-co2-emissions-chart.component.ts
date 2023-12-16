@@ -14,7 +14,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit {
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
 
-  lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-17').trim();
+  lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;

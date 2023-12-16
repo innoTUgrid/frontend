@@ -62,7 +62,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
         min: 0,
         max: 1,
         minorTickInterval: null,
-
+        visible: false,
         
         labels: {
             enabled: false,
