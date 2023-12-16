@@ -34,6 +34,23 @@ export class KpiService {
   hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
   pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
 
+  energyTypesToName = new Map([
+    ['biogas', 'Biogas'],
+    ['biomass', 'Biomass'],
+    ['other-renewables', 'Other Renewables'],
+    ['offwind', 'Offshore Wind'],
+    ['hydro', 'Hydro Power'],
+    ['onwind', 'Onshore Wind'],
+    ['solar', 'Solar'],
+    ['brown-coal', 'Brown Coal'],
+    ['natural-gas', 'Natural Gas'],
+    ['other-conventionals', 'Other Conventionals'],
+    ['hard-coal', 'Hard Coal'],
+    ['pump-storage', 'Pump Storage'],
+    ['coal', 'Coal'],
+    ['gas', 'Gas'],
+  ])
+
   constructor(private http: HttpClient) {
     this.timeSeriesData$$.subscribe((data: TimeSeriesDataDictionary) => { 
       for (const [key, value] of data) {
@@ -88,8 +105,10 @@ export class KpiService {
         let data: TimeSeriesDataPoint[];
         if (!series.has(entry.carrier_name)) {
           data = []
+          let name = this.energyTypesToName.get(entry.carrier_name)
+          if (!name) name = entry.carrier_name
           series.set(entry.carrier_name, {
-            name: entry.carrier_name,
+            name: name,
             type: entry.carrier_name,
             data: data
           })
@@ -137,11 +156,11 @@ export class KpiService {
             return this.biomassColor;
         case 'other-renewables':
             return this.otherRenewablesColor;
-        case 'wind-offshore':
+        case 'offwind':
             return this.windOffshoreColor;
-        case 'hydro-power':
+        case 'hydro':
             return this.hydroPowerColor;
-        case 'wind-onshore':
+        case 'onwind':
             return this.windOnshoreColor;
         case 'solar':
             return this.solarColor;
@@ -153,6 +172,8 @@ export class KpiService {
             return this.otherConventionalColor;
         case 'hard-coal':
             return this.hardCoalColor;
+        case 'coal':
+            return this.brownCoalColor;
         case 'pump-storage':
             return this.pumpStorageColor;
         default:
@@ -171,7 +192,7 @@ export class KpiService {
       const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
       for (const series of energy) {
         highchartsSeries.push({
-          name: this.splitDiagramTypeIfNeeded(series.type),
+          name: series.name,
           id: series.type, 
           data:series.data.map(entry => ([entry.time.getTime(), entry.value])),
           type: diagram.seriesType,
@@ -218,14 +239,6 @@ export class KpiService {
         diagram.updateFlag = true
       }
     });
-  }
-
-  splitDiagramTypeIfNeeded(type: string): string {
-    if (type.includes('-')) {
-      return type.split('-').join(' ');
-    } else {
-      return type;
-    }
   }
 
   updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
