@@ -5,6 +5,7 @@ import * as testData from './data/readKPIs.json';
 import { HttpClient } from '@angular/common/http';
 import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval, TimeSeriesData, KPIResult, TimeSeriesResult } from '../types/time-series-data.model';
 import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
+import moment from 'moment';
 
 import { environment } from '@env/environment';
 
@@ -18,7 +19,7 @@ export class KpiService {
   timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
   timeSeriesData$$:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new TimeSeriesDataDictionary());
 
-  timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-02-01T00:00:00.000Z"), step:1, stepUnit:"day"};
+  timeInterval:TimeInterval = {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T02:00:00.000Z"), step:1, stepUnit:"day"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
 
   biogasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
@@ -78,7 +79,7 @@ export class KpiService {
               time:new Date(), 
               value:kpiValue.value, 
               meta:{unit:kpiValue.unit? kpiValue.unit : undefined, consumption:true},
-              timeRange: {start:new Date(kpiValue.from_timestamp), end:new Date(kpiValue.to_timestamp), step:15, stepUnit:"minute"}
+              timeRange: {start: moment(kpiValue.from_timestamp), end: moment(kpiValue.to_timestamp), step:15, stepUnit:"minute"}
             }
           ]}
         ]]
@@ -135,8 +136,8 @@ export class KpiService {
   updateTimeInterval(timeInterval: TimeInterval): void {
     // only update valid values
     const newTimeInterval = {
-      start: (timeInterval.start && !isNaN(timeInterval.start.getTime())) ? timeInterval.start : this.timeInterval.start,
-      end: (timeInterval.end && !isNaN(timeInterval.end.getTime())) ? timeInterval.end : this.timeInterval.end,
+      start: (timeInterval.start.isValid()) ? timeInterval.start : this.timeInterval.start,
+      end: (timeInterval.end.isValid()) ? timeInterval.end : this.timeInterval.end,
       step: (timeInterval.step) ? timeInterval.step : this.timeInterval.step,
       stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : this.timeInterval.stepUnit,
     }
@@ -230,10 +231,10 @@ export class KpiService {
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
-        diagram.chart.xAxis[0].setExtremes(timeInterval.start.getTime(), timeInterval.end.getTime(), true, true);
+        diagram.chart.xAxis[0].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), true, true);
       } else { // this is only reachable for code that uses highcharts-angular
-        diagram.xAxis.min = timeInterval.start.getTime();
-        diagram.xAxis.max = timeInterval.end.getTime();
+        diagram.xAxis.min = timeInterval.start.toDate().getTime();
+        diagram.xAxis.max = timeInterval.end.toDate().getTime();
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.updateFlag = true
       }
@@ -264,18 +265,6 @@ export class KpiService {
 
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
       if (diagram.kpiName) this.fetchKPIData(diagram.kpiName, timeInterval)
-
-      // const kpiData = this.timeSeriesData.get(kpiName)
-      // if (!kpiData) {
-      //   return
-      // }
-
-      // if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${kpiName}`)
-      // const series = kpiData.map(entry => entry.data).flat()
-
-      // // filter out data that is not in the time interval
-      // const filteredSeries = series.filter(entry => entry.time >= timeInterval.start && entry.time <= timeInterval.end)
-      // this.updateSingleValue(filteredSeries, diagram, average)
     })
   }
 

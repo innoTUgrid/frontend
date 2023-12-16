@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 export type MetaData = {
   unit?: string;
   consumption?: boolean;
@@ -31,8 +32,8 @@ export type TimeSeriesResult = {
 
 export type TimeUnit = 'miliseconds' | 'seconds' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 export type TimeInterval = {
-  start: Date;
-  end: Date;
+  start: Moment;
+  end: Moment;
   step: number;
   stepUnit: TimeUnit;
 };
