@@ -18,11 +18,7 @@ export class CommandBarComponent {
   
   selectedGranularity: string = '';
 
-  startDate: Moment | null = null;
-  endDate: Moment | null = null;
-  singleDate: Moment | null = null;
-
-  timeInterval?: TimeInterval;
+  timeInterval!: TimeInterval;
   selectedView?: string | null;
 
 
@@ -31,29 +27,22 @@ export class CommandBarComponent {
   // last 31 day --> weeks, daily --> range, disabled
   //last year --> quarter, months --> range, disabled
 
-  applyFilters() {
+  applyFilters(singleDate?: boolean) {
     console.log('Recent period:', this.recentPeriodToDisplay);
     console.log('Granularity:', this.selectedGranularity);
-    console.log('Start Date:', this.startDate);
-    console.log('End Date:', this.endDate);
 
-    if (this.startDate && this.endDate) {
-      this.timeInterval = {
-        start:this.startDate,
-        end:this.endDate,
-        step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
-        stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
-      }
-      this.kpiService.timeInterval$$.next(this.timeInterval)
+    this.timeInterval = {
+      start: this.timeInterval.start.clone().startOf('day'), 
+      end: singleDate ? this.timeInterval.start.clone().endOf('day') : this.timeInterval.end.clone().endOf('day'),
+      step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
+      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
     }
+    this.kpiService.timeInterval$$.next(this.timeInterval)
   }
 
   resetFilters(){
     this.recentPeriodToDisplay='';
     this.selectedGranularity = '';
-    this.startDate = null;
-    this.endDate = null;
-    this.singleDate = null;
 
     // currently set as initial date in KPI service
     let timeInterval: TimeInterval = {
@@ -66,25 +55,11 @@ export class CommandBarComponent {
   }
 
   handleRecentPeriodInput() {
-    let today = moment();
-    switch(this.recentPeriodToDisplay) {
-      case 'today': this.setDateRange(today); break;
-      case 'last7Days': this.setDateRange(this.calculateStartDate(7), today); break;
-      case 'last31Days': this.setDateRange(this.calculateStartDate(31), today); break;
-      case 'lastYear': this.setDateRange(this.calculateStartDate(365), today); break;
-    }
-  }
-
-  calculateStartDate(daysAgo: number): Moment {
-    return moment().startOf('day').add(-daysAgo, 'days');
-  }
-
-  setDateRange(start: Moment, end?: Moment){
-    if(!end) this.singleDate = start;
-    else{
-      this.startDate = start;
-      this.endDate = end;
-    }
+    let today = moment().endOf('day');
+    let start = moment().startOf('day').subtract({ 'today': 0, 'last7Days': 7, 'last31Days': 31, 'lastYear': 365}[this.recentPeriodToDisplay], 'days');
+    this.timeInterval.start = start;
+    this.timeInterval.end = today;
+    this.kpiService.timeInterval$$.next(this.timeInterval);
   }
 
   isSingleDatepickerDisabled(): boolean {
@@ -95,9 +70,9 @@ export class CommandBarComponent {
 
   constructor(private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParams.subscribe(params => {
-      const timeInterval = {
-        start: moment(params['start']),
-        end: moment(params['end']),
+      const timeInterval: Partial<TimeInterval> = {
+        start: params['start'] ? moment(params['start']) : undefined,
+        end: params['start'] ? moment(params['end']) : undefined,
         step: +params['step'], // convert to number
         stepUnit: params['stepunit'] as TimeUnit
       };
@@ -108,8 +83,6 @@ export class CommandBarComponent {
     this.kpiService.timeInterval$$.subscribe(timeInterval => {
       if (timeInterval != this.timeInterval) {
         this.timeInterval = timeInterval;
-        this.startDate = timeInterval.start;
-        this.endDate = timeInterval.end;
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
       }
     });

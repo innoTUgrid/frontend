@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCommonModule, MatOptionModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatCommonModule, MatOptionModule } from '@angular/material/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { OverviewComponent } from './views/overview/overview.component';
 import { EnergyConsumptionDiagramComponent } from './components/diagrams/energy-consumption-diagram/energy-consumption-diagram.component';
@@ -130,8 +130,9 @@ import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-s
     MatDatepickerModule,
     MatMomentDateModule,
   ],
-  //entryComponents: [TableBasicExample],
-  providers: [],
+  providers: [
+     {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
