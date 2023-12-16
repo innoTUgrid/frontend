@@ -3,15 +3,11 @@ import * as Highcharts from 'highcharts';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import HC_noData from 'highcharts/modules/no-data-to-display';
-import HC_more from 'highcharts/highcharts-more'; // Import the highcharts-more module for gauge charts
+import HC_more from 'highcharts/highcharts-more'; 
 import { Options } from 'highcharts';
 import HC_solidGauge from 'highcharts/modules/solid-gauge';
 
-import customPlugin from './customPlugin';
-
-HC_more(Highcharts); // init highcharts-more
-customPlugin(Highcharts);
-
+//import customPlugin from './customPlugin';
 
 @Component({
   selector: 'app-gauge-series-co2-comparison',
@@ -24,15 +20,16 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
   updateFlag = false;
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    // Do something with the chart if needed
+   
   }
 
   constructor() {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
-    HC_more(Highcharts); // Initialize highcharts-more module
-    HC_solidGauge(Highcharts)
+    HC_more(Highcharts);
+    HC_solidGauge(Highcharts);
+    //customPlugin(Highcharts)
   }
 
   ngOnInit(): void {
@@ -40,7 +37,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
   }
 
   setChartData(): void {
-    // Set data dynamically based on your comparison logic
     const comparisonValue = 120;
 
     this.chartOptions = {
@@ -56,7 +52,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
         text: 'CO₂ Emissions of 2023 compared to 2022',
         margin: 20,
         style: {
-          fontSize: '1.2em',
+          fontSize: '0.95em',
         }
       },
       credits: {
@@ -88,10 +84,10 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
             if (valueNumber < 75) {
               color = '#55BF3B';
             } else if (valueNumber >= 75 && valueNumber <= 125) {
-              color = '#DDDF0D';
+              color = '#F8961E';
             }
   
-            return `<span style='color: ${color}'>${this.value} %</span>`;
+            return `<span style='font-family:"Lucida Grande, sans-serif"; font-size: 1.2em; font-weight: bold; color: ${color}'>${this.value} %</span>`;
           },
         },
         plotBands: [
@@ -104,7 +100,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
           {
             from: 76,
             to: 125,
-            color: '#dddf0d', // yellow
+            color: '#F8961E', // yellow
             thickness: 20,
           },
           {
@@ -116,7 +112,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
         ],
       },
       series: [{
-        type: 'gauge', // Add the 'type' property
+        type: 'gauge',
         name: 'CO₂ Emissions',
         data: [comparisonValue],
         tooltip: {
@@ -142,35 +138,10 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
             backgroundColor: 'gray',
             radius: 6
           }
-        } as any // Cast 'dial' to any
+        } as any
       }]
     };
 
     this.updateFlag = true;
   }
 }
-
-
-/**
- * {
-          backgroundColor: {
-            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 0 },
-            stops: [
-              [0, '#FFF'],
-              [1, '#FFF']
-            ]
-          },
-          borderWidth: 0,
-        
-        }, {
-        
-          borderWidth: 0,
-          
-        }, {
-          // default background
-        }, {
-          backgroundColor: 'white',
-          borderWidth: 0,
-         
-        }
- */
