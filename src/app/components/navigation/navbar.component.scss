@@ -11,6 +11,16 @@
     
 }
 
+.entry {
+    display: flex;
+    align-items: center;
+}
+
+.item-name {
+    text-wrap: wrap;
+
+}
+
 .mat-sidenav{
     background-color: $background-color;
     width: 15em;

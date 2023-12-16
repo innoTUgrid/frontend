@@ -13,8 +13,8 @@ export class NavbarComponent {
 
   public menuItems: MenuItem[] = [
     { name: 'Overview', icon: 'gallery_thumbnail', route: '/overview' },
-    { name: 'CO2 Emissions', icon: 'bubble_chart', route: '/co2emissions' },
-    { name: 'Comparison', icon: 'compare_arrows', route: '/comparison' },
+    { name: 'CO₂ Emissions', icon: 'bubble_chart', route: '/co2emissions' },
+    { name: 'CO₂ Emissions Comparison', icon: 'compare_arrows', route: '/comparison' },
     { name: 'Reporting', icon: 'assignment', route: '/reporting' },
     { name: 'Datasets', icon: 'dataset', route: '/datasets' },
     { name: 'Energy Flow', icon: 'timeline', route: '/energyflow' },
