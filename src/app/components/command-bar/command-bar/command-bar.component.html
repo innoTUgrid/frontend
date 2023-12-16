@@ -7,7 +7,7 @@
     <mat-button-toggle value="lastYear">Last year</mat-button-toggle>
   </mat-button-toggle-group>
   
-  <mat-form-field id="granularity-selection">
+  <mat-form-field id="granularity-selection" *ngIf="selectedView=='overview'">
     <mat-label>Granularity:</mat-label>
     <mat-select [(ngModel)]="selectedGranularity">
       <mat-option class="select-font" *ngFor="let granularity of sortedGranularities" [value]="granularity" [disabled]="!allowedGranularity.includes(granularity)">
