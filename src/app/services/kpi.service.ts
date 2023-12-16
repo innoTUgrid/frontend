@@ -132,7 +132,6 @@ export class KpiService {
       }
 
       newData.set(key, Array.from(series.values()))
-      console.log(timeSeriesResult)
       this.timeSeriesData$$.next(newData);
     });
   }
