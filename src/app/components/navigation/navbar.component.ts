@@ -18,7 +18,6 @@ export class NavbarComponent {
     { name: 'Reporting', icon: 'assignment', route: '/reporting' },
     { name: 'Datasets', icon: 'dataset', route: '/datasets' },
     { name: 'Energy Flow', icon: 'timeline', route: '/energyflow' },
-    { name: 'Add view', icon: 'add_circle', route: '/addview' }
   ];
 
   public menuItemsOrg: MenuItem[] = [
