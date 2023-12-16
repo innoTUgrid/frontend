@@ -9,12 +9,12 @@ h2{
 .diagram-container{
     display: flex;
     gap: min(5vh, 5vw);
-    height: 40%;
+    height: 47.5%;
     margin: 0 2em;
 }
 
 .title {
-  height: 10%;
+  height: 30px;
 }
 
 .page-container {
@@ -40,11 +40,10 @@ h2{
 @media (max-width: 1000px) {
   .diagram-container {
     flex-direction: column;
-    height: 100%;
+    height: auto;
   }
 
   .item {
     width: 100% !important;
-    height: 100vh !important;
   }
 }
