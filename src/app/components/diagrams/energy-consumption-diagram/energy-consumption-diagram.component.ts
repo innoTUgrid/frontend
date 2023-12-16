@@ -74,7 +74,8 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
       },
     },
     tooltip: {
-      valueSuffix: ' kWh'
+      valueSuffix: ' kWh',
+      valueDecimals: 2,
     },
     exporting: {
       enabled: true,

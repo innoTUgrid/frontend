@@ -77,11 +77,15 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
       }
     },
     credits: {enabled: false},
+    tooltip: {
+      valueSuffix: ' kg',
+      valueDecimals: 2, 
+    },
 
     xAxis: this.xAxis,
     yAxis: {
       title: {
-        text: 'CO2 Emissions',
+        text: 'CO2 Emissions (kg)',
       },
     },
     plotOptions: {
