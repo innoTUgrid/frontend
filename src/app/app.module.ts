@@ -63,6 +63,7 @@ import { EmissionsComparisonColumnChartComponent } from './components/diagrams/e
 import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-co2-emissions-chart/yearly-co2-emissions-chart.component';
 import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
 import { ScopeEmissionComparisionComponent } from './components/diagrams/scope-emission-comparision/scope-emission-comparision.component';
+import { LayoutModule } from '@angular/cdk/layout';
 
 
 @NgModule({
@@ -127,7 +128,7 @@ import { ScopeEmissionComparisionComponent } from './components/diagrams/scope-e
     HttpClientModule,
     FormsModule,
     PdfViewerModule,
-
+    LayoutModule,
     ReactiveFormsModule,
     MatDatepickerModule,
     MatMomentDateModule,

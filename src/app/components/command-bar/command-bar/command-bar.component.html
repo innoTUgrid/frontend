@@ -1,23 +1,33 @@
 <div id="command-bar" class="flex-container">
   
-  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (ngModelChange)="handleRecentPeriodInput()">
-    <mat-button-toggle value="today">Today</mat-button-toggle>
-    <mat-button-toggle value="last7Days">Last 7 days</mat-button-toggle>
-    <mat-button-toggle value="last31Days">Last 31 days</mat-button-toggle>
-    <mat-button-toggle value="lastYear">Last year</mat-button-toggle>
+  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (ngModelChange)="handleRecentPeriodInput()" *ngIf="granularityType == 'button'; else recentPeriodSelectionElse">
+      <mat-button-toggle *ngFor="let period of recentPeriodNames" [value]="period">
+        {{ period }}
+      </mat-button-toggle>
   </mat-button-toggle-group>
 
+  <ng-template #recentPeriodSelectionElse>
+    <mat-form-field id="recent-period-selection-else" subscriptSizing="dynamic">
+      <mat-label>Select period</mat-label>
+      <mat-select [(ngModel)]="recentPeriodToDisplay" (ngModelChange)="handleRecentPeriodInput()">
+        <mat-option class="select-font" *ngFor="let period of recentPeriodNames" [value]="period">
+          {{ period }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-template>
+
   
-  <mat-form-field id="granularity-selection" *ngIf="selectedView=='overview'">
+  <mat-form-field id="granularity-selection" *ngIf="selectedView=='overview'" subscriptSizing="dynamic">
     <mat-label>Granularity</mat-label>
-    <mat-select [(ngModel)]="selectedGranularity" (ngModelChange)="applyFilters()">
+    <mat-select [(ngModel)]="selectedGranularity" (ngModelChange)="setTimeInterval()">
       <mat-option class="select-font" *ngFor="let granularity of granularities" [value]="granularity">
         {{ granularity }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()">
+  <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()" subscriptSizing="dynamic">
     <mat-label>Enter a date range</mat-label>
     <mat-date-range-input [rangePicker]="pickerInterval">
       <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters()">
@@ -27,7 +37,7 @@
     <mat-date-range-picker #pickerInterval></mat-date-range-picker>
   </mat-form-field>
   
-  <mat-form-field id="single-date-selection" *ngIf="isSingleDatepickerDisabled()" >
+  <mat-form-field id="single-date-selection" *ngIf="isSingleDatepickerDisabled()" subscriptSizing="dynamic">
     <mat-label>Choose a date</mat-label>
     <input matInput [matDatepicker]="pickerDay" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters(true)">
     <mat-datepicker-toggle matIconSuffix [for]="pickerDay"></mat-datepicker-toggle>
