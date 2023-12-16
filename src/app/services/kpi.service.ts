@@ -59,6 +59,10 @@ export class KpiService {
       }
     })
 
+    this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+      this.timeInterval = timeInterval
+    })
+
     // read the object from the data/readKPIs.json file and load it into the time series data dictionary
     // this.loadTimeSeriesData();
   }
@@ -79,7 +83,7 @@ export class KpiService {
               time:new Date(), 
               value:kpiValue.value, 
               meta:{unit:kpiValue.unit? kpiValue.unit : undefined, consumption:true},
-              timeRange: {start: moment(kpiValue.from_timestamp), end: moment(kpiValue.to_timestamp), step:15, stepUnit:"minute"}
+              timeRange: {start: moment(kpiValue.from_timestamp), end: moment(kpiValue.to_timestamp), step:timeInterval.step, stepUnit:timeInterval.stepUnit}
             }
           ]}
         ]]
@@ -128,6 +132,7 @@ export class KpiService {
       }
 
       newData.set(key, Array.from(series.values()))
+      console.log(timeSeriesResult)
       this.timeSeriesData$$.next(newData);
     });
   }
