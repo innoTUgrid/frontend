@@ -19,7 +19,8 @@ export class CommandBarComponent {
   endDate: Date | null = null;
   singleDate: Date | null = null;
 
-  timeInterval?: TimeInterval
+  timeInterval?: TimeInterval;
+  selectedView?: string | null;
 
   // today --> granularity: only allowed hour --> current day, disabled
   // last 7 day --> daily, hourly --> last week range, disabled
@@ -113,5 +114,9 @@ export class CommandBarComponent {
   }
 
   ngOnInit(): void {
+    const currentRoute = this.activatedRoute.snapshot.url;
+    this.selectedView = currentRoute[currentRoute.length - 1].path;
+
+    console.log(this.selectedView);
   }
 }
