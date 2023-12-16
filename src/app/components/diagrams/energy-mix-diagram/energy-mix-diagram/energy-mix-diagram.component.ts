@@ -68,7 +68,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
       
     },
     title: {
-      text: 'Energy-mix',
+      text: 'Energy Mix',
       align: 'center',
       style: {
         fontSize: '1em',
