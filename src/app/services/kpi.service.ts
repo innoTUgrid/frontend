@@ -18,7 +18,7 @@ export class KpiService {
   timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
   timeSeriesData$$:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new TimeSeriesDataDictionary());
 
-  timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-01-01T02:00:00.000Z"), step:1, stepUnit:"hour"};
+  timeInterval:TimeInterval = {start:new Date("2019-01-01T00:00:00.000Z"), end:new Date("2019-02-01T00:00:00.000Z"), step:1, stepUnit:"day"};
   timeInterval$$:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>(this.timeInterval);
 
   biogasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
@@ -128,7 +128,6 @@ export class KpiService {
 
       newData.set(key, Array.from(series.values()))
       this.timeSeriesData$$.next(newData);
-      console.log(newData)
     });
   }
 
