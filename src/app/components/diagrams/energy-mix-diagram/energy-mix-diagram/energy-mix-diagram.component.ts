@@ -36,6 +36,8 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   constructor(kpiService: KpiService) {
     this.kpiService = kpiService;
     this.kpiService.subscribeSeries(this);
+
+    if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
 
   set updateFlag(value: boolean) {
@@ -61,6 +63,14 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
+  }
+
+  toggleSeries: Highcharts.ExportingButtonsOptionsObject = {
+    // change button text between consumption end emissions when it is clicked
+    onclick: () => {
+      if (this.kpiName == KPI.SCOPE_2_EMISSIONS) this.changeSeriesType(KPI.ENERGY_CONSUMPTION);
+      else this.changeSeriesType(KPI.SCOPE_2_EMISSIONS);
+    }
   }
 
   chartProperties: Highcharts.Options = {
@@ -94,7 +104,21 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
         stacking: 'normal',
       }
     },
+    exporting: {
+      enabled: true,
+      buttons: {
+        toggleSeries: this.toggleSeries
+      }
+    },
   };
+
+  changeSeriesType(kpi: KPI) {
+    this.kpiName = kpi;
+
+    this.toggleSeries.text = this.kpiName == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
+    this.chart?.update(this.chartProperties, true, true, true);
+    this.kpiService.fetchTimeSeriesData(this.kpiName, this.kpiService.timeInterval)
+  }
 
   private initChart() {
     this.chart = Highcharts.chart(this.chartProperties);

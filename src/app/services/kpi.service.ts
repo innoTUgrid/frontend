@@ -88,7 +88,7 @@ export class KpiService {
     });
   }
 
-  fetchTimeSeriesData(key: string, timeInterval: TimeInterval) {
+  async fetchTimeSeriesData(key: string, timeInterval: TimeInterval) {
     const url = `${environment.apiUrl}/v1/kpi/${key}/`;
     this.http.get<TimeSeriesResult[]>(url, {
       params: {
