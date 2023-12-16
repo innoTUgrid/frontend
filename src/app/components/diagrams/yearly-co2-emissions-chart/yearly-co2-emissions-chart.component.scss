@@ -1,5 +1,10 @@
 #yearly-co2-emissions-chart{
     display: block; 
-    width: 50vw; 
     height: 35vh;
+    width: 48vw;
+    position: absolute;
+    left: 1vw;
+    top: 2vh;
+    min-width: fit-content;
+    min-width: 25em !important;
 }
