@@ -18,7 +18,7 @@ export class EnergyFlowDiagramComponent {
 
     chartProperties: Highcharts.Options = {
         title: {
-            text: 'Electricity Flow with share of different energy sources'
+            text: 'Electricity Flow with the Share of Different Energy Sources'
         },
         accessibility: {
             point: {
@@ -88,21 +88,6 @@ export class EnergyFlowDiagramComponent {
                 { from: 'Microgrid 1', to: 'Total Consumption', weight: 10, colorIndex: 3},
                 { from: 'Microgrid 2', to: 'Total Consumption', weight: 10, colorIndex: 3},
                 { from: 'Microgrid 3', to: 'Total Consumption', weight: 10, colorIndex: 3},
-                // { from: 'Total Consumption', to: 'Consumer 1', weight: 2 },
-                // { from: 'Total Consumption', to: 'Consumer 2', weight: 6 },
-                // { from: 'Total Consumption', to: 'Consumer 3', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 4', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 5', weight: 2 },
-                // { from: 'Total Consumption', to: 'Consumer 6', weight: 2 },
-                // { from: 'Total Consumption', to: 'Consumer 7', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 8', weight: 4 },
-                // { from: 'Total Consumption', to: 'Consumer 9', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 10', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 11', weight: 3 },
-                // { from: 'Total Consumption', to: 'Consumer 12', weight: 2 },
-                // { from: 'Total Consumption', to: 'Consumer 13', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 14', weight: 1 },
-                // { from: 'Total Consumption', to: 'Consumer 15', weight: 2 },
             ],
             type: 'sankey',
             name: 'Energy Flow'
