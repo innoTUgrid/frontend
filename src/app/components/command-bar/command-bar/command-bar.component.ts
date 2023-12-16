@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { KpiService } from 'src/app/services/kpi.service';
 import {Granularity} from 'src/app/types/granularity.model'
@@ -14,46 +14,33 @@ export class CommandBarComponent {
   kpiService: KpiService = inject(KpiService)
 
   granularities = Object.values(Granularity);
-  recentPeriodToDisplay='';
   
   selectedGranularity: string = '';
 
-  startDate: Moment | null = null;
-  endDate: Moment | null = null;
-  singleDate: Moment | null = null;
-
-  timeInterval?: TimeInterval;
+  timeInterval!: TimeInterval;
   selectedView?: string | null;
 
+  recentPeriods: {[k: string]: number} = { 'today': 0, 'last7Days': 7, 'last31Days': 31, 'lastYear': 365};
+  recentPeriodToDisplay = '';
 
-  // today --> granularity: only allowed hour --> current day, disabled
-  // last 7 day --> daily, hourly --> last week range, disabled
-  // last 31 day --> weeks, daily --> range, disabled
-  //last year --> quarter, months --> range, disabled
-
-  applyFilters() {
-    console.log('Recent period:', this.recentPeriodToDisplay);
-    console.log('Granularity:', this.selectedGranularity);
-    console.log('Start Date:', this.startDate);
-    console.log('End Date:', this.endDate);
-
-    if (this.startDate && this.endDate) {
-      this.timeInterval = {
-        start:this.startDate,
-        end:this.endDate,
-        step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
-        stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
-      }
-      this.kpiService.timeInterval$$.next(this.timeInterval)
+  applyFilters(singleDate?: boolean) {
+    this.timeInterval = {
+      start: this.timeInterval.start.clone().startOf('day'), 
+      end: singleDate ? this.timeInterval.start.clone().endOf('day') : this.timeInterval.end.clone().endOf('day'),
+      step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
+      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
     }
+    // set recent period
+    this.recentPeriodToDisplay = '';
+    if (this.timeInterval.end.isSame(moment().endOf('day'))) {
+      const diff = this.timeInterval.end.diff(this.timeInterval.start, 'days');
+      this.recentPeriodToDisplay = Object.entries(this.recentPeriods).find(([key, value]) => value == diff)?.[0] || '';
+    }
+    this.kpiService.timeInterval$$.next(this.timeInterval);
   }
 
   resetFilters(){
-    this.recentPeriodToDisplay='';
     this.selectedGranularity = '';
-    this.startDate = null;
-    this.endDate = null;
-    this.singleDate = null;
 
     // currently set as initial date in KPI service
     let timeInterval: TimeInterval = {
@@ -66,25 +53,11 @@ export class CommandBarComponent {
   }
 
   handleRecentPeriodInput() {
-    let today = moment();
-    switch(this.recentPeriodToDisplay) {
-      case 'today': this.setDateRange(today); break;
-      case 'last7Days': this.setDateRange(this.calculateStartDate(7), today); break;
-      case 'last31Days': this.setDateRange(this.calculateStartDate(31), today); break;
-      case 'lastYear': this.setDateRange(this.calculateStartDate(365), today); break;
-    }
-  }
-
-  calculateStartDate(daysAgo: number): Moment {
-    return moment().startOf('day').add(-daysAgo, 'days');
-  }
-
-  setDateRange(start: Moment, end?: Moment){
-    if(!end) this.singleDate = start;
-    else{
-      this.startDate = start;
-      this.endDate = end;
-    }
+    let today = moment().endOf('day');
+    let start = moment().startOf('day').subtract(this.recentPeriods[this.recentPeriodToDisplay], 'days');
+    this.timeInterval.start = start;
+    this.timeInterval.end = today;
+    this.kpiService.timeInterval$$.next(this.timeInterval);
   }
 
   isSingleDatepickerDisabled(): boolean {
@@ -95,9 +68,9 @@ export class CommandBarComponent {
 
   constructor(private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParams.subscribe(params => {
-      const timeInterval = {
-        start: moment(params['start']),
-        end: moment(params['end']),
+      const timeInterval: Partial<TimeInterval> = {
+        start: params['start'] ? moment(params['start']) : undefined,
+        end: params['start'] ? moment(params['end']) : undefined,
         step: +params['step'], // convert to number
         stepUnit: params['stepunit'] as TimeUnit
       };
@@ -108,8 +81,6 @@ export class CommandBarComponent {
     this.kpiService.timeInterval$$.subscribe(timeInterval => {
       if (timeInterval != this.timeInterval) {
         this.timeInterval = timeInterval;
-        this.startDate = timeInterval.start;
-        this.endDate = timeInterval.end;
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
       }
     });

@@ -1,6 +1,6 @@
 <div id="command-bar" class="flex-container">
   
-  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (click)="handleRecentPeriodInput()">
+  <mat-button-toggle-group id="recent-period-selection" [(ngModel)]="recentPeriodToDisplay" (ngModelChange)="handleRecentPeriodInput()">
     <mat-button-toggle value="today">Today</mat-button-toggle>
     <mat-button-toggle value="last7Days">Last 7 days</mat-button-toggle>
     <mat-button-toggle value="last31Days">Last 31 days</mat-button-toggle>
@@ -20,8 +20,8 @@
   <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()">
     <mat-label>Enter a date range</mat-label>
     <mat-date-range-input [rangePicker]="pickerInterval">
-      <input matStartDate placeholder="Start date" [(ngModel)]="startDate" (ngModelChange)="applyFilters()">
-      <input matEndDate placeholder="End date" [(ngModel)]="endDate" (ngModelChange)="applyFilters()">
+      <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters()">
+      <input matEndDate placeholder="End date" [(ngModel)]="timeInterval.end" (ngModelChange)="applyFilters()">
     </mat-date-range-input>
     <mat-datepicker-toggle matIconSuffix [for]="pickerInterval"></mat-datepicker-toggle>
     <mat-date-range-picker #pickerInterval></mat-date-range-picker>
@@ -29,7 +29,7 @@
   
   <mat-form-field id="single-date-selection" *ngIf="isSingleDatepickerDisabled()" >
     <mat-label>Choose a date</mat-label>
-    <input matInput [matDatepicker]="pickerDay" [(ngModel)]="singleDate">
+    <input matInput [matDatepicker]="pickerDay" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters(true)">
     <mat-datepicker-toggle matIconSuffix [for]="pickerDay"></mat-datepicker-toggle>
     <mat-datepicker #pickerDay></mat-datepicker>
   </mat-form-field>

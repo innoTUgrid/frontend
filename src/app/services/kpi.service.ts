@@ -138,11 +138,11 @@ export class KpiService {
   }
 
 
-  updateTimeInterval(timeInterval: TimeInterval): void {
+  updateTimeInterval(timeInterval: Partial<TimeInterval>): void {
     // only update valid values
     const newTimeInterval = {
-      start: (timeInterval.start.isValid()) ? timeInterval.start : this.timeInterval.start,
-      end: (timeInterval.end.isValid()) ? timeInterval.end : this.timeInterval.end,
+      start: (timeInterval.start?.isValid()) ? timeInterval.start : this.timeInterval.start,
+      end: (timeInterval.end?.isValid()) ? timeInterval.end : this.timeInterval.end,
       step: (timeInterval.step) ? timeInterval.step : this.timeInterval.step,
       stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : this.timeInterval.stepUnit,
     }
