@@ -65,6 +65,12 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     },
   }
 
+  yAxis: Highcharts.YAxisOptions = {
+    title: {
+      text: 'CO₂ Emissions (kg)',
+    },
+  }
+
   toggleSeries: Highcharts.ExportingButtonsOptionsObject = {
     // change button text between consumption end emissions when it is clicked
     onclick: () => {
@@ -93,11 +99,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     },
 
     xAxis: this.xAxis,
-    yAxis: {
-      title: {
-        text: 'CO2 Emissions (kg)',
-      },
-    },
+    yAxis: this.yAxis,
     plotOptions: {
       area: {
         dataGrouping: this.dataGrouping,
@@ -116,6 +118,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     this.kpiName = kpi;
 
     this.toggleSeries.text = this.kpiName == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
+    if (this.yAxis.title) this.yAxis.title.text = this.kpiName == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.chart?.update(this.chartProperties, true, true, true);
     this.kpiService.fetchTimeSeriesData(this.kpiName, this.kpiService.timeInterval)
   }
