@@ -106,7 +106,7 @@ export class CommandBarComponent {
         start: new Date(params['start']),
         end: new Date(params['end']),
         step: +params['step'], // convert to number
-        stepUnit: params['stepUnit'] as TimeUnit
+        stepUnit: params['stepunit'] as TimeUnit
       };
 
       this.kpiService.updateTimeInterval(timeInterval);

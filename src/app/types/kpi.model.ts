@@ -1,9 +1,18 @@
 export enum KPI {
-    ENERGY_CONSUMPTION = "energyConsumption",
+    ENERGY_CONSUMPTION = "consumption",
     AUTARKY = "autarky",
+    SELF_CONSUMPTION = "self_consumption",
+    COST_SAVINGS = "cost_savings",
+    CO2_SAVINGS = "co2_savings",
+    SCOPE_2_EMISSIONS = "scope_two_emissions",
 }
 
-export interface HighchartsDiagram {
+export interface DataSubscription {
+    onSeriesUpdate?: () => void
+    kpiName?: KPI
+}
+
+export interface HighchartsDiagram extends DataSubscription {
     chart: Highcharts.Chart|undefined
     chartProperties: Highcharts.Options
     xAxis: Highcharts.XAxisOptions
@@ -11,10 +20,9 @@ export interface HighchartsDiagram {
     updateFlag: boolean
     seriesType: SeriesTypes
     colors: string[]
-    onSeriesUpdate?: () => void
 }
 
-export interface SingleValueDiagram {
+export interface SingleValueDiagram extends DataSubscription {
     value: number
 }
 

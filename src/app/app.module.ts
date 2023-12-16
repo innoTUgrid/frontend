@@ -33,6 +33,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
+import { HttpClientModule } from '@angular/common/http';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-view.component';
@@ -114,6 +115,7 @@ import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-s
     MatButtonToggleModule, 
     MtxPopoverModule,
     MatGridListModule,
+    HttpClientModule,
     FormsModule,
     PdfViewerModule,
 

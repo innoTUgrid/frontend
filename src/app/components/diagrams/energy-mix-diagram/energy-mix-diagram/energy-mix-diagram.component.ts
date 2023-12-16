@@ -30,10 +30,12 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   chart: Highcharts.Chart | undefined;
   colors: string[] = [this.solarColor, this.windColor, this.biogasColor, this.color3, this.color4];
   seriesType: SeriesTypes = 'area';
+
+  kpiName?: KPI = KPI.SCOPE_2_EMISSIONS;
   
   constructor(kpiService: KpiService) {
     this.kpiService = kpiService;
-    this.kpiService.subscribeSeries(this, KPI.ENERGY_CONSUMPTION);
+    this.kpiService.subscribeSeries(this);
   }
 
   set updateFlag(value: boolean) {

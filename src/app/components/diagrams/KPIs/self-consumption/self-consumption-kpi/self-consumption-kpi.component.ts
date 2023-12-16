@@ -9,7 +9,7 @@ import { KPI } from 'src/app/types/kpi.model';
 })
 export class SelfConsumptionKPIComponent implements OnInit{
   selfConsumptionKPI: number = 0;
-  kpiName: KPI = KPI.AUTARKY;
+  kpiName: KPI = KPI.SELF_CONSUMPTION;
 
   constructor(private kpiService: KpiService) {}
 
