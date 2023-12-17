@@ -60,9 +60,9 @@ export class CommandBarComponent {
     // currently set as initial date in KPI service
     let timeInterval: TimeInterval = {
       start: moment("2019-01-01T00:00:00.000Z"),
-      end: moment("2019-01-01T02:00:00.000Z"),
+      end: moment("2019-02-01T00:00:00.000Z"),
       step: 1,
-      stepUnit: "hour"
+      stepUnit: "day"
     }
     this.kpiService.timeInterval$$.next(timeInterval)
   }

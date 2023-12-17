@@ -71,8 +71,8 @@ export class KpiService {
     const url = `${environment.apiUrl}/v1/kpi/${kpi}/`;
     this.http.get<KPIResult>(url, {
       params: {
-        start: timeInterval.start.toISOString(),
-        end: timeInterval.end.toISOString(),
+        from: timeInterval.start.toISOString(),
+        to: timeInterval.end.toISOString(),
       }
     })
     .subscribe((kpiValue) => {
