@@ -5,6 +5,7 @@ import SolidGauge from 'highcharts/modules/solid-gauge';
 import NoData from 'highcharts/modules/no-data-to-display'
 import { KpiService } from 'src/app/services/kpi.service';
 import { HighchartsDiagram, KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
+import { Subscription } from 'rxjs';
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
 NoData(Highcharts);
@@ -27,6 +28,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     }
 
     _kpiName?: KPI;
+    subscriptions: Subscription[] = [];
 
     @Input() set kpiName(value: KPI | undefined) {
         this._kpiName = value;
@@ -118,7 +120,8 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
             background: [{ // Track for Conversion
                 outerRadius: '112%',
                 innerRadius: '88%',
-                borderWidth: 0
+                borderWidth: 0,
+                backgroundColor: '#F5F5F5',
             }]
         },
 
@@ -174,8 +177,12 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
         }
     }
 
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+    
     constructor() {
-        this.kpiService.subscribeSingleValueDiagram(this);
+        this.subscriptions = this.kpiService.subscribeSingleValueDiagram(this);
     }
     
 }

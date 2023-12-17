@@ -6,6 +6,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsData from 'highcharts/modules/data';
 import HighchartsAccessibility from 'highcharts/modules/accessibility';
 import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
+import { Subscription } from 'rxjs';
 
 
 
@@ -33,9 +34,11 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
 
   kpiName?: KPI = KPI.SCOPE_2_EMISSIONS;
   
+  subscriptions: Subscription[] = [];
+
   constructor(kpiService: KpiService) {
     this.kpiService = kpiService;
-    this.kpiService.subscribeSeries(this);
+    this.subscriptions = this.kpiService.subscribeSeries(this);
 
     if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
@@ -48,6 +51,10 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   ngOnInit() {
     this.initChart();
 
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {
@@ -115,20 +122,17 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   };
 
   changeSeriesType(kpi: KPI) {
-    this.kpiName = kpi;
-
-    this.toggleSeries.text = this.kpiName == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
-    if (this.yAxis.title) this.yAxis.title.text = this.kpiName == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
+    this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
+    if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.chart?.update(this.chartProperties, true, true, true);
-    this.kpiService.fetchTimeSeriesData(this.kpiName, this.kpiService.timeInterval)
+    if (kpi !== this.kpiName) this.kpiService.fetchTimeSeriesData(kpi, this.kpiService.timeInterval)
+    
+    this.kpiName = kpi;
   }
 
   private initChart() {
     this.chart = Highcharts.chart(this.chartProperties);
   }
-  
-  
-  
 
 }
 

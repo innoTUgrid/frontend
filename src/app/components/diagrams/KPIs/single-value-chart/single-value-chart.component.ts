@@ -1,5 +1,6 @@
 
 import { Component, Input, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { KpiService } from 'src/app/services/kpi.service';
 import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
 
@@ -40,7 +41,16 @@ export class SingleValueChartComponent implements SingleValueDiagram {
     return this._kpiName;
   }
 
+  subscriptions: Subscription[] = [];
+
+  ngOnInit() {
+  }
+  
+  ngOnDestroy() {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+  
   constructor() {
-    this.kpiService.subscribeSingleValueDiagram(this, false);
+    this.subscriptions = this.kpiService.subscribeSingleValueDiagram(this, false);
   }
 }

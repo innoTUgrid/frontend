@@ -187,7 +187,7 @@ export class KpiService {
 
 
   subscribeSeries(diagram: HighchartsDiagram) {
-    this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+    const s1 = this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
       if (!energy) {
         return
@@ -219,7 +219,7 @@ export class KpiService {
       }
     });
 
-    this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+    const s2 = this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
       if (diagram.kpiName) {
         this.fetchTimeSeriesData(diagram.kpiName, timeInterval)
       }
@@ -243,6 +243,8 @@ export class KpiService {
         diagram.updateFlag = true
       }
     });
+
+    return [s1, s2]
   }
 
   updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
@@ -255,7 +257,7 @@ export class KpiService {
   }
 
   subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
-    this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+    const s1 = this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
       const kpiData = (diagram.kpiName) ? data.get(diagram.kpiName) : undefined
       if (!kpiData) {
         return
@@ -267,9 +269,11 @@ export class KpiService {
       this.updateSingleValue(series, diagram, average)
     });
 
-    this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
+    const s2 = this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
       if (diagram.kpiName) this.fetchKPIData(diagram.kpiName, timeInterval)
     })
+
+    return [s1, s2]
   }
 
   loadTimeSeriesData():void {

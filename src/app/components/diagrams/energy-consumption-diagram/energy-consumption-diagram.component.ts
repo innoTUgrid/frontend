@@ -6,6 +6,7 @@ import HC_noData from 'highcharts/modules/no-data-to-display'
 import { KpiService } from 'src/app/services/kpi.service';
 import { TimeSeriesDataDictionary } from 'src/app/types/time-series-data.model';
 import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -17,6 +18,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   kpiService: KpiService = inject(KpiService);
   kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
+  subscriptions: Subscription[] = [];
 
   chart: Highcharts.Chart|undefined
   seriesType: SeriesTypes = 'column';
@@ -47,10 +49,10 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   }
 
   plotLines: Highcharts.YAxisPlotLinesOptions = {
-    color: '#FF0000',
     width: 2,
     value: 0,
     zIndex: 5,
+    color: '#FF0000',
   }
 
   chartProperties: Highcharts.Options = {
@@ -105,7 +107,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
         this.plotLines.value = sum
         this.chart.update({
           yAxis: {
-
+            color: '#FF0000',
             plotLines: [this.plotLines]
           }
         }, true, true, true)
@@ -117,14 +119,15 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     this.updateAverageLine()
   }
 
-  ngOnInit(): void {
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
   
   constructor() {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
-    this.kpiService.subscribeSeries(this);
+    this.subscriptions = this.kpiService.subscribeSeries(this);
   }
 
 }

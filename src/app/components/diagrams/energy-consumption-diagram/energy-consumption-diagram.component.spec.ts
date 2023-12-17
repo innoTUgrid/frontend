@@ -1,16 +1,16 @@
-/*import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProductionConsumptionDiagramComponent } from './energy-consumption-diagram.component';
+import { EnergyConsumptionDiagramComponent } from './energy-consumption-diagram.component';
 
 describe('ProductionConsumptionDiagramComponent', () => {
-  let component: ProductionConsumptionDiagramComponent;
-  let fixture: ComponentFixture<ProductionConsumptionDiagramComponent>;
+  let component: EnergyConsumptionDiagramComponent;
+  let fixture: ComponentFixture<EnergyConsumptionDiagramComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ProductionConsumptionDiagramComponent]
+      declarations: [EnergyConsumptionDiagramComponent]
     });
-    fixture = TestBed.createComponent(ProductionConsumptionDiagramComponent);
+    fixture = TestBed.createComponent(EnergyConsumptionDiagramComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -18,4 +18,4 @@ describe('ProductionConsumptionDiagramComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-});*/
+});
