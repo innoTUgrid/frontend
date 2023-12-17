@@ -78,28 +78,29 @@ $hc-year-comparison-chart: #6494dc; // has to be inserted in emissions compariso
 $hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions comparison chart 
 
 :root {
-    --highcharts-color-0: #{$hc-biogas} !important;
-    --highcharts-color-1: #{$hc-biomas} !important;
-    --highcharts-color-2: #{$hc-other-renewables} !important;
-    --highcharts-color-3: #{$hc-wind-offshore} !important;
-    --highcharts-color-4: #{$hc-hydro-power} !important;
-    --highcharts-color-5: #{$hc-wind-onshore} !important;
-    --highcharts-color-6: #{$hc-solar} !important;
-    --highcharts-color-7: #{$hc-brown-coal} !important;
-    --highcharts-color-8: #{$hc-natural-gas} !important;
-    --highcharts-color-9: #{$hc-other-conventionals} !important;
-    --highcharts-color-10: #{$hc-hard-coal} !important;
-    --highcharts-color-11: #{$hc-pump-storage} !important;
-    --highcharts-color-12: #{$hc-orange-light} !important;
-    --highcharts-color-13:#{$hc-orange-medium} !important;
-    --highcharts-color-14: #{$hc-orange-dark} !important;
-    --highcharts-color-15: #{$hc-red} !important;
-    --highcharts-color-16: #{$hc-year-shadow-comparison-chart} !important;
-    --highcharts-color-17: #{$hc-year-comparison-chart} !important;
-    --highcharts-color-18: #{$hc-mean-comparison-chart} !important;
+    --highcharts-color-0: #{$hc-biogas};
+    --highcharts-color-1: #{$hc-biomas};
+    --highcharts-color-2: #{$hc-other-renewables};
+    --highcharts-color-3: #{$hc-wind-offshore};
+    --highcharts-color-4: #{$hc-hydro-power};
+    --highcharts-color-5: #{$hc-wind-onshore};
+    --highcharts-color-6: #{$hc-solar};
+    --highcharts-color-7: #{$hc-brown-coal};
+    --highcharts-color-8: #{$hc-natural-gas};
+    --highcharts-color-9: #{$hc-other-conventionals};
+    --highcharts-color-10: #{$hc-hard-coal};
+    --highcharts-color-11: #{$hc-pump-storage};
+    --highcharts-color-12: #{$hc-orange-light};
+    --highcharts-color-13:#{$hc-orange-medium};
+    --highcharts-color-14: #{$hc-orange-dark};
+    --highcharts-color-15: #{$hc-red};
+    --highcharts-color-16: #{$hc-year-shadow-comparison-chart};
+    --highcharts-color-17: #{$hc-year-comparison-chart};
+    --highcharts-color-18: #{$hc-mean-comparison-chart};
 
     // this is currently only used for the average line in column charts
     --highcharts-neutral-color-40: #ff0000; 
+    // --highcharts-neutral-color-100: #ff0000;
 }
 
 
