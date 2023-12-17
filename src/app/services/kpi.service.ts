@@ -50,6 +50,7 @@ export class KpiService {
     ['pump-storage', 'Pump Storage'],
     ['coal', 'Coal'],
     ['gas', 'Gas'],
+    ['imported', 'Imported Energy']
   ])
 
   constructor(private http: HttpClient) {
@@ -108,17 +109,18 @@ export class KpiService {
 
       for (const entry of timeSeriesResult) {
         let data: TimeSeriesDataPoint[];
-        if (!series.has(entry.carrier_name)) {
+        const carrier = (key == KPI.ENERGY_CONSUMPTION && !entry.local) ? 'imported' : entry.carrier_name
+        if (!series.has(carrier)) {
           data = []
-          let name = this.energyTypesToName.get(entry.carrier_name)
-          if (!name) name = entry.carrier_name
-          series.set(entry.carrier_name, {
+          let name = this.energyTypesToName.get(carrier)
+          if (!name) name = carrier
+          series.set(carrier, {
             name: name,
-            type: entry.carrier_name,
+            type: carrier,
             data: data
           })
         } else {
-          data = series.get(entry.carrier_name)?.data as TimeSeriesDataPoint[];
+          data = series.get(carrier)?.data as TimeSeriesDataPoint[];
         }
 
         data.push({
@@ -180,6 +182,8 @@ export class KpiService {
             return this.brownCoalColor;
         case 'pump-storage':
             return this.pumpStorageColor;
+        case 'imported':
+            return this.otherConventionalColor;
         default:
             return '';
     }
@@ -195,14 +199,15 @@ export class KpiService {
 
       const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
       for (const series of energy) {
+        const color = this.defineColors(series.type)
         highchartsSeries.push({
           name: series.name,
           id: series.type, 
           data:series.data.map(entry => ([entry.time.getTime(), entry.value])),
           type: diagram.seriesType,
-          color: this.defineColors(series.type),
+          color: color,
           marker:{
-            lineColor: this.defineColors(series.type),
+            lineColor: color,
           },
         })
       }

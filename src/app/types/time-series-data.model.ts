@@ -26,6 +26,7 @@ export type KPIResult = {
 export type TimeSeriesResult = {
   bucket: string;
   carrier_name: string;
+  local: boolean;
   value: number;
   unit: string;
 }
