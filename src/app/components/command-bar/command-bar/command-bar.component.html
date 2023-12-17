@@ -18,7 +18,7 @@
   </ng-template>
 
   
-  <mat-form-field id="granularity-selection" *ngIf="selectedView=='overview'" subscriptSizing="dynamic">
+  <mat-form-field id="granularity-selection" *ngIf="enableGranularitySelection" subscriptSizing="dynamic">
     <mat-label>Granularity</mat-label>
     <mat-select [(ngModel)]="selectedGranularity" (ngModelChange)="setTimeInterval()">
       <mat-option class="select-font" *ngFor="let granularity of granularities" [value]="granularity">

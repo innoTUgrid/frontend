@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { KpiService } from 'src/app/services/kpi.service';
 import {Granularity} from 'src/app/types/granularity.model'
@@ -26,6 +26,8 @@ export class CommandBarComponent {
   recentPeriodNames: string[] = Object.entries(this.recentPeriods).sort((a, b) => a[1] - b[1]).map(([key, value]) => key);
   recentPeriodToDisplay = '';
   granularityType: 'select' | 'button' = 'button';
+
+  @Input() enableGranularitySelection: boolean = true;
 
   applyFilters(singleDate?: boolean) {
     const diff = this.timeInterval.end.diff(this.timeInterval.start, 'days');
