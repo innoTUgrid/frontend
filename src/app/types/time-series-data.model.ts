@@ -1,11 +1,19 @@
 import { Moment } from 'moment';
-export type MetaData = {
-  unit?: string;
-  consumption?: boolean;
-}
+
 // integrate a property that describes for what time range a single data point is representative
-export type TimeSeriesDataPoint = {time:Date, value:number, meta?:MetaData, timeRange?: TimeInterval};
-export type TimeSeriesData = {name:string, type:string, data:TimeSeriesDataPoint[]};
+export type TimeSeriesDataPoint = {
+  time:Date, 
+  value:number, 
+  timeRange?: TimeInterval,
+};
+export type TimeSeriesData = {
+  name:string, 
+  type:string, 
+  data:TimeSeriesDataPoint[]
+  unit?: string,
+  consumption?: boolean,
+  local?: boolean,
+};
 
 export class TimeSeriesDataDictionary extends Map<string, TimeSeriesData[]> {
   constructor(iterable?: Iterable<[string, TimeSeriesData[]]>) {

@@ -50,7 +50,6 @@ export class KpiService {
     ['pump-storage', 'Pump Storage'],
     ['coal', 'Coal'],
     ['gas', 'Gas'],
-    ['imported', 'Imported Energy']
   ])
 
   constructor(private http: HttpClient) {
@@ -83,10 +82,12 @@ export class KpiService {
             {
               time:new Date(), 
               value:kpiValue.value, 
-              meta:{unit:kpiValue.unit? kpiValue.unit : undefined, consumption:true},
               timeRange: {start: moment(kpiValue.from_timestamp), end: moment(kpiValue.to_timestamp), step:timeInterval.step, stepUnit:timeInterval.stepUnit}
             }
-          ]}
+          ],
+          unit:kpiValue.unit? kpiValue.unit : undefined, 
+          consumption:true,
+        },
         ]]
       ]);
 
@@ -109,27 +110,27 @@ export class KpiService {
 
       for (const entry of timeSeriesResult) {
         let data: TimeSeriesDataPoint[];
-        const carrier = (key == KPI.ENERGY_CONSUMPTION && !entry.local) ? 'imported' : entry.carrier_name
-        if (!series.has(carrier)) {
+        const carrierName = entry.carrier_name
+        const seriesKey = carrierName + (entry.local ? '' : ' (external)')
+        if (!series.has(seriesKey)) {
           data = []
-          let name = this.energyTypesToName.get(carrier)
-          if (!name) name = carrier
-          series.set(carrier, {
+          let name = this.energyTypesToName.get(carrierName)
+          if (!name) name = carrierName
+          series.set(seriesKey, {
             name: name,
-            type: carrier,
-            data: data
+            type: carrierName,
+            data: data,
+            unit: entry.unit,
+            consumption: (key === 'consumption') ? true : false,
+            local: entry.local,
           })
         } else {
-          data = series.get(carrier)?.data as TimeSeriesDataPoint[];
+          data = series.get(seriesKey)?.data as TimeSeriesDataPoint[];
         }
 
         data.push({
           time: new Date(entry.bucket),
           value: entry.value,
-          meta: {
-            unit: entry.unit,
-            consumption: (key === 'consumption') ? true : false
-          }
         })
       }
 
@@ -182,7 +183,7 @@ export class KpiService {
             return this.brownCoalColor;
         case 'pump-storage':
             return this.pumpStorageColor;
-        case 'imported':
+        case 'external':
             return this.otherConventionalColor;
         default:
             return '';
@@ -190,20 +191,33 @@ export class KpiService {
   }
 
 
-  subscribeSeries(diagram: HighchartsDiagram) {
+  subscribeSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false) {
     const s1 = this.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      const energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
+      let energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
       if (!energy) {
         return
+      }
+
+      if (aggregateExternal) {
+        const data = energy.filter(entry => !entry.local).map(entry => entry.data).flat()
+        console.log(data)
+        energy = [{
+          name: 'Imported Energy',
+          type: 'external',
+          data: data,
+        }, ...energy.filter(entry => entry.local)]
       }
 
       const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
       for (const series of energy) {
         const color = this.defineColors(series.type)
+
+        const data = series.data.map(entry => ([entry.time.getTime(), entry.value]))
+        data.sort((a, b) => a[0] - b[0])
         highchartsSeries.push({
           name: series.name,
           id: series.type, 
-          data:series.data.map(entry => ([entry.time.getTime(), entry.value])),
+          data:data,
           type: diagram.seriesType,
           color: color,
           marker:{

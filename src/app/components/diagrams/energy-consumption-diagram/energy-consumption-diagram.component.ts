@@ -126,7 +126,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
-    this.subscriptions = this.kpiService.subscribeSeries(this);
+    this.subscriptions = this.kpiService.subscribeSeries(this, true);
   }
 
 }
