@@ -38,10 +38,7 @@ export class ScopeEmissionComparisionComponent {
       style: {
           fontSize: '16px'
       },
-      valueSuffix: '%',
-      pointFormat: '{series.name}<br>{point.x}<br>' +
-          '<span style="font-size: 2em; color: {point.color}; <br>' +
-          'font-weight: bold">{point.y}</span>',
+      valueSuffix: '% ({point.x})',
       positioner: function (labelWidth) {
           return {
               x: (this.chart.chartWidth - labelWidth) / 2,
@@ -97,13 +94,13 @@ export class ScopeEmissionComparisionComponent {
           name: 'Scope 1 (2022)',
           colorIndex: 0,
           y: 80,
-          x: 400
+          x: 800
         },
         {
           name: 'Scope 2 (2022)',
           colorIndex: 1,
           y: 20,
-          x: 100
+          x: 200
         }
       ]
       },
@@ -116,12 +113,12 @@ export class ScopeEmissionComparisionComponent {
           name: 'Scope 1 (2023)',
           colorIndex: 0,
           y: 65,
-          x: 400
+          x: 650
         },{
           name: 'Scope 2 (2023)',
           colorIndex: 1,
           y: 35,
-          x: 200
+          x: 350
         }
 
       ]
