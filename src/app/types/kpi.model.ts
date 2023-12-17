@@ -19,7 +19,6 @@ export interface HighchartsDiagram extends DataSubscription {
     dataGrouping: Highcharts.DataGroupingOptionsObject
     updateFlag: boolean
     seriesType: SeriesTypes
-    colors: string[]
 }
 
 export interface SingleValueDiagram extends DataSubscription {

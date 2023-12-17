@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { KpiService } from 'src/app/services/kpi.service';
 
 import * as Highcharts from 'highcharts/highstock';
@@ -20,37 +20,29 @@ HighchartsAccessibility(Highcharts);
   styleUrls: ['./energy-mix-diagram.component.scss']
 })
 export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
-  kpiService: KpiService;
-
-  solarColor = '';
-  windColor = '';
-  biogasColor = '';
-  color3 = '';
-  color4 = '';
+  Highcharts: typeof Highcharts = Highcharts; // required
+  kpiService: KpiService = inject(KpiService);
 
   chart: Highcharts.Chart | undefined;
-  colors: string[] = [this.solarColor, this.windColor, this.biogasColor, this.color3, this.color4];
+  updateFlag: boolean = false;
   seriesType: SeriesTypes = 'area';
 
   kpiName?: KPI = KPI.SCOPE_2_EMISSIONS;
   
   subscriptions: Subscription[] = [];
 
-  constructor(kpiService: KpiService) {
-    this.kpiService = kpiService;
+  chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    this.chart = chart;
+  }
+
+  constructor() {
     this.subscriptions = this.kpiService.subscribeSeries(this);
 
     if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
 
-  set updateFlag(value: boolean) {
-    if (value) this.chart?.update(this.chartProperties, true)
-  }
-  get updateFlag(): boolean { return false};
 
   ngOnInit() {
-    this.initChart();
-
   }
 
   ngOnDestroy() {
@@ -89,8 +81,6 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'area',
-      renderTo: 'energyMixChart',
-      
     },
     title: {
       text: 'Energy Mix',
@@ -124,14 +114,10 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   changeSeriesType(kpi: KPI) {
     this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
     if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
-    this.chart?.update(this.chartProperties, true, true, true);
+    this.updateFlag = true;
     if (kpi !== this.kpiName) this.kpiService.fetchTimeSeriesData(kpi, this.kpiService.timeInterval)
     
     this.kpiName = kpi;
-  }
-
-  private initChart() {
-    this.chart = Highcharts.chart(this.chartProperties);
   }
 
 }

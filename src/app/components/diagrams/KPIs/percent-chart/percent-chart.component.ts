@@ -83,7 +83,6 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
       }
     updateFlag: boolean = false;
     seriesType: SeriesTypes = "solidgauge";
-    colors: string[] = [];
     
     get series(): Highcharts.SeriesOptionsType[] {
         if (isNaN(this.value)) return []

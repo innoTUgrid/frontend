@@ -22,7 +22,6 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
 
   chart: Highcharts.Chart|undefined
   seriesType: SeriesTypes = 'column';
-  colors: string[] = []
 
   updateFlag = false
 

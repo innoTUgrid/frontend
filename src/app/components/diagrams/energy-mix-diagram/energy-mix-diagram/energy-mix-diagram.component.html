@@ -1,1 +1,7 @@
-<div id="energyMixChart" class="highcharts-container highcharts-light"></div>
+<highcharts-chart
+    [Highcharts]="Highcharts"
+    [options]="chartProperties"
+    [(update)]="updateFlag"
+    [callbackFunction]="chartCallback"
+    style="display: block; width: 100%; height: 100%;"
+></highcharts-chart>
