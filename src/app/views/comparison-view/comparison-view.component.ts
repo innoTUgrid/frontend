@@ -36,8 +36,8 @@ export const MY_FORMATS = {
   ],
 })
 export class ComparisonViewComponent {
-  firstYear = new FormControl(moment());
-  secondYear = new FormControl(moment());
+  firstYear = new FormControl(moment('2022'));
+  secondYear = new FormControl(moment('2023'));
   isDatepickerOpen = false;
 
 
