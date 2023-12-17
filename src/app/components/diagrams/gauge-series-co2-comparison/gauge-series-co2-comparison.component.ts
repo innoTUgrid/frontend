@@ -79,12 +79,12 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
           distance: 25,
           useHTML: true,
           formatter() {
-            let color = '#DF5353';
+            let color = 'var(--highcharts-color-15)';
             let valueNumber = +this.value;
             if (valueNumber < 75) {
-              color = '#55BF3B';
+              color = 'var(--highcharts-color-0)';
             } else if (valueNumber >= 75 && valueNumber <= 125) {
-              color = '#F8961E';
+              color = 'var(--highcharts-color-6)';
             }
   
             return `<span style='font-family:"Lucida Grande, sans-serif"; font-size: 1.2em; font-weight: bold; color: ${color}'>${this.value} %</span>`;
@@ -92,7 +92,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
         },
         plotBands: [
           {
-            color: '#55BF3B', // green
+            color: 'var(--highcharts-color-0)', // green
             from: 0,
             to: 75,
             thickness: 20,
@@ -100,13 +100,13 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
           {
             from: 76,
             to: 125,
-            color: '#F8961E', // yellow
+            color: 'var(--highcharts-color-6)', // yellow
             thickness: 20,
           },
           {
             from: 126,
             to: 200,
-            color: '#DF5353', // red
+            color: 'var(--highcharts-color-15)', // red
             thickness: 20,
           },
         ],

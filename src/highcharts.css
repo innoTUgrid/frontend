@@ -598,12 +598,6 @@ circle.highcharts-legend-nav-inactive {
     top: 45%
 }
 
-.highcharts-plot-band,
-.highcharts-pane {
-    fill: var(--highcharts-neutral-color-100);
-    fill-opacity: .05
-}
-
 .highcharts-plot-line {
     fill: none;
     stroke: var(--highcharts-neutral-color-40);
