@@ -50,7 +50,7 @@ export class EnergyFlowDiagramComponent {
 
                 },
                 {
-                    id: 'Biomass',
+                    id: 'Biogas',
                     colorIndex: 0
                 },
                 {
@@ -76,15 +76,15 @@ export class EnergyFlowDiagramComponent {
                 { from: 'Solar', to: 'Microgrid 1', weight: 6, colorIndex: 6},
                 { from: 'Wind', to: 'Microgrid 1', weight: 2, colorIndex: 5},
                 { from: 'Brown Coal', to: 'Microgrid 1', weight: 3, colorIndex: 7},
-                { from: 'Biomass', to: 'Microgrid 1', weight: 6, colorIndex: 0},
+                { from: 'Biogas', to: 'Microgrid 1', weight: 6, colorIndex: 0},
                 { from: 'Solar', to: 'Microgrid 2', weight: 3, colorIndex: 6},
                 { from: 'Wind', to: 'Microgrid 2', weight: 1, colorIndex: 5},
                 { from: 'Brown Coal', to: 'Microgrid 2', weight: 2, colorIndex: 7},
-                { from: 'Biomass', to: 'Microgrid 2', weight: 4, colorIndex: 0},
+                { from: 'Biogas', to: 'Microgrid 2', weight: 4, colorIndex: 0},
                 { from: 'Solar', to: 'Microgrid 3', weight: 3, colorIndex: 6},
                 { from: 'Wind', to: 'Microgrid 3', weight: 1, colorIndex: 5},
                 { from: 'Brown Coal', to: 'Microgrid 3', weight: 2, colorIndex: 7},
-                { from: 'Biomass', to: 'Microgrid 3', weight: 4, colorIndex: 0},
+                { from: 'Biogas', to: 'Microgrid 3', weight: 4, colorIndex: 0},
                 { from: 'Microgrid 1', to: 'Total Consumption', weight: 10, colorIndex: 3},
                 { from: 'Microgrid 2', to: 'Total Consumption', weight: 10, colorIndex: 3},
                 { from: 'Microgrid 3', to: 'Total Consumption', weight: 10, colorIndex: 3},
