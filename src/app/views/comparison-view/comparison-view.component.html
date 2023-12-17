@@ -26,9 +26,13 @@
       
   </div>
 
-  <mat-grid-list cols="3" gutterSize="1.875em" rowHeight="40vh">
-    <mat-grid-tile colspan="2" id="item"> <app-emissions-comparison-column-chart></app-emissions-comparison-column-chart></mat-grid-tile>
-    <mat-grid-tile colspan="1" id="item-after"><app-gauge-series-co2-comparison></app-gauge-series-co2-comparison></mat-grid-tile>
-    <mat-grid-tile colspan="2" id="item"><app-yearly-co2-emissions-chart></app-yearly-co2-emissions-chart></mat-grid-tile>
-    <mat-grid-tile colspan="1" id="item-after"><app-scope-emission-comparision></app-scope-emission-comparision></mat-grid-tile>
-  </mat-grid-list>
+  <div class="page-container">
+    <div class="diagram-container">
+      <app-emissions-comparison-column-chart class="item left"></app-emissions-comparison-column-chart>
+      <app-gauge-series-co2-comparison class="item right"></app-gauge-series-co2-comparison>
+    </div>
+    <div class="diagram-container">
+      <app-yearly-co2-emissions-chart class="item left"></app-yearly-co2-emissions-chart>
+      <app-scope-emission-comparision class="item right"></app-scope-emission-comparision>
+    </div>
+  </div>

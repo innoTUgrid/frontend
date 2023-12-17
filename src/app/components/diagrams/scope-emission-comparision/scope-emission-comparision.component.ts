@@ -27,7 +27,10 @@ export class ScopeEmissionComparisionComponent {
     chart: {
     },
     title: {
-      text: 'CO2 Emissions Comparison per Scope'
+      text: 'CO2 Emissions Comparison per Scope',
+      style: {
+        fontSize: '1em',
+      }
     },
     tooltip: {
       borderWidth: 0,

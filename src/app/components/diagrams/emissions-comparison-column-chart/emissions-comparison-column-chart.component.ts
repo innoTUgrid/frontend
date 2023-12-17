@@ -38,7 +38,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
       text: `Monthly CO₂ Emissions Comparison`,
       margin: 50,
       style: {
-        fontSize: '0.95em',
+        fontSize: '1em',
       }
     },
     

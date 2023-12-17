@@ -33,13 +33,36 @@
     
   }
 
-
   #granularity-selection{
     margin-top: 1.3vh;
     max-width: 10em;
     min-width: 5em;
   }
 
+.page-container {
+  width: 100%;
+  height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+}
 
+.item {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.left {
+  width: 60%;
+}
+
+.right {
+  width: 40%;
+}
+
+.diagram-container{
+  display: flex;
+  gap: min(10vh, 10vw);
+  height: 50%;
+}
 
 
