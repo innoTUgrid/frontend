@@ -52,7 +52,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     width: 2,
     value: 0,
     zIndex: 5,
-    color: '#FF0000',
+    
   }
 
   chartProperties: Highcharts.Options = {

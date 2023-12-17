@@ -3,7 +3,7 @@
 @use '@angular/material' as mat;
 @use '@ng-matero/extensions' as mtx;
 
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import '/src/highcharts.css';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -97,6 +97,9 @@ $hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions compariso
     --highcharts-color-16: #{$hc-year-shadow-comparison-chart} !important;
     --highcharts-color-17: #{$hc-year-comparison-chart} !important;
     --highcharts-color-18: #{$hc-mean-comparison-chart} !important;
+
+    // this is currently only used for the average line in column charts
+    --highcharts-neutral-color-40: #ff0000; 
 }
 
 

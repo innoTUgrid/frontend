@@ -20,7 +20,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
 
   earlierYearColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-16').trim();
   laterYearColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
-  meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-1').trim();
+  meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-neutral-color-40').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
