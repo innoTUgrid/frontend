@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, map } from 'rxjs';
 // import json
-import * as testData from './data/readKPIs.json';
 import { HttpClient } from '@angular/common/http';
 import { TimeSeriesDataPoint, TimeSeriesDataDictionary, TimeInterval, TimeSeriesData, KPIResult, TimeSeriesResult } from '../types/time-series-data.model';
 import { HighchartsDiagram, KPI as KPI, SingleValueDiagram } from '../types/kpi.model';
@@ -62,9 +61,6 @@ export class KpiService {
     this.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
       this.timeInterval = timeInterval
     })
-
-    // read the object from the data/readKPIs.json file and load it into the time series data dictionary
-    // this.loadTimeSeriesData();
   }
 
   async fetchKPIData(kpi: string, timeInterval: TimeInterval) {
@@ -293,26 +289,6 @@ export class KpiService {
     })
 
     return [s1, s2]
-  }
-
-  loadTimeSeriesData():void {
-    const keys: Array<KPI> = [KPI.ENERGY_CONSUMPTION, KPI.AUTARKY]
-    const data = testData as any
-    for (const key of keys) {
-      const value = data[key];
-      const energyTypes: Set<string> = new Set(value.map((entry: any) => entry.meta.type))
-      const series: TimeSeriesData[] = []
-      for (const type of energyTypes) {
-        const typeData: TimeSeriesData = {
-          name: type,
-          type: type,
-          data: value.filter((entry: any) => entry.meta.type === type).map((entry: any) => ({time: new Date(entry.time), value: entry.value, meta: entry.meta }))
-        }
-        series.push(typeData)
-      }
-      this.timeSeriesData.set(key, series);
-    }
-    this.timeSeriesData$$.next(this.timeSeriesData);
   }
 
 }
