@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { KpiService } from 'src/app/services/kpi.service';
+import { ApiService } from 'src/app/services/api.service';
 
 import * as Highcharts from 'highcharts/highstock';
 import HighchartsExporting from 'highcharts/modules/exporting';
@@ -21,7 +21,7 @@ HighchartsAccessibility(Highcharts);
 })
 export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
-  kpiService: KpiService = inject(KpiService);
+  kpiService: ApiService = inject(ApiService);
 
   chart: Highcharts.Chart | undefined;
   updateFlag: boolean = false;

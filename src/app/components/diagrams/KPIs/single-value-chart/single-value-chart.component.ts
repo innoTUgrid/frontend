@@ -1,7 +1,7 @@
 
 import { Component, Input, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { KpiService } from 'src/app/services/kpi.service';
+import { ApiService } from 'src/app/services/api.service';
 import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
 
 @Component({
@@ -10,7 +10,7 @@ import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
   styleUrls: ['./single-value-chart.component.scss']
 })
 export class SingleValueChartComponent implements SingleValueDiagram {
-  kpiService: KpiService = inject(KpiService);
+  kpiService: ApiService = inject(ApiService);
   _value: number = 0;
   @Input() set value (value: number) {
     this._value = value;

@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
 import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { KpiService } from 'src/app/services/kpi.service';
+import { ApiService } from 'src/app/services/api.service';
 import {Granularity} from 'src/app/types/granularity.model'
 import { TimeInterval, TimeUnit } from 'src/app/types/time-series-data.model';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -12,7 +12,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
   styleUrls: ['./command-bar.component.scss']
 })
 export class CommandBarComponent {
-  kpiService: KpiService = inject(KpiService)
+  kpiService: ApiService = inject(ApiService)
 
   granularities = Object.values(Granularity);
   granularityInHours: {[k: string]: number} = { 'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30, 'quarter': 24 * 30 * 3, 'year': 24 * 365};

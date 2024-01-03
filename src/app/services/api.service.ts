@@ -12,7 +12,7 @@ import { environment } from '@env/environment';
   providedIn: 'root'
 })
 
-export class KpiService {
+export class ApiService {
 
   // time series data dictionary which contains all the data for all kpis
   timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
