@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { KpiService } from 'src/app/services/kpi.service';
 import { KPI } from 'src/app/types/kpi.model';
 
 @Component({
@@ -11,7 +10,7 @@ export class SelfConsumptionKPIComponent implements OnInit{
   selfConsumptionKPI: number = 0;
   kpiName: KPI = KPI.SELF_CONSUMPTION;
 
-  constructor(private kpiService: KpiService) {}
+  constructor() {}
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates

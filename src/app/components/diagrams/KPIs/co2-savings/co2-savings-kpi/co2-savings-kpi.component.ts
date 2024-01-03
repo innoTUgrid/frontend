@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { KPI } from '@app/types/kpi.model';
-import { KpiService } from 'src/app/services/kpi.service';
 
 @Component({
   selector: 'app-co2-savings-kpi',
@@ -11,7 +10,7 @@ export class Co2SavingsKPIComponent implements OnInit {
   
   kpiName: KPI = KPI.CO2_SAVINGS;
 
-  constructor(private kpiService: KpiService) {}
+  constructor() {}
 
   ngOnInit(): void {
     // Subscribe to autarkyKPI$ observable to get real-time updates

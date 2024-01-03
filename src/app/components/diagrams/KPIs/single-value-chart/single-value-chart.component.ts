@@ -1,7 +1,9 @@
 
 import { Component, Input, inject } from '@angular/core';
+import { ApiService } from '@app/services/api.service';
+import { ChartService } from '@app/services/chart.service';
+import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
-import { KpiService } from 'src/app/services/kpi.service';
 import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
 
 @Component({
@@ -10,7 +12,9 @@ import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
   styleUrls: ['./single-value-chart.component.scss']
 })
 export class SingleValueChartComponent implements SingleValueDiagram {
-  kpiService: KpiService = inject(KpiService);
+  chartService: ChartService = inject(ChartService);
+  dataService: DataService = inject(DataService);
+  apiService: ApiService = inject(ApiService);
   _value: number = 0;
   @Input() set value (value: number) {
     this._value = value;
@@ -33,7 +37,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() set kpiName(value: KPI | undefined) {
     this._kpiName = value;
     if (value) {
-      this.kpiService.fetchKPIData(value, this.kpiService.timeInterval)
+      this.apiService.fetchKPIData(value, this.dataService.timeInterval)
     }
   }
 
@@ -51,6 +55,6 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   }
   
   constructor() {
-    this.subscriptions = this.kpiService.subscribeSingleValueDiagram(this, false);
+    this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, false);
   }
 }

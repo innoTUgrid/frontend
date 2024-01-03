@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { KpiService } from 'src/app/services/kpi.service';
+import { ApiService } from 'src/app/services/api.service';
 
 import * as Highcharts from 'highcharts/highstock';
 import HighchartsExporting from 'highcharts/modules/exporting';
@@ -7,6 +7,8 @@ import HighchartsData from 'highcharts/modules/data';
 import HighchartsAccessibility from 'highcharts/modules/accessibility';
 import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
+import { DataService } from '@app/services/data.service';
+import { ChartService } from '@app/services/chart.service';
 
 
 
@@ -21,7 +23,9 @@ HighchartsAccessibility(Highcharts);
 })
 export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
-  kpiService: KpiService = inject(KpiService);
+  chartService: ChartService = inject(ChartService);
+  dataService: DataService = inject(DataService);
+  apiService: ApiService = inject(ApiService);
 
   chart: Highcharts.Chart | undefined;
   updateFlag: boolean = false;
@@ -36,7 +40,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   }
 
   constructor() {
-    this.subscriptions = this.kpiService.subscribeSeries(this);
+    this.subscriptions = this.chartService.subscribeSeries(this);
 
     if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
@@ -115,7 +119,7 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
     if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.updateFlag = true;
-    if (kpi !== this.kpiName) this.kpiService.fetchTimeSeriesData(kpi, this.kpiService.timeInterval)
+    if (kpi !== this.kpiName) this.apiService.fetchTimeSeriesData(kpi, this.dataService.timeInterval)
     
     this.kpiName = kpi;
   }

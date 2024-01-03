@@ -1,12 +1,11 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import HC_noData from 'highcharts/modules/no-data-to-display'
-import { KpiService } from 'src/app/services/kpi.service';
-import { TimeSeriesDataDictionary } from 'src/app/types/time-series-data.model';
 import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
+import { ChartService } from '@app/services/chart.service';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -16,7 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
-  kpiService: KpiService = inject(KpiService);
+  chartService: ChartService = inject(ChartService);
   kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
   subscriptions: Subscription[] = [];
 
@@ -126,7 +125,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     HC_exporting(Highcharts);
     HC_exportData(Highcharts);
     HC_noData(Highcharts);
-    this.subscriptions = this.kpiService.subscribeSeries(this, true);
+    this.subscriptions = this.chartService.subscribeSeries(this, true);
   }
 
 }

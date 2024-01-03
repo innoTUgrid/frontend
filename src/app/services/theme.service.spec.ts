@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { KpiService } from './kpi.service';
+import { ThemeService } from './theme.service';
 
-describe('KpiService', () => {
-  let service: KpiService;
+describe('ThemeService', () => {
+  let service: ThemeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(KpiService);
+    service = TestBed.inject(ThemeService);
   });
 
   it('should be created', () => {
