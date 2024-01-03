@@ -1,10 +1,10 @@
-import moment, { Moment } from 'moment';
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import moment from 'moment';
+import { Component, Input, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ApiService } from 'src/app/services/api.service';
 import {Granularity} from 'src/app/types/granularity.model'
 import { TimeInterval, TimeUnit } from 'src/app/types/time-series-data.model';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { DataService } from '@app/services/data.service';
 
 @Component({
   selector: 'app-command-bar',
@@ -12,7 +12,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
   styleUrls: ['./command-bar.component.scss']
 })
 export class CommandBarComponent {
-  kpiService: ApiService = inject(ApiService)
+  dataService: DataService = inject(DataService)
 
   granularities = Object.values(Granularity);
   granularityInHours: {[k: string]: number} = { 'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30, 'quarter': 24 * 30 * 3, 'year': 24 * 365};
@@ -53,7 +53,7 @@ export class CommandBarComponent {
       step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
       stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
     }
-    this.kpiService.timeInterval$$.next(this.timeInterval);
+    this.dataService.timeInterval$$.next(this.timeInterval);
   }
 
   resetFilters(){
@@ -66,7 +66,7 @@ export class CommandBarComponent {
       step: 1,
       stepUnit: "day"
     }
-    this.kpiService.timeInterval$$.next(timeInterval)
+    this.dataService.timeInterval$$.next(timeInterval)
   }
 
   handleRecentPeriodInput() {
@@ -75,7 +75,7 @@ export class CommandBarComponent {
     this.timeInterval.start = start;
     this.timeInterval.end = today;
     this.applyFilters();
-    this.kpiService.timeInterval$$.next(this.timeInterval);
+    this.dataService.timeInterval$$.next(this.timeInterval);
   }
 
   isSingleDatepickerDisabled(): boolean {
@@ -97,10 +97,10 @@ export class CommandBarComponent {
         stepUnit: params['stepunit'] as TimeUnit
       };
 
-      this.kpiService.updateTimeInterval(timeInterval);
+      this.dataService.updateTimeInterval(timeInterval);
     });
 
-    this.kpiService.timeInterval$$.subscribe(timeInterval => {
+    this.dataService.timeInterval$$.subscribe(timeInterval => {
       if (timeInterval != this.timeInterval) {
         this.timeInterval = timeInterval;
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;

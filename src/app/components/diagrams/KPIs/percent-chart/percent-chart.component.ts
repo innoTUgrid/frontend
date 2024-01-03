@@ -6,6 +6,8 @@ import NoData from 'highcharts/modules/no-data-to-display'
 import { ApiService } from 'src/app/services/api.service';
 import { HighchartsDiagram, KPI, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
+import { DataService } from '@app/services/data.service';
+import { ChartService } from '@app/services/chart.service';
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
 NoData(Highcharts);
@@ -16,7 +18,9 @@ NoData(Highcharts);
     styleUrls: ['./percent-chart.component.scss'],
 })
 export class PercentChartComponent implements HighchartsDiagram, SingleValueDiagram {
-    kpiService: ApiService = inject(ApiService);
+    apiService: ApiService = inject(ApiService);
+    chartService: ChartService = inject(ChartService);
+    dataService: DataService = inject(DataService);
     _value: number = 0;
     get value(): number {
         return this._value
@@ -33,7 +37,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     @Input() set kpiName(value: KPI | undefined) {
         this._kpiName = value;
         if (value) {
-           this.kpiService.fetchKPIData(value, this.kpiService.timeInterval)
+           this.apiService.fetchKPIData(value, this.dataService.timeInterval)
         }
     }
 
@@ -181,7 +185,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     }
     
     constructor() {
-        this.subscriptions = this.kpiService.subscribeSingleValueDiagram(this);
+        this.subscriptions = this.chartService.subscribeSingleValueDiagram(this);
     }
     
 }
