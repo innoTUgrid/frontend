@@ -20,40 +20,22 @@ export class ThemeService {
   hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
   pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
 
-  defineColors(type: string): string {
-    switch (type) {
-        case 'biogas':
-            return this.biogasColor;
-        case 'biomass':
-            return this.biomassColor;
-        case 'other-renewables':
-            return this.otherRenewablesColor;
-        case 'offwind':
-            return this.windOffshoreColor;
-        case 'hydro':
-            return this.hydroPowerColor;
-        case 'onwind':
-            return this.windOnshoreColor;
-        case 'solar':
-            return this.solarColor;
-        case 'brown-coal':
-            return this.brownCoalColor;
-        case 'natural-gas':
-            return this.naturalGasColor;
-        case 'other-conventionals':
-            return this.otherConventionalColor;
-        case 'hard-coal':
-            return this.hardCoalColor;
-        case 'coal':
-            return this.brownCoalColor;
-        case 'pump-storage':
-            return this.pumpStorageColor;
-        case 'external':
-            return this.otherConventionalColor;
-        default:
-            return '';
-    }
-  }
+  colorMap = new Map<string, string>([
+    ['biogas', this.biogasColor],
+    ['biomass', this.biomassColor],
+    ['other-renewables', this.otherRenewablesColor],
+    ['offwind', this.windOffshoreColor],
+    ['hydro', this.hydroPowerColor],
+    ['onwind', this.windOnshoreColor],
+    ['solar', this.solarColor],
+    ['brown-coal', this.brownCoalColor],
+    ['natural-gas', this.naturalGasColor],
+    ['other-conventionals', this.otherConventionalColor],
+    ['hard-coal', this.hardCoalColor],
+    ['coal', this.brownCoalColor],
+    ['pump-storage', this.pumpStorageColor],
+    ['external', this.otherConventionalColor],
+  ]);
 
   energyTypesToName = new Map([
     ['biogas', 'Biogas'],

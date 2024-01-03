@@ -35,7 +35,7 @@ export class ChartService {
 
       const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
       for (const series of energy) {
-        const color = this.themeService.defineColors(series.type)
+        const color = this.themeService.colorMap.get(series.type)
 
         const data = series.data.map(entry => ([entry.time.getTime(), entry.value]))
         data.sort((a, b) => a[0] - b[0])
