@@ -32,9 +32,9 @@ export class ApiService {
         [kpi, [
           {type:kpi, name:kpiValue.name, data:[
             {
-              time:new Date(), 
+              timestamp:new Date().getTime(), 
               value:kpiValue.value, 
-              timeRange: {start: moment(kpiValue.from_timestamp), end: moment(kpiValue.to_timestamp), step:timeInterval.step, stepUnit:timeInterval.stepUnit}
+              timeRange: timeInterval
             }
           ],
           unit:kpiValue.unit? kpiValue.unit : undefined, 
@@ -81,12 +81,18 @@ export class ApiService {
         }
 
         data.push({
-          time: new Date(entry.bucket),
+          timestamp: new Date(entry.bucket).getTime(),
           value: entry.value,
+          timeRange: timeInterval
         })
       }
+      // sort newData
+      const seriesArray = Array.from(series.values())
+      for (const value of seriesArray) {
+        value.data.sort((a, b) => a.timestamp - b.timestamp)
+      }
 
-      newData.set(key, Array.from(series.values()))
+      newData.set(key, seriesArray)
       this.dataService.timeSeriesData$$.next(newData);
     });
   }

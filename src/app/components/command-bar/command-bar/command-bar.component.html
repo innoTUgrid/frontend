@@ -30,7 +30,7 @@
   <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()" subscriptSizing="dynamic">
     <mat-label>Enter a date range</mat-label>
     <mat-date-range-input [rangePicker]="pickerInterval">
-      <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters()">
+      <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start">
       <input matEndDate placeholder="End date" [(ngModel)]="timeInterval.end" (ngModelChange)="applyFilters()">
     </mat-date-range-input>
     <mat-datepicker-toggle matIconSuffix [for]="pickerInterval"></mat-datepicker-toggle>

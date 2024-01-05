@@ -30,6 +30,8 @@ export class CommandBarComponent {
   @Input() enableGranularitySelection: boolean = true;
 
   applyFilters(singleDate?: boolean) {
+    if (!(this.timeInterval.start && this.timeInterval.end)) return;
+
     const diff = this.timeInterval.end.diff(this.timeInterval.start, 'days');
     // make sure granularity is sane
     const granularity = Object.entries(this.granularityInHours).find(([key, entry]) => {

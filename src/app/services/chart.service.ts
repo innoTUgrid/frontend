@@ -25,7 +25,7 @@ export class ChartService {
 
       if (aggregateExternal) {
         const data = energy.filter(entry => !entry.local).map(entry => entry.data).flat()
-        console.log(data)
+        data.sort((a, b) => a.timestamp - b.timestamp)
         energy = [{
           name: 'Imported Energy',
           type: 'external',
@@ -37,8 +37,7 @@ export class ChartService {
       for (const series of energy) {
         const color = this.themeService.colorMap.get(series.type)
 
-        const data = series.data.map(entry => ([entry.time.getTime(), entry.value]))
-        data.sort((a, b) => a[0] - b[0])
+        const data = series.data.map(entry => ([entry.timestamp, entry.value]))
         highchartsSeries.push({
           name: series.name,
           id: series.type, 

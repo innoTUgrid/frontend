@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 
 // integrate a property that describes for what time range a single data point is representative
 export type TimeSeriesDataPoint = {
-  time:Date, 
+  timestamp:number, 
   value:number, 
   timeRange?: TimeInterval,
 };
