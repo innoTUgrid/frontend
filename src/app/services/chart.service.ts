@@ -45,6 +45,7 @@ export class ChartService {
         data:data,
         type: diagram.seriesType,
         color: color,
+        animation: true,
         marker:{
           lineColor: color,
         },
