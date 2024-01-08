@@ -119,9 +119,10 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
     if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.updateFlag = true;
-    if (kpi !== this.kpiName) this.apiService.fetchTimeSeriesData(kpi, this.dataService.timeInterval)
-    
+    const lastKpi = this.kpiName;
     this.kpiName = kpi;
+
+    if (kpi !== lastKpi) this.chartService.updateSeries(this);
   }
 
 }
