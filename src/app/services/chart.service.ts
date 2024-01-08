@@ -34,29 +34,39 @@ export class ChartService {
       }, ...energy.filter(entry => entry.local)]
     }
 
-    const highchartsSeries: Array<Highcharts.SeriesOptionsType> = []
+    if (diagram.chart) {
+      while(diagram.chart.series.length > 0) {
+        diagram.chart.series[0].remove(false, false)
+      }
+    } else {
+      diagram.chartProperties.series = []
+    }
+
     for (const series of energy) {
       const color = this.themeService.colorMap.get(series.type)
 
       const data = series.data.map(entry => ([entry.timestamp, entry.value]))
-      highchartsSeries.push({
-        name: series.name,
-        id: series.type, 
-        data:data,
-        type: diagram.seriesType,
-        color: color,
-        animation: true,
-        marker:{
-          lineColor: color,
-        },
-      })
+
+      const newSeries = {
+          name: series.name,
+          id: series.type + ' ' + diagram.kpiName, 
+          data:data,
+          type: diagram.seriesType,
+          color: color,
+          animation: true,
+          marker:{
+            lineColor: color,
+          },
+        }
+      if (diagram.chart) {
+        diagram.chart?.addSeries(newSeries, false, true)
+      } else {
+        diagram.chartProperties.series?.push(newSeries)
+      }
     }
     if (diagram.chart) {
-      diagram.chart.update({
-        series: highchartsSeries
-      }, true, true, true)
+      diagram.chart.redraw()
     } else { // this is only reachable for code that uses highcharts-angular
-      diagram.chartProperties.series = highchartsSeries
       diagram.updateFlag = true
     }
     if (diagram.onSeriesUpdate) {
