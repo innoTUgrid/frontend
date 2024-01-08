@@ -1,0 +1,21 @@
+<mtx-grid 
+    [data]="data" 
+    [columns]="columns" 
+    [expandable]="true" 
+    [expansionTemplate]="expansionTpl"
+    [pageOnFront]="false"
+    [showPaginator]="false"
+>
+</mtx-grid>
+
+<ng-template #expansionTpl let-row>
+    <mtx-grid 
+        [data]="row.dataFiltered" 
+        [columns]="subColumns" 
+        [length]="row.data.length"
+        [pageSizeOptions]="row.pageSizeOptions"
+        [pageOnFront]="false"
+        (page)="row.nextPage($event)"
+    >
+    </mtx-grid>
+</ng-template>
