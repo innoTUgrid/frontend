@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CamelCaseToSpacePipe } from './views/datasets/datasets/camel-case-to-space.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,10 +24,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { NavbarComponent } from './components/navigation/navbar.component';
 
-import { DatasetsComponent } from './views/datasets/datasets/datasets.component';
-import { DataTableSmardComponent } from './views/datasets/datasets/smard_50hz/data-table-smard/data-table-smard.component';
-import { DataTableConsumptionHouseBeckerComponent } from './views/datasets/datasets/consumption-house-becker/data-table-consumption-house-becker/data-table-consumption-house-becker.component';
-import { CampusEnergyComponent } from './views/datasets/datasets/campus-energy/campus-energy/campus-energy.component';
+import { DatasetsComponent } from './views/datasets/datasets.component';
 import { MatTableModule } from '@angular/material/table';
 
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
@@ -81,10 +77,6 @@ import { DataTableComponent } from './components/data-table/data-table.component
     SelfConsumptionKPIComponent,
 
     DatasetsComponent,
-    DataTableSmardComponent,
-    DataTableConsumptionHouseBeckerComponent,
-    CampusEnergyComponent,
-    CamelCaseToSpacePipe,
     PercentChartComponent,
     SingleValueChartComponent,
 
