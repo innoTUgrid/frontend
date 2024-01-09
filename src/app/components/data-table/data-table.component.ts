@@ -96,6 +96,7 @@ export class DataTableComponent {
 
   }
 
+  subsciptions: any[] = []
   ngOnInit() {
     this.dataService.timeSeriesData$$.subscribe(() => {
       this.updateData()
@@ -104,6 +105,10 @@ export class DataTableComponent {
     if (this.kpiName) {
       this.apiService.fetchTimeSeriesData(this.kpiName, this.dataService.timeInterval)
     }
+  }
+
+  ngOnDestroy() {
+    this.subsciptions.forEach((sub) => sub.unsubscribe())
   }
 
 }

@@ -86,12 +86,20 @@ export class CommandBarComponent {
     );
   }
 
+  subscriptions: any[] = [];
+
   constructor(private activatedRoute: ActivatedRoute, public observer: BreakpointObserver) {
-    this.observer.observe(['(max-width: 1600px)']).subscribe((res) => {
+  }
+
+  ngOnInit(): void {
+    const currentRoute = this.activatedRoute.snapshot.url;
+    this.selectedView = currentRoute[currentRoute.length - 1].path;
+
+    const s0 = this.observer.observe(['(max-width: 1600px)']).subscribe((res) => {
       this.granularityType = res.matches ? 'select' : 'button';
     });
 
-    this.activatedRoute.queryParams.subscribe(params => {
+    const s1 = this.activatedRoute.queryParams.subscribe(params => {
       const timeInterval: Partial<TimeInterval> = {
         start: params['start'] ? moment(params['start']) : undefined,
         end: params['start'] ? moment(params['end']) : undefined,
@@ -102,18 +110,16 @@ export class CommandBarComponent {
       this.dataService.updateTimeInterval(timeInterval);
     });
 
-    this.dataService.timeInterval$$.subscribe(timeInterval => {
+    const s2 = this.dataService.timeInterval$$.subscribe(timeInterval => {
       if (timeInterval != this.timeInterval) {
         this.timeInterval = timeInterval;
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
       }
     });
+    this.subscriptions.push(s0, s1, s2);
   }
 
-  ngOnInit(): void {
-    const currentRoute = this.activatedRoute.snapshot.url;
-    this.selectedView = currentRoute[currentRoute.length - 1].path;
-
-    console.log(this.selectedView);
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 }
