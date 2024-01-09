@@ -53,6 +53,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  import {MatFormFieldModule} from '@angular/material/form-field';
  import {MatNativeDateModule} from '@angular/material/core';
  import { MatSelectModule } from '@angular/material/select';
+import { MtxGridModule } from '@ng-matero/extensions/grid';
 
 import { FormsModule } from '@angular/forms';
 import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
@@ -64,6 +65,7 @@ import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-c
 import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
 import { ScopeEmissionComparisionComponent } from './components/diagrams/scope-emission-comparision/scope-emission-comparision.component';
 import { LayoutModule } from '@angular/cdk/layout';
+import { DataTableComponent } from './components/data-table/data-table.component';
 
 
 @NgModule({
@@ -98,6 +100,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     YearlyCo2EmissionsChartComponent,
     GaugeSeriesCo2ComparisonComponent,
     ScopeEmissionComparisionComponent,
+    DataTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -132,6 +135,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     ReactiveFormsModule,
     MatDatepickerModule,
     MatMomentDateModule,
+    MtxGridModule
   ],
   providers: [
      {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
