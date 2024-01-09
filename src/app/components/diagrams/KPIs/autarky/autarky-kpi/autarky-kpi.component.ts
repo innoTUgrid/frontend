@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { KPI } from 'src/app/types/kpi.model';
+import { DatasetKey, KPIKey } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-autarky-kpi',
@@ -8,7 +8,7 @@ import { KPI } from 'src/app/types/kpi.model';
 })
 export class AutarkyKPIComponent implements OnInit{
   autarkyKPI: number = 80;
-  kpiName: KPI = KPI.AUTARKY;
+  kpiName: DatasetKey = KPIKey.AUTARKY;
 
   constructor() {}
 

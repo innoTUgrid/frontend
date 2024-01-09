@@ -1,10 +1,7 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, ViewChild, inject } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { ApiService } from '@app/services/api.service';
 import { DataService } from '@app/services/data.service';
-import { KPI } from '@app/types/kpi.model';
+import { DatasetKey } from '@app/types/kpi.model';
 import { TimeSeriesData, TimeSeriesDataPoint } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 
@@ -42,7 +39,6 @@ class DataTableSeries implements TimeSeriesData {
   nextPage(e: PageEvent) {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
-    this.updateDataFiltered()
   }
   
   updateDataFiltered() {
@@ -60,9 +56,8 @@ type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index:
 })
 export class DataTableComponent {
   dataService: DataService = inject(DataService);
-  apiService: ApiService = inject(ApiService);
 
-  @Input() kpiName?: KPI;
+  @Input() kpiName?: DatasetKey;
   @Input() title?: string;
 
   columns: MtxGridColumn[] = [
@@ -85,7 +80,7 @@ export class DataTableComponent {
   }
 
   updateData() {
-    const newData = (this.kpiName) ? this.dataService.timeSeriesData.get(this.kpiName) : undefined
+    const newData = (this.kpiName) ? this.dataService.timeSeriesData.getValue().get(this.kpiName) : undefined
 
     if (newData) {
       this.data = newData.map((data) => new DataTableSeries(data))
@@ -98,13 +93,9 @@ export class DataTableComponent {
 
   subsciptions: any[] = []
   ngOnInit() {
-    this.dataService.timeSeriesData$$.subscribe(() => {
+    this.dataService.timeSeriesData.subscribe(() => {
       this.updateData()
     })
-
-    if (this.kpiName) {
-      this.apiService.fetchTimeSeriesData(this.kpiName, this.dataService.timeInterval)
-    }
   }
 
   ngOnDestroy() {

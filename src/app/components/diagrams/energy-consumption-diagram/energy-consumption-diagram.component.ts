@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts/highstock';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_exportData from 'highcharts/modules/export-data';
 import HC_noData from 'highcharts/modules/no-data-to-display'
-import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
+import { DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
 
@@ -16,7 +16,7 @@ import { ChartService } from '@app/services/chart.service';
 export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartService: ChartService = inject(ChartService);
-  kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
+  kpiName?: DatasetKey = TimeSeriesKey.ENERGY_CONSUMPTION;
   subscriptions: Subscription[] = [];
 
   chart: Highcharts.Chart|undefined

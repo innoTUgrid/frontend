@@ -1,11 +1,10 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { ApiService } from 'src/app/services/api.service';
 
 import * as Highcharts from 'highcharts/highstock';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsData from 'highcharts/modules/data';
 import HighchartsAccessibility from 'highcharts/modules/accessibility';
-import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
+import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
@@ -25,13 +24,12 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
-  apiService: ApiService = inject(ApiService);
 
   chart: Highcharts.Chart | undefined;
   updateFlag: boolean = false;
   seriesType: SeriesTypes = 'area';
 
-  kpiName?: KPI = KPI.SCOPE_2_EMISSIONS;
+  kpiName?: DatasetKey = TimeSeriesKey.SCOPE_2_EMISSIONS;
   
   subscriptions: Subscription[] = [];
 
@@ -77,8 +75,8 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   toggleSeries: Highcharts.ExportingButtonsOptionsObject = {
     // change button text between consumption end emissions when it is clicked
     onclick: () => {
-      if (this.kpiName == KPI.SCOPE_2_EMISSIONS) this.changeSeriesType(KPI.ENERGY_CONSUMPTION);
-      else this.changeSeriesType(KPI.SCOPE_2_EMISSIONS);
+      if (this.kpiName == TimeSeriesKey.SCOPE_2_EMISSIONS) this.changeSeriesType(TimeSeriesKey.ENERGY_CONSUMPTION);
+      else this.changeSeriesType(TimeSeriesKey.SCOPE_2_EMISSIONS);
     }
   }
 
@@ -115,9 +113,9 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     },
   };
 
-  changeSeriesType(kpi: KPI) {
-    this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
-    if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
+  changeSeriesType(kpi: DatasetKey) {
+    this.toggleSeries.text = kpi == TimeSeriesKey.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
+    if (this.yAxis.title) this.yAxis.title.text = kpi == TimeSeriesKey.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.updateFlag = true;
     const lastKpi = this.kpiName;
     this.kpiName = kpi;

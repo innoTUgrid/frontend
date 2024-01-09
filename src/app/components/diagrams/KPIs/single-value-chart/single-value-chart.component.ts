@@ -1,10 +1,9 @@
 
 import { Component, Input, inject } from '@angular/core';
-import { ApiService } from '@app/services/api.service';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
-import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
+import { DatasetKey, SingleValueDiagram } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-single-value-chart',
@@ -14,7 +13,6 @@ import { KPI, SingleValueDiagram } from 'src/app/types/kpi.model';
 export class SingleValueChartComponent implements SingleValueDiagram {
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
-  apiService: ApiService = inject(ApiService);
   _value: number = 0;
   @Input() set value (value: number) {
     this._value = value;
@@ -32,29 +30,38 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() icon: string = '';
   @Input() unit: string = '';
   
-  _kpiName?: KPI;
+  _kpiName?: DatasetKey;
 
-  @Input() set kpiName(value: KPI | undefined) {
+  @Input() set kpiName(value: DatasetKey | undefined) {
     this._kpiName = value;
     if (value) {
-      this.apiService.fetchKPIData(value, this.dataService.timeInterval)
+      this.chartService.updateSingleValue(this, false)
     }
   }
 
-  get kpiName(): KPI | undefined {  
+  get kpiName(): DatasetKey | undefined {
     return this._kpiName;
   }
 
   subscriptions: Subscription[] = [];
 
   ngOnInit() {
+    this.subscribe();
   }
   
   ngOnDestroy() {
+    this.unsubscribeAll()
+  }
+
+  subscribe() {
+    this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, false);
+  }
+
+  unsubscribeAll() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions = [];
   }
   
   constructor() {
-    this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, false);
   }
 }

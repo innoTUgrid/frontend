@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { ThemeService } from './theme.service';
-import { ApiService } from './api.service';
 import { TimeInterval, TimeSeriesDataDictionary, TimeSeriesDataPoint } from '@app/types/time-series-data.model';
 import { DataService } from './data.service';
 import { HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
@@ -11,13 +10,12 @@ import { HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
 export class ChartService {
 
   themeService: ThemeService = inject(ThemeService);
-  apiService: ApiService = inject(ApiService);
   dataService: DataService = inject(DataService);
 
   constructor() { }
 
   updateSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false, data?: TimeSeriesDataDictionary) {
-    if (!data) data = this.dataService.timeSeriesData
+    if (!data) data = this.dataService.timeSeriesData.getValue()
 
     let energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
     if (!energy) {
@@ -75,15 +73,11 @@ export class ChartService {
   }
 
   subscribeSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false) {
-    const s1 = this.dataService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+    const s1 = this.dataService.timeSeriesData.subscribe((data:TimeSeriesDataDictionary) => {
       this.updateSeries(diagram, aggregateExternal, data)
     });
 
-    const s2 = this.dataService.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.kpiName) {
-        this.apiService.fetchTimeSeriesData(diagram.kpiName, timeInterval)
-      }
-
+    const s2 = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval) => {
       const minuteFormat = '%H:%M'
       const dayFormat = '%e. %b'
       diagram.xAxis.dateTimeLabelFormats = {
@@ -107,17 +101,18 @@ export class ChartService {
     return [s1, s2]
   }
 
-  updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
+  calculateSingleValue(data: TimeSeriesDataPoint[], average: boolean = true): number {
     let sum = 0
       for (const datapoint of data) {
           sum += datapoint.value
       }
       if (average && data.length > 0) sum /= data.length
-      diagram.value = sum
+      return sum
   }
 
-  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
-    const s1 = this.dataService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
+  updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data?: TimeSeriesDataDictionary) {
+      if (!data) data = this.dataService.timeSeriesData.getValue()
+
       const kpiData = (diagram.kpiName) ? data.get(diagram.kpiName) : undefined
       if (!kpiData) {
         return
@@ -126,13 +121,14 @@ export class ChartService {
       if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${diagram.kpiName}`)
       const series = kpiData.map(entry => entry.data).flat()
 
-      this.updateSingleValue(series, diagram, average)
+      diagram.value = this.calculateSingleValue(series, average)
+  }
+
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
+    const s1 = this.dataService.timeSeriesData.subscribe((data:TimeSeriesDataDictionary) => {
+      this.updateSingleValue(diagram, average, data)
     });
 
-    const s2 = this.dataService.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.kpiName) this.apiService.fetchKPIData(diagram.kpiName, timeInterval)
-    })
-
-    return [s1, s2]
+    return [s1]
   }
 }

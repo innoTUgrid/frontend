@@ -1,15 +1,20 @@
-export enum KPI {
-    ENERGY_CONSUMPTION = "consumption",
-    AUTARKY = "autarky",
+export enum KPIKey {
     SELF_CONSUMPTION = "self_consumption",
+    AUTARKY = "autarky",
     COST_SAVINGS = "cost_savings",
     CO2_SAVINGS = "co2_savings",
+}
+
+export enum TimeSeriesKey {
+    ENERGY_CONSUMPTION = "consumption",
     SCOPE_2_EMISSIONS = "scope_two_emissions",
 }
 
+export type DatasetKey = KPIKey | TimeSeriesKey
+
 export interface DataSubscription {
     onSeriesUpdate?: () => void
-    kpiName?: KPI
+    kpiName?: DatasetKey
 }
 
 export interface HighchartsDiagram extends DataSubscription {
