@@ -1,2 +1,8 @@
-<app-command-bar></app-command-bar>
-<app-data-table></app-data-table>
+<div>
+    <app-command-bar></app-command-bar>
+    
+    <div class="dataset-container">
+        <app-data-table title="Energy Consumption" [kpiName]="KPI.ENERGY_CONSUMPTION"></app-data-table>        
+        <app-data-table title="Scope 2 Emissions" [kpiName]="KPI.SCOPE_2_EMISSIONS"></app-data-table>
+    </div>
+</div>

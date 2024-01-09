@@ -61,7 +61,9 @@ type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index:
 export class DataTableComponent {
   dataService: DataService = inject(DataService);
   apiService: ApiService = inject(ApiService);
-  @Input() kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
+
+  @Input() kpiName?: KPI;
+  @Input() title?: string;
 
   columns: MtxGridColumn[] = [
       { header: 'Name', field: 'name', showExpand: true },

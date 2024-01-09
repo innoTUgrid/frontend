@@ -1,13 +1,17 @@
-<mtx-grid 
-    [data]="data" 
-    [columns]="columns" 
-    [expandable]="true" 
-    [expansionTemplate]="expansionTpl"
-    [pageOnFront]="false"
-    [showPaginator]="false"
-    (expansionChange)="onExpansionChange($event)"
->
-</mtx-grid>
+<div>
+    <h2 *ngIf="title">{{title}}</h2>
+
+    <mtx-grid 
+        [data]="data" 
+        [columns]="columns" 
+        [expandable]="true" 
+        [expansionTemplate]="expansionTpl"
+        [pageOnFront]="false"
+        [showPaginator]="false"
+        (expansionChange)="onExpansionChange($event)"
+    >
+    </mtx-grid>
+</div>
 
 <ng-template #expansionTpl let-row>
     <mtx-grid 
