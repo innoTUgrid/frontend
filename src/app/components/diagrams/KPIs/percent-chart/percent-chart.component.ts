@@ -1,15 +1,9 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
-import HighchartsMore from 'highcharts/highcharts-more';
-import SolidGauge from 'highcharts/modules/solid-gauge';
-import NoData from 'highcharts/modules/no-data-to-display'
 import { HighchartsDiagram, DatasetKey, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
-HighchartsMore(Highcharts);
-SolidGauge(Highcharts);
-NoData(Highcharts);
 
 @Component({
     selector: 'app-percent-chart',

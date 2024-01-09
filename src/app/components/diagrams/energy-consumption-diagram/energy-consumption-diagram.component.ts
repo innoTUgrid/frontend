@@ -1,8 +1,5 @@
 import { Component, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
-import HC_exporting from 'highcharts/modules/exporting';
-import HC_exportData from 'highcharts/modules/export-data';
-import HC_noData from 'highcharts/modules/no-data-to-display'
 import { DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
@@ -122,9 +119,6 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   }
   
   constructor() {
-    HC_exporting(Highcharts);
-    HC_exportData(Highcharts);
-    HC_noData(Highcharts);
     this.subscriptions = this.chartService.subscribeSeries(this, true);
   }
 

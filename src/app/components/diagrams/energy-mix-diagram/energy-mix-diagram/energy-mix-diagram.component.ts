@@ -1,19 +1,12 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 
 import * as Highcharts from 'highcharts/highstock';
-import HighchartsExporting from 'highcharts/modules/exporting';
-import HighchartsData from 'highcharts/modules/data';
-import HighchartsAccessibility from 'highcharts/modules/accessibility';
 import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
 
 
-
-HighchartsExporting(Highcharts);
-HighchartsData(Highcharts);
-HighchartsAccessibility(Highcharts);
 
 @Component({
   selector: 'app-energy-mix-diagram',
@@ -38,13 +31,13 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   }
 
   constructor() {
-    this.subscriptions = this.chartService.subscribeSeries(this);
-
-    if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
 
 
   ngOnInit() {
+    this.subscriptions = this.chartService.subscribeSeries(this);
+
+    if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
 
   ngOnDestroy() {
