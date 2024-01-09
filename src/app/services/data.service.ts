@@ -4,7 +4,6 @@ import { KPIResult, TimeInterval, TimeSeriesData, TimeSeriesDataDictionary, Time
 import moment from 'moment';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ThemeService } from './theme.service';
-import { ApiService } from './api.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
 
