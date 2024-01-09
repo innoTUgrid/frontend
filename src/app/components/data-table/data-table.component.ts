@@ -15,12 +15,21 @@ class DataTableSeries implements TimeSeriesData {
   unit?: string | undefined
   consumption?: boolean | undefined
   local?: boolean | undefined
-  expanded: boolean = false
+
   pageIndex: number = 0
   pageSize: number = 10
   pageSizeOptions: number[] = [5, 10, 25]
-  dataFiltered: TimeSeriesDataPoint[] = []
+  expanded: boolean = false
 
+  updateExpansion(value: boolean) {
+    this.expanded = value
+    if (value) {
+      this.updateDataFiltered()
+    }
+  }
+
+  dataFiltered: TimeSeriesDataPoint[] = []
+  
   constructor(data: TimeSeriesData) {
     this.name = data.name
     this.type = data.type
@@ -28,17 +37,21 @@ class DataTableSeries implements TimeSeriesData {
     this.unit = data.unit
     this.consumption = data.consumption
     this.local = data.local
-
-    this.nextPage(this)
   }
 
-  nextPage(e: PageEvent|DataTableSeries) {
+  nextPage(e: PageEvent) {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
-    this.dataFiltered = this.data.slice(e.pageIndex * e.pageSize, (e.pageIndex + 1) * e.pageSize)
+    this.updateDataFiltered()
+  }
+  
+  updateDataFiltered() {
+    this.dataFiltered = this.data.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize)
   }
 
 }
+
+type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index: number; expanded: boolean }
 
 @Component({
   selector: 'app-data-table',
@@ -65,9 +78,12 @@ export class DataTableComponent {
 
   data: DataTableSeries[] = []
 
+  onExpansionChange(e: MtxExpansionEvent) {
+    e.data.updateExpansion(e.expanded)
+  }
+
   updateData() {
     const newData = (this.kpiName) ? this.dataService.timeSeriesData.get(this.kpiName) : undefined
-    console.log(newData)
 
     if (newData) {
       this.data = newData.map((data) => new DataTableSeries(data))
@@ -89,30 +105,3 @@ export class DataTableComponent {
   }
 
 }
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-  description: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    name: 'Hydrogen',
-    weight: 1.0079,
-    symbol: 'H',
-    description: `Hydrogen is a chemical element with symbol H and atomic number 1. With a standard
-        atomic weight of 1.008, hydrogen is the lightest element on the periodic table.`,
-  },
-  {
-    position: 1,
-    name: 'Hydrogen',
-    weight: 1.0079,
-    symbol: 'H',
-    description: `Hydrogen is a chemical element with symbol H and atomic number 1. With a standard
-        atomic weight of 1.008, hydrogen is the lightest element on the periodic table.`,
-  },
-];
