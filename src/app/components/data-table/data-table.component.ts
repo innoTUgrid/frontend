@@ -2,13 +2,18 @@ import { Component, Input, ViewChild, inject } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey } from '@app/types/kpi.model';
-import { TimeSeriesData, TimeSeriesDataPoint } from '@app/types/time-series-data.model';
+import { Dataset, Series } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 
-class DataTableSeries implements TimeSeriesData {
+type TimeSeriesDataPoint = {
+  timestamp: number,
+  value: number,
+}
+
+class DataTableSeries implements Series {
   name: string
   type: string
-  data: TimeSeriesDataPoint[]
+  data: number[][]
   unit?: string | undefined
   consumption?: boolean | undefined
   local?: boolean | undefined
@@ -27,7 +32,7 @@ class DataTableSeries implements TimeSeriesData {
 
   dataFiltered: TimeSeriesDataPoint[] = []
   
-  constructor(data: TimeSeriesData) {
+  constructor(data: Series) {
     this.name = data.name
     this.type = data.type
     this.data = data.data
@@ -42,7 +47,14 @@ class DataTableSeries implements TimeSeriesData {
   }
   
   updateDataFiltered() {
-    this.dataFiltered = this.data.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize)
+    this.dataFiltered = this.data.
+    slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize).
+    map((entry) => {
+      return {
+        timestamp: entry[0],
+        value: entry[1],
+      }
+    })
   }
 
 }
@@ -57,8 +69,22 @@ type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index:
 export class DataTableComponent {
   dataService: DataService = inject(DataService);
 
-  @Input() kpiName?: DatasetKey;
+  _kpiName?: DatasetKey;
+
+  @Input()
+  set kpiName(value: DatasetKey | undefined) {
+    this._kpiName = value;
+    if (value) {
+      this.dataService.registerDataset(value, this.id)
+    }
+  }
+
+  get kpiName(): DatasetKey | undefined {
+    return this._kpiName;
+  }
+
   @Input() title?: string;
+  readonly id = "DataTableComponent." + Math.random().toString(36).substring(7);
 
   columns: MtxGridColumn[] = [
       { header: 'Name', field: 'name', showExpand: true },
@@ -79,27 +105,22 @@ export class DataTableComponent {
     e.data.updateExpansion(e.expanded)
   }
 
-  updateData() {
-    const newData = (this.kpiName) ? this.dataService.timeSeriesData.getValue().get(this.kpiName) : undefined
-
-    if (newData) {
-      this.data = newData.map((data) => new DataTableSeries(data))
-    }
-    else {
-      this.data = []
-    }
-
+  updateData(newData: Series[]) {
+    this.data = newData.map((data) => new DataTableSeries(data))
   }
 
   subsciptions: any[] = []
   ngOnInit() {
-    this.dataService.timeSeriesData.subscribe(() => {
-      this.updateData()
-    })
+    if (this.kpiName) {
+      this.dataService.getBehaviorSubject(this.kpiName).subscribe((data: Series[]) => {
+        this.updateData(data)
+      })
+    }
   }
 
   ngOnDestroy() {
     this.subsciptions.forEach((sub) => sub.unsubscribe())
+    this.dataService.unregisterDataset(this.id)
   }
 
 }

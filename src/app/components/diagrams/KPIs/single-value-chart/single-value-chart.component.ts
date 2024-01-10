@@ -31,10 +31,12 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() unit: string = '';
   
   _kpiName?: DatasetKey;
+readonly id = "SingleValueChartComponent." + Math.random().toString(36).substring(7);
 
   @Input() set kpiName(value: DatasetKey | undefined) {
     this._kpiName = value;
     if (value) {
+      this.dataService.registerDataset(value, this.id)
       this.chartService.updateSingleValue(this, false)
     }
   }
@@ -51,6 +53,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   
   ngOnDestroy() {
     this.unsubscribeAll()
+    this.dataService.unregisterDataset(this.id)
   }
 
   subscribe() {

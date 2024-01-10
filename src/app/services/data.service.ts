@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HighchartsDiagram, DatasetKey, SingleValueDiagram, KPIKey } from '@app/types/kpi.model';
-import { KPIResult, TimeInterval, TimeSeriesData, TimeSeriesDataDictionary, TimeSeriesDataPoint, TimeSeriesResult } from '@app/types/time-series-data.model';
+import { HighchartsDiagram, DatasetKey, SingleValueDiagram, KPIEndpointKey, KPIList } from '@app/types/kpi.model';
+import { CustomIntervalRegistry, DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult } from '@app/types/time-series-data.model';
 import moment from 'moment';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ThemeService } from './theme.service';
@@ -18,35 +18,43 @@ export class DataService {
   http: HttpClient = inject(HttpClient);
   themeService: ThemeService = inject(ThemeService);
 
-  readonly timeSeriesData:BehaviorSubject<TimeSeriesDataDictionary> = new BehaviorSubject<TimeSeriesDataDictionary>(new TimeSeriesDataDictionary());
-  readonly newTimeSeriesData:Subject<TimeSeriesDataDictionary> = new Subject<TimeSeriesDataDictionary>();
+  readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
 
-  currentDatasets: DatasetKey[] = [];
+  datasetConfigurations: Map<string, DatasetRegistry> = new Map<string, DatasetRegistry>();
 
   readonly timeInterval:BehaviorSubject<TimeInterval> = new BehaviorSubject<TimeInterval>({start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:"day"});
 
   constructor() {
-    this.newTimeSeriesData.subscribe((data: TimeSeriesDataDictionary) => {
-      const newData = new TimeSeriesDataDictionary(this.timeSeriesData.getValue())
-      for (const [key, value] of data) {
-        newData.set(key, value)
-      }
-      this.timeSeriesData.next(newData)
-    })
-
     this.timeInterval.subscribe((timeInterval: TimeInterval) => {
-      this.fetchDatasets(timeInterval)
+      this.fetchDatasets()
     })
   }
 
-  updateDatasets(datasets: DatasetKey[]): void {
-    const filtered = datasets.filter(key => !this.currentDatasets.includes(key))
-    this.fetchDatasets(this.timeInterval.getValue(), filtered)
-    this.currentDatasets = datasets.concat(this.currentDatasets)
+  getDataset(key: string): Dataset {
+    let dataset = this.timeSeriesData.get(key)
+    if (!dataset) {
+      dataset = {
+        series: new BehaviorSubject<Series[]>([])
+      }
+      this.timeSeriesData.set(key, dataset)
+    }
+    return dataset
   }
 
-  updateTimeSeriesData(timeSeriesData: TimeSeriesDataDictionary): void {
-    this.newTimeSeriesData.next(timeSeriesData)
+  getBehaviorSubject(key: string): BehaviorSubject<Series[]> {
+    let dataset = this.getDataset(key)
+    return dataset.series
+  }
+
+  registerDataset(key: DatasetKey, id: string, customInterval?: CustomIntervalRegistry): void {
+    const registry = {id: id, endpointKey: key, customInterval: customInterval}
+    this.datasetConfigurations.set(id, registry)
+
+    this.fetchDataset(registry)
+  }
+
+  unregisterDataset(id: string) {
+    this.datasetConfigurations.delete(id)
   }
 
   updateTimeInterval(timeInterval: Partial<TimeInterval>): void {
@@ -64,20 +72,41 @@ export class DataService {
     }
   }
 
-  async fetchDatasets(timeInterval: TimeInterval, datasetKeys?: DatasetKey[]) {
-    if (!datasetKeys) datasetKeys = this.currentDatasets
-
-    let kpis: DatasetKey[] = Object.values(KPIKey)
-    for (const key of datasetKeys) {
-      if (kpis.includes(key)) {
-        this.fetchKPIData(key, timeInterval)
-      } else {
-        this.fetchTimeSeriesData(key, timeInterval)
+  async fetchDatasets(customIntervalsToo: boolean = false) {
+    for (const [id, registry] of this.datasetConfigurations) {
+      if (!registry.customInterval || customIntervalsToo) {
+        this.fetchDataset(registry)
       }
     }
   }
 
-  async fetchKPIData(kpi: string, timeInterval: TimeInterval) {
+  async fetchDataset(registry: DatasetRegistry) {
+    let localKey: string = registry.endpointKey
+    let timeInterval = this.timeInterval.getValue()
+    if (registry.customInterval) {
+      localKey = registry.customInterval.key
+      timeInterval = registry.customInterval.fixedTimeInterval
+    }
+
+    const localData = this.timeSeriesData.get(localKey)
+    if (localData) {
+      const timeRange = localData.timeRange
+      if (timeRange && timeIntervalEquals(timeRange, timeInterval)) { // do not call the same request twice
+        return
+      }
+    }
+
+
+    if (KPIList.includes(registry.endpointKey)) {
+      this.fetchKPIData(registry.endpointKey, timeInterval, localKey)
+    } else {
+      this.fetchTimeSeriesData(registry.endpointKey, timeInterval, localKey)
+    }
+  }
+
+  async fetchKPIData(kpi: DatasetKey, timeInterval: TimeInterval, localKey: string) {
+    // this is important such that while an endpoint loades data, no other call on the same endpoint is made
+    this.getDataset(localKey).timeRange = timeInterval
     const url = `${environment.apiUrl}/v1/kpi/${kpi}/`;
     this.http.get<KPIResult>(url, {
       params: {
@@ -86,26 +115,25 @@ export class DataService {
       }
     })
     .subscribe((kpiValue) => {
-      const newData = new TimeSeriesDataDictionary([
-        [kpi, [
-          {type:kpi, name:kpiValue.name, data:[
-            {
-              timestamp:new Date().getTime(), 
-              value:kpiValue.value, 
-              timeRange: timeInterval
-            }
-          ],
-          unit:kpiValue.unit? kpiValue.unit : undefined, 
-          consumption:true,
-        },
-        ]]
-      ]);
+      const series: Series[] = [
+        {type:kpi, name:kpiValue.name, data:[
+          [
+            new Date().getTime(), 
+            kpiValue.value, 
+          ]
+        ],
+        unit:kpiValue.unit? kpiValue.unit : undefined, 
+        consumption:true,
+      },
+      ]
 
-      this.newTimeSeriesData.next(newData);
+      this.getBehaviorSubject(localKey).next(series);
     });
   }
 
-  async fetchTimeSeriesData(key: string, timeInterval: TimeInterval) {
+  async fetchTimeSeriesData(key: DatasetKey, timeInterval: TimeInterval, localKey: string) {
+    // this is important such that while an endpoint loades data, no other call on the same endpoint is made
+    this.getDataset(localKey).timeRange = timeInterval
     const url = `${environment.apiUrl}/v1/kpi/${key}/`;
     this.http.get<TimeSeriesResult[]>(url, {
       params: {
@@ -115,18 +143,19 @@ export class DataService {
       }
     })
     .subscribe((timeSeriesResult: TimeSeriesResult[]) => {
-      const newData = new TimeSeriesDataDictionary();
-      const series: Map<string, TimeSeriesData> = new Map();
+      const seriesMap: Map<string, Series> = new Map();
 
       for (const entry of timeSeriesResult) {
-        let data: TimeSeriesDataPoint[];
+        let data: number[][];
         const carrierName = entry.carrier_name
         const seriesKey = carrierName + (entry.local ? '' : ' (external)')
-        if (!series.has(seriesKey)) {
+
+        const currentSeries = seriesMap.get(seriesKey)
+        if (!currentSeries) {
           data = []
           let name = this.themeService.energyTypesToName.get(carrierName)
           if (!name) name = carrierName
-          series.set(seriesKey, {
+          seriesMap.set(seriesKey, {
             name: name,
             type: carrierName,
             data: data,
@@ -135,23 +164,21 @@ export class DataService {
             local: entry.local,
           })
         } else {
-          data = series.get(seriesKey)?.data as TimeSeriesDataPoint[];
+          data = currentSeries.data;
         }
 
-        data.push({
-          timestamp: new Date(entry.bucket).getTime(),
-          value: entry.value,
-          timeRange: timeInterval
-        })
+        data.push([
+          new Date(entry.bucket).getTime(),
+          entry.value,
+        ])
       }
       // sort newData
-      const seriesArray = Array.from(series.values())
+      const seriesArray = Array.from(seriesMap.values())
       for (const value of seriesArray) {
-        value.data.sort((a, b) => a.timestamp - b.timestamp)
+        value.data.sort((a, b) => a[0] - b[0])
       }
 
-      newData.set(key, seriesArray)
-      this.newTimeSeriesData.next(newData);
+      this.getBehaviorSubject(localKey).next(seriesArray);
     });
   }
 }

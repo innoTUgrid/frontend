@@ -1,16 +1,17 @@
-export enum KPIKey {
+export enum KPIEndpointKey {
     SELF_CONSUMPTION = "self_consumption",
     AUTARKY = "autarky",
     COST_SAVINGS = "cost_savings",
     CO2_SAVINGS = "co2_savings",
 }
 
-export enum TimeSeriesKey {
+export enum TimeSeriesEndpointKey {
     ENERGY_CONSUMPTION = "consumption",
     SCOPE_2_EMISSIONS = "scope_two_emissions",
 }
 
-export type DatasetKey = KPIKey | TimeSeriesKey
+export type DatasetKey = KPIEndpointKey | TimeSeriesEndpointKey
+export const KPIList: string[] = Object.values(KPIEndpointKey)
 
 export interface DataSubscription {
     onSeriesUpdate?: () => void

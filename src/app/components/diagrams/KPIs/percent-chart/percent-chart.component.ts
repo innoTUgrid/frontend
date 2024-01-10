@@ -24,11 +24,13 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     }
 
     _kpiName?: DatasetKey;
+  readonly id = "PercentChartComponent." + Math.random().toString(36).substring(7);
     subscriptions: Subscription[] = [];
 
     @Input() set kpiName(value: DatasetKey | undefined) {
         this._kpiName = value;
         if (value) {
+            this.dataService.registerDataset(value, this.id)
            this.chartService.updateSingleValue(this)
         }
     }
@@ -174,6 +176,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
 
     ngOnDestroy(): void {
         this.unsubscribeAll()
+        this.dataService.unregisterDataset(this.id)
     }
 
     ngOnInit(): void {
