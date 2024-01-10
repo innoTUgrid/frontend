@@ -46,11 +46,12 @@ export class DataService {
     return dataset.series
   }
 
-  registerDataset(key: DatasetKey, id: string, customInterval?: CustomIntervalRegistry): void {
-    const registry = {id: id, endpointKey: key, customInterval: customInterval}
-    this.datasetConfigurations.set(id, registry)
+  registerDataset(registry: DatasetRegistry): DatasetRegistry {
+    this.datasetConfigurations.set(registry.id, registry)
 
     this.fetchDataset(registry)
+
+    return registry
   }
 
   unregisterDataset(id: string) {
@@ -96,6 +97,9 @@ export class DataService {
       }
     }
 
+    if (registry.beforeUpdate) {
+      registry.beforeUpdate()
+    }
 
     if (KPIList.includes(registry.endpointKey)) {
       this.fetchKPIData(registry.endpointKey, timeInterval, localKey)

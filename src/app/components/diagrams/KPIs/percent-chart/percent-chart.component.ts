@@ -30,8 +30,12 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     @Input() set kpiName(value: DatasetKey | undefined) {
         this._kpiName = value;
         if (value) {
-            this.dataService.registerDataset(value, this.id)
-           this.chartService.updateSingleValue(this)
+            this.dataService.registerDataset({
+                id:this.id,
+                endpointKey: value,
+            })
+           this.chartService.updateSingleValue(this) 
+           this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, value);
         }
     }
 
@@ -180,13 +184,8 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     }
 
     ngOnInit(): void {
-        this.subscribe()
     }
     
-    subscribe() {
-        this.subscriptions = this.chartService.subscribeSingleValueDiagram(this);
-    }
-
     unsubscribeAll() {
         this.subscriptions.forEach(subscription => subscription.unsubscribe());
         this.subscriptions = [];

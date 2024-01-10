@@ -35,6 +35,9 @@ export type DatasetRegistry = {
 
   // when a registry has a customInterval, then it is not updated by the data service
   customInterval?: CustomIntervalRegistry
+
+  // events
+  beforeUpdate?: () => void,
 }
 
 // export type TimeSeriesDataDictionary = Map<string, TimeSeriesData[]>;

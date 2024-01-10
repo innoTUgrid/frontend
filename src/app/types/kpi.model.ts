@@ -15,7 +15,6 @@ export const KPIList: string[] = Object.values(KPIEndpointKey)
 
 export interface DataSubscription {
     onSeriesUpdate?: () => void
-    kpiName?: DatasetKey
 }
 
 export interface HighchartsDiagram extends DataSubscription {

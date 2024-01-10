@@ -91,39 +91,24 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     },
   }
 
-  updateAverageLine() {
-    if (this.chart && this.chart.series && this.chart.series[0]) {
-      const series = this.chart.series[0] as any
-      const groupedData = series.groupedData
-      if (groupedData) {
-        let sum = 0
-        for (const group of groupedData) {
-          sum += group.stackTotal
-        }
-        sum /= groupedData.length
-        this.plotLines.value = sum
-        this.chart.update({
-          yAxis: {
-            color: '#FF0000',
-            plotLines: [this.plotLines]
-          }
-        }, true, true, true)
-      }
-    }
-  }
-
   onSeriesUpdate() {
-    this.updateAverageLine()
+    if (this.chart) this.chartService.updateAverageLine(this.chart, this.plotLines)
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
     this.dataService.unregisterDataset(this.id)
   }
 
   ngOnInit() {
-    this.dataService.registerDataset(this.kpiName, this.id)
-    this.subscriptions = this.chartService.subscribeSeries(this, true);
+    this.dataService.registerDataset({
+      id: this.id,
+      endpointKey: this.kpiName,
+    })
+
+    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, true))
+    this.subscriptions.push(this.chartService.subscribeSeriesInterval(this))
   }
   
   constructor() {

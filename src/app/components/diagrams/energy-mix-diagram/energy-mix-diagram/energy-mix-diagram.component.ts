@@ -32,12 +32,13 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   set kpiName(value: DatasetKey) {
     this._kpiName = value;
     if (value) {
-      this.unsubscribeAll();
-      this.subscribe();
+      this.timeSeriesSubscription?.unsubscribe()
+      this.timeSeriesSubscription = this.chartService.subscribeSeries(this, this.kpiName);
     }
   }
   
-  subscriptions: Subscription[] = [];
+  timeSeriesSubscription?: Subscription;
+  timeIntervalSubscription?: Subscription;
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
@@ -52,9 +53,19 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
 
   ngOnInit(): void {
     if (this._kpiName) this.changeSeriesType(this._kpiName)
-    this.dataService.registerDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS))
-    this.dataService.registerDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
+    this.dataService.registerDataset(
+      {
+        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
+        endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
+      })
+    this.dataService.registerDataset(
+      {
+        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
+        endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
+      })
+    this.timeIntervalSubscription = this.chartService.subscribeSeriesInterval(this)
   }
+
 
   ngOnDestroy() {
     this.unsubscribeAll()
@@ -62,12 +73,11 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
   }
 
-  subscribe() {
-    this.subscriptions = this.chartService.subscribeSeries(this);
-  }
-
   unsubscribeAll() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.timeIntervalSubscription?.unsubscribe()
+    this.timeIntervalSubscription = undefined;
+    this.timeSeriesSubscription?.unsubscribe()
+    this.timeSeriesSubscription = undefined;
   }
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {

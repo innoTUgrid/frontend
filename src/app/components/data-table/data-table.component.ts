@@ -75,7 +75,10 @@ export class DataTableComponent {
   set kpiName(value: DatasetKey | undefined) {
     this._kpiName = value;
     if (value) {
-      this.dataService.registerDataset(value, this.id)
+      this.dataService.registerDataset({
+        id:this.id,
+        endpointKey: value,
+      })
     }
   }
 

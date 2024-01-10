@@ -2,7 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { ThemeService } from './theme.service';
 import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/types/time-series-data.model';
 import { DataService } from './data.service';
-import { HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
+import { DatasetKey, HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ChartService {
 
   constructor() { }
 
-  updateSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false, data?: Series[]) {
+  updateSeries(diagram: HighchartsDiagram, datasetKey: string, aggregateExternal: boolean = false, data?: Series[]) {
     if (!data) {
       return
     }
@@ -35,7 +36,7 @@ export class ChartService {
 
       const newSeries = {
           name: series.name,
-          id: series.type + ' ' + diagram.kpiName, 
+          id: series.type + ' ' + datasetKey, 
           data:series.data,
           type: diagram.seriesType,
           color: color,
@@ -50,7 +51,8 @@ export class ChartService {
       diagram.chart.update({
         series: allSeries,
       }, true, true)
-    } else { 
+      diagram.chart.hideLoading()
+    } else {
       diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
     }
@@ -59,37 +61,35 @@ export class ChartService {
     }
   }
 
-  subscribeSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false) {
-    let s1 = undefined;
-    if (diagram.kpiName) {
-      s1 = this.dataService.getBehaviorSubject(diagram.kpiName).subscribe((data:Series[]) => {
-        this.updateSeries(diagram, aggregateExternal, data)
-      });
-    }
+  subscribeSeries(diagram: HighchartsDiagram, datasetKey: string, aggregateExternal: boolean = false): Subscription {
+    const s = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
+      this.updateSeries(diagram, datasetKey, aggregateExternal, data)
+    });
+    return s
+  }
 
-    const s2 = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval) => {
+  subscribeSeriesInterval(diagram: HighchartsDiagram): Subscription {
+    const s = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval) => {
       const minuteFormat = '%H:%M'
       const dayFormat = '%e. %b'
       diagram.xAxis.dateTimeLabelFormats = {
         minute: minuteFormat,
         day: timeInterval.stepUnit === 'day' ? dayFormat : minuteFormat,
       }
-      diagram.updateFlag = true
 
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
+        diagram.chart.showLoading()
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
-        diagram.chart.xAxis[0].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), true, true);
+        diagram.chart.xAxis[0].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), false, true);
       } else { // this is only reachable for code that uses highcharts-angular
         diagram.xAxis.min = timeInterval.start.toDate().getTime();
         diagram.xAxis.max = timeInterval.end.toDate().getTime();
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        diagram.updateFlag = true
+        diagram.updateFlag = false
       }
     });
-
-
-    return (s1) ? [s1, s2] : [s2]
+    return s
   }
 
   calculateSingleValue(data: number[][], average: boolean = true): number {
@@ -106,18 +106,45 @@ export class ChartService {
         return
       }
 
-      if (data.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${data.length} at ${diagram.kpiName}`)
+      if (data.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${data.length}`)
       const series = data.map(entry => entry.data).flat()
-
       diagram.value = this.calculateSingleValue(series, average)
   }
 
-  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
-    if (!diagram.kpiName) return [];
-    const s1 = this.dataService.getBehaviorSubject(diagram.kpiName).subscribe((data:Series[]) => {
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, datasetKey:DatasetKey, average: boolean = true) {
+    const s1 = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
       this.updateSingleValue(diagram, average, data)
     });
 
     return [s1]
+  }
+
+
+  updateAverageLine(chart: Highcharts.Chart, plotLineConfig?: Highcharts.YAxisPlotLinesOptions, seriesIndices?: number[]) {
+    if (!seriesIndices) {
+      seriesIndices = []
+      chart.series.forEach((series, index) => seriesIndices?.push(index))
+    }
+    
+    for (const seriesIndex of seriesIndices) {
+      const series = chart.series[seriesIndex] as any
+      const groupedData = series.groupedData
+      if (groupedData) {
+        let sum = 0
+        for (const group of groupedData) {
+          sum += group.stackTotal
+        }
+        sum /= groupedData.length
+  
+        const plotLines = {...plotLineConfig}
+        plotLines.value = sum
+        chart.update({
+          yAxis: {
+            color: '#FF0000',
+            plotLines: [plotLines]
+          }
+        }, true, true, true)
+      }
+    }
   }
 }
