@@ -1,15 +1,21 @@
-export enum KPI {
-    ENERGY_CONSUMPTION = "consumption",
-    AUTARKY = "autarky",
+export enum KPIEndpointKey {
     SELF_CONSUMPTION = "self_consumption",
+    AUTARKY = "autarky",
     COST_SAVINGS = "cost_savings",
     CO2_SAVINGS = "co2_savings",
+}
+
+export enum TimeSeriesEndpointKey {
+    ENERGY_CONSUMPTION = "consumption",
     SCOPE_2_EMISSIONS = "scope_two_emissions",
 }
 
+export type DatasetKey = KPIEndpointKey | TimeSeriesEndpointKey
+export const KPIList: string[] = Object.values(KPIEndpointKey)
+
 export interface DataSubscription {
     onSeriesUpdate?: () => void
-    kpiName?: KPI
+    kpiName?: DatasetKey
 }
 
 export interface HighchartsDiagram extends DataSubscription {

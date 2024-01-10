@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { KPI } from '@app/types/kpi.model';
+import { DatasetKey, KPIEndpointKey } from '@app/types/kpi.model';
 
 @Component({
   selector: 'app-cost-savings-kpi',
@@ -8,7 +8,7 @@ import { KPI } from '@app/types/kpi.model';
 })
 export class CostSavingsKPIComponent implements OnInit{
 
-  kpiName: KPI = KPI.COST_SAVINGS;
+  kpiName: DatasetKey = KPIEndpointKey.COST_SAVINGS;
 
   constructor() {}
 

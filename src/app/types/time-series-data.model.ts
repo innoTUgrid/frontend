@@ -1,24 +1,40 @@
 import { Moment } from 'moment';
+import { BehaviorSubject } from 'rxjs';
+import { DatasetKey } from './kpi.model';
 
 // integrate a property that describes for what time range a single data point is representative
-export type TimeSeriesDataPoint = {
-  timestamp:number, 
-  value:number, 
-  timeRange?: TimeInterval,
-};
-export type TimeSeriesData = {
+export type Series = {
   name:string, 
   type:string, 
-  data:TimeSeriesDataPoint[]
+  data:number[][]
   unit?: string,
   consumption?: boolean,
   local?: boolean,
 };
 
-export class TimeSeriesDataDictionary extends Map<string, TimeSeriesData[]> {
-  constructor(iterable?: Iterable<[string, TimeSeriesData[]]>) {
+export type Dataset = {
+  series: BehaviorSubject<Series[]>,
+  timeRange?: TimeInterval,
+}
+
+export class TimeSeriesDataDictionary extends Map<string, Dataset> {
+  constructor(iterable?: Iterable<[string, Dataset]>) {
     super(iterable);
   }
+}
+
+// this type should be a type that has information about a dataset that is registered by a component such that the data service keeps it up to date 
+export type CustomIntervalRegistry = {
+  key: string, // this is the key that is used to access the data in the data service
+  fixedTimeInterval: TimeInterval, // when this is given, then the data service will update the data for this dataset at the given interval
+}
+
+export type DatasetRegistry = {
+  id: string, // this is the id of the component that registered the dataset
+  endpointKey: DatasetKey,
+
+  // when a registry has a customInterval, then it is not updated by the data service
+  customInterval?: CustomIntervalRegistry
 }
 
 // export type TimeSeriesDataDictionary = Map<string, TimeSeriesData[]>;

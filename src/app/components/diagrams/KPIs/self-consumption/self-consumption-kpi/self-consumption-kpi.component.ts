@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { KPI } from 'src/app/types/kpi.model';
+import { DatasetKey, KPIEndpointKey } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-self-consumption-kpi',
@@ -8,7 +8,7 @@ import { KPI } from 'src/app/types/kpi.model';
 })
 export class SelfConsumptionKPIComponent implements OnInit{
   selfConsumptionKPI: number = 0;
-  kpiName: KPI = KPI.SELF_CONSUMPTION;
+  kpiName: DatasetKey = KPIEndpointKey.SELF_CONSUMPTION;
 
   constructor() {}
 

@@ -1,37 +1,41 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { ApiService } from 'src/app/services/api.service';
 
 import * as Highcharts from 'highcharts/highstock';
-import HighchartsExporting from 'highcharts/modules/exporting';
-import HighchartsData from 'highcharts/modules/data';
-import HighchartsAccessibility from 'highcharts/modules/accessibility';
-import { HighchartsDiagram, KPI, SeriesTypes } from 'src/app/types/kpi.model';
+import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesEndpointKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
 
 
 
-HighchartsExporting(Highcharts);
-HighchartsData(Highcharts);
-HighchartsAccessibility(Highcharts);
-
 @Component({
   selector: 'app-energy-mix-diagram',
   templateUrl: './energy-mix-diagram.component.html',
   styleUrls: ['./energy-mix-diagram.component.scss']
 })
-export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
+export class EnergyMixDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
-  apiService: ApiService = inject(ApiService);
 
   chart: Highcharts.Chart | undefined;
   updateFlag: boolean = false;
   seriesType: SeriesTypes = 'area';
 
-  kpiName?: KPI = KPI.SCOPE_2_EMISSIONS;
+  readonly id = "EnergyMixDiagramComponent." + Math.random().toString(36).substring(7);
+  _kpiName: DatasetKey = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+
+  get kpiName(): DatasetKey {
+    return this._kpiName;
+  }
+
+  set kpiName(value: DatasetKey) {
+    this._kpiName = value;
+    if (value) {
+      this.unsubscribeAll();
+      this.subscribe();
+    }
+  }
   
   subscriptions: Subscription[] = [];
 
@@ -40,16 +44,29 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   }
 
   constructor() {
-    this.subscriptions = this.chartService.subscribeSeries(this);
-
-    if (this.kpiName) this.changeSeriesType(this.kpiName)
   }
 
+  getRegistryId(id: string, endpointKey: string) {
+    return id + '-' + endpointKey
+  }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    if (this._kpiName) this.changeSeriesType(this._kpiName)
+    this.dataService.registerDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS))
+    this.dataService.registerDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
   }
 
   ngOnDestroy() {
+    this.unsubscribeAll()
+    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS))
+    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
+  }
+
+  subscribe() {
+    this.subscriptions = this.chartService.subscribeSeries(this);
+  }
+
+  unsubscribeAll() {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
@@ -77,8 +94,8 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
   toggleSeries: Highcharts.ExportingButtonsOptionsObject = {
     // change button text between consumption end emissions when it is clicked
     onclick: () => {
-      if (this.kpiName == KPI.SCOPE_2_EMISSIONS) this.changeSeriesType(KPI.ENERGY_CONSUMPTION);
-      else this.changeSeriesType(KPI.SCOPE_2_EMISSIONS);
+      if (this.kpiName == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS) this.changeSeriesType(TimeSeriesEndpointKey.ENERGY_CONSUMPTION);
+      else this.changeSeriesType(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS);
     }
   }
 
@@ -115,14 +132,11 @@ export class EnergyMixDiagramComponent implements OnInit, HighchartsDiagram {
     },
   };
 
-  changeSeriesType(kpi: KPI) {
-    this.toggleSeries.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
-    if (this.yAxis.title) this.yAxis.title.text = kpi == KPI.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
+  changeSeriesType(kpi: DatasetKey) {
+    this.toggleSeries.text = kpi == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
+    if (this.yAxis.title) this.yAxis.title.text = kpi == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.updateFlag = true;
-    const lastKpi = this.kpiName;
     this.kpiName = kpi;
-
-    if (kpi !== lastKpi) this.chartService.updateSeries(this);
   }
 
 }

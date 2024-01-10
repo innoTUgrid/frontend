@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ThemeService } from './theme.service';
-import { ApiService } from './api.service';
-import { TimeInterval, TimeSeriesDataDictionary, TimeSeriesDataPoint } from '@app/types/time-series-data.model';
+import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/types/time-series-data.model';
 import { DataService } from './data.service';
 import { HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
 
@@ -11,46 +10,33 @@ import { HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
 export class ChartService {
 
   themeService: ThemeService = inject(ThemeService);
-  apiService: ApiService = inject(ApiService);
   dataService: DataService = inject(DataService);
 
   constructor() { }
 
-  updateSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false, data?: TimeSeriesDataDictionary) {
-    if (!data) data = this.dataService.timeSeriesData
-
-    let energy = diagram.kpiName? data.get(diagram.kpiName) : undefined
-    if (!energy) {
+  updateSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false, data?: Series[]) {
+    if (!data) {
       return
     }
 
     if (aggregateExternal) {
-      const data = energy.filter(entry => !entry.local).map(entry => entry.data).flat()
-      data.sort((a, b) => a.timestamp - b.timestamp)
-      energy = [{
+      const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
+      externalEnergy.sort((a, b) => a[0] - b[0])
+      data = [{
         name: 'Imported Energy',
         type: 'external',
-        data: data,
-      }, ...energy.filter(entry => entry.local)]
+        data: externalEnergy,
+      }, ...data.filter(entry => entry.local)]
     }
 
-    if (diagram.chart) {
-      while(diagram.chart.series.length > 0) {
-        diagram.chart.series[0].remove(false, false)
-      }
-    } else {
-      diagram.chartProperties.series = []
-    }
-
-    for (const series of energy) {
+    const allSeries = []
+    for (const series of data) {
       const color = this.themeService.colorMap.get(series.type)
-
-      const data = series.data.map(entry => ([entry.timestamp, entry.value]))
 
       const newSeries = {
           name: series.name,
           id: series.type + ' ' + diagram.kpiName, 
-          data:data,
+          data:series.data,
           type: diagram.seriesType,
           color: color,
           animation: true,
@@ -58,15 +44,14 @@ export class ChartService {
             lineColor: color,
           },
         }
-      if (diagram.chart) {
-        diagram.chart?.addSeries(newSeries, false, true)
-      } else {
-        diagram.chartProperties.series?.push(newSeries)
-      }
+      allSeries.push(newSeries)
     }
     if (diagram.chart) {
-      diagram.chart.redraw()
-    } else { // this is only reachable for code that uses highcharts-angular
+      diagram.chart.update({
+        series: allSeries,
+      }, true, true)
+    } else { 
+      diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
     }
     if (diagram.onSeriesUpdate) {
@@ -75,15 +60,14 @@ export class ChartService {
   }
 
   subscribeSeries(diagram: HighchartsDiagram, aggregateExternal: boolean = false) {
-    const s1 = this.dataService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      this.updateSeries(diagram, aggregateExternal, data)
-    });
+    let s1 = undefined;
+    if (diagram.kpiName) {
+      s1 = this.dataService.getBehaviorSubject(diagram.kpiName).subscribe((data:Series[]) => {
+        this.updateSeries(diagram, aggregateExternal, data)
+      });
+    }
 
-    const s2 = this.dataService.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.kpiName) {
-        this.apiService.fetchTimeSeriesData(diagram.kpiName, timeInterval)
-      }
-
+    const s2 = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval) => {
       const minuteFormat = '%H:%M'
       const dayFormat = '%e. %b'
       diagram.xAxis.dateTimeLabelFormats = {
@@ -104,35 +88,36 @@ export class ChartService {
       }
     });
 
-    return [s1, s2]
+
+    return (s1) ? [s1, s2] : [s2]
   }
 
-  updateSingleValue(data: TimeSeriesDataPoint[], diagram:SingleValueDiagram, average: boolean = true) {
+  calculateSingleValue(data: number[][], average: boolean = true): number {
     let sum = 0
       for (const datapoint of data) {
-          sum += datapoint.value
+          sum += datapoint[1]
       }
       if (average && data.length > 0) sum /= data.length
-      diagram.value = sum
+      return sum
   }
 
-  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
-    const s1 = this.dataService.timeSeriesData$$.subscribe((data:TimeSeriesDataDictionary) => {
-      const kpiData = (diagram.kpiName) ? data.get(diagram.kpiName) : undefined
-      if (!kpiData) {
+  updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data?: Series[]) {
+      if (!data) {
         return
       }
 
-      if (kpiData.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${kpiData.length} at ${diagram.kpiName}`)
-      const series = kpiData.map(entry => entry.data).flat()
+      if (data.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${data.length} at ${diagram.kpiName}`)
+      const series = data.map(entry => entry.data).flat()
 
-      this.updateSingleValue(series, diagram, average)
+      diagram.value = this.calculateSingleValue(series, average)
+  }
+
+  subscribeSingleValueDiagram(diagram: SingleValueDiagram, average: boolean = true) {
+    if (!diagram.kpiName) return [];
+    const s1 = this.dataService.getBehaviorSubject(diagram.kpiName).subscribe((data:Series[]) => {
+      this.updateSingleValue(diagram, average, data)
     });
 
-    const s2 = this.dataService.timeInterval$$.subscribe((timeInterval: TimeInterval) => {
-      if (diagram.kpiName) this.apiService.fetchKPIData(diagram.kpiName, timeInterval)
-    })
-
-    return [s1, s2]
+    return [s1]
   }
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { DataService } from '@app/services/data.service';
 
 
 @Component({
@@ -7,6 +8,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./overview.component.scss'],
 })
 export class OverviewComponent {
+  dataService: DataService = inject(DataService);
 
+  ngOnInit(): void {
+  }
 }
 

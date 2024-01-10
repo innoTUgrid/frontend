@@ -1,11 +1,9 @@
 import { Component, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
-import HC_exporting from 'highcharts/modules/exporting';
-import HC_exportData from 'highcharts/modules/export-data';
-import HC_noData from 'highcharts/modules/no-data-to-display'
-import { KPI, HighchartsDiagram, SeriesTypes } from 'src/app/types/kpi.model';
+import { DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
+import { DataService } from '@app/services/data.service';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -16,7 +14,10 @@ import { ChartService } from '@app/services/chart.service';
 export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartService: ChartService = inject(ChartService);
-  kpiName?: KPI = KPI.ENERGY_CONSUMPTION;
+  dataService: DataService = inject(DataService);
+  kpiName: DatasetKey = TimeSeriesEndpointKey.ENERGY_CONSUMPTION;
+readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).substring(7);
+
   subscriptions: Subscription[] = [];
 
   chart: Highcharts.Chart|undefined
@@ -26,9 +27,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
-    this.updateAverageLine()
   }
-
 
   xAxis: Highcharts.XAxisOptions = {
     id: 'xAxis', // update xAxis and do not create a new one
@@ -117,15 +116,17 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
     this.updateAverageLine()
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.dataService.unregisterDataset(this.id)
+  }
+
+  ngOnInit() {
+    this.dataService.registerDataset(this.kpiName, this.id)
+    this.subscriptions = this.chartService.subscribeSeries(this, true);
   }
   
   constructor() {
-    HC_exporting(Highcharts);
-    HC_exportData(Highcharts);
-    HC_noData(Highcharts);
-    this.subscriptions = this.chartService.subscribeSeries(this, true);
   }
 
 }

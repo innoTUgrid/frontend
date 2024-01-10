@@ -55,7 +55,7 @@ export class CommandBarComponent {
       step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
       stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
     }
-    this.dataService.timeInterval$$.next(this.timeInterval);
+    this.dataService.updateTimeInterval(this.timeInterval);
   }
 
   resetFilters(){
@@ -68,7 +68,7 @@ export class CommandBarComponent {
       step: 1,
       stepUnit: "day"
     }
-    this.dataService.timeInterval$$.next(timeInterval)
+    this.dataService.updateTimeInterval(timeInterval)
   }
 
   handleRecentPeriodInput() {
@@ -77,7 +77,7 @@ export class CommandBarComponent {
     this.timeInterval.start = start;
     this.timeInterval.end = today;
     this.applyFilters();
-    this.dataService.timeInterval$$.next(this.timeInterval);
+    this.dataService.updateTimeInterval(this.timeInterval);
   }
 
   isSingleDatepickerDisabled(): boolean {
@@ -110,7 +110,7 @@ export class CommandBarComponent {
       this.dataService.updateTimeInterval(timeInterval);
     });
 
-    const s2 = this.dataService.timeInterval$$.subscribe(timeInterval => {
+    const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
       if (timeInterval != this.timeInterval) {
         this.timeInterval = timeInterval;
         this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
