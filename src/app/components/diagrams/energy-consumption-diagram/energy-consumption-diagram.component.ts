@@ -105,6 +105,9 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     this.dataService.registerDataset({
       id: this.id,
       endpointKey: this.kpiName,
+      beforeUpdate: () => {
+        this.chart?.showLoading()
+      }
     })
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, true))

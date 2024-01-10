@@ -51,17 +51,23 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     return id + '-' + endpointKey
   }
 
+  beforeDataUpdate() {
+    this.chart?.showLoading()
+  }
+
   ngOnInit(): void {
     if (this._kpiName) this.changeSeriesType(this._kpiName)
     this.dataService.registerDataset(
       {
         id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
         endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
+        beforeUpdate: () => {this.beforeDataUpdate()}
       })
     this.dataService.registerDataset(
       {
         id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
         endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
+        beforeUpdate: () => {this.beforeDataUpdate()}
       })
     this.timeIntervalSubscription = this.chartService.subscribeSeriesInterval(this)
   }

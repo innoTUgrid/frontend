@@ -89,6 +89,10 @@ export class DataService {
       timeInterval = registry.customInterval.fixedTimeInterval
     }
 
+    if (registry.beforeUpdate) {
+      registry.beforeUpdate()
+    }
+
     const localData = this.timeSeriesData.get(localKey)
     if (localData) {
       const timeRange = localData.timeRange
@@ -97,21 +101,18 @@ export class DataService {
       }
     }
 
-    if (registry.beforeUpdate) {
-      registry.beforeUpdate()
-    }
+    // this is important such that while an endpoint loades data, no other call on the same endpoint is made
+    this.getDataset(localKey).timeRange = timeInterval
 
     if (KPIList.includes(registry.endpointKey)) {
-      this.fetchKPIData(registry.endpointKey, timeInterval, localKey)
+      this.fetchKPIData(registry, timeInterval, localKey)
     } else {
-      this.fetchTimeSeriesData(registry.endpointKey, timeInterval, localKey)
+      this.fetchTimeSeriesData(registry, timeInterval, localKey)
     }
   }
 
-  async fetchKPIData(kpi: DatasetKey, timeInterval: TimeInterval, localKey: string) {
-    // this is important such that while an endpoint loades data, no other call on the same endpoint is made
-    this.getDataset(localKey).timeRange = timeInterval
-    const url = `${environment.apiUrl}/v1/kpi/${kpi}/`;
+  async fetchKPIData(registry: DatasetRegistry, timeInterval: TimeInterval, localKey: string) {
+    const url = `${environment.apiUrl}/v1/kpi/${registry.endpointKey}/`;
     this.http.get<KPIResult>(url, {
       params: {
         from: timeInterval.start.toISOString(),
@@ -120,7 +121,7 @@ export class DataService {
     })
     .subscribe((kpiValue) => {
       const series: Series[] = [
-        {type:kpi, name:kpiValue.name, data:[
+        {type:registry.endpointKey, name:kpiValue.name, data:[
           [
             new Date().getTime(), 
             kpiValue.value, 
@@ -135,10 +136,8 @@ export class DataService {
     });
   }
 
-  async fetchTimeSeriesData(key: DatasetKey, timeInterval: TimeInterval, localKey: string) {
-    // this is important such that while an endpoint loades data, no other call on the same endpoint is made
-    this.getDataset(localKey).timeRange = timeInterval
-    const url = `${environment.apiUrl}/v1/kpi/${key}/`;
+  async fetchTimeSeriesData(registry: DatasetRegistry, timeInterval: TimeInterval, localKey: string) {
+    const url = `${environment.apiUrl}/v1/kpi/${registry.endpointKey}/`;
     this.http.get<TimeSeriesResult[]>(url, {
       params: {
         from: timeInterval.start.toISOString(),
@@ -164,7 +163,7 @@ export class DataService {
             type: carrierName,
             data: data,
             unit: entry.unit,
-            consumption: (key === 'consumption') ? true : false,
+            consumption: (registry.endpointKey === 'consumption') ? true : false,
             local: entry.local,
           })
         } else {

@@ -78,7 +78,6 @@ export class ChartService {
       }
 
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
-        diagram.chart.showLoading()
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
         diagram.chart.xAxis[0].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), false, true);
