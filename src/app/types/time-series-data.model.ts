@@ -4,6 +4,7 @@ import { DatasetKey } from './kpi.model';
 
 // integrate a property that describes for what time range a single data point is representative
 export type Series = {
+  id:string,
   name:string, 
   type:string, 
   data:number[][]

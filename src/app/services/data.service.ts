@@ -11,6 +11,30 @@ function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
   return a.start.isSame(b.start) && a.end.isSame(b.end) && a.step === b.step && a.stepUnit === b.stepUnit
 }
 
+function sortedMerge(a: number[][], b: number[][]): number[][] {
+  const data = new Array<number[]>(a.length + b.length)
+  let i = 0
+  let j = 0
+  while (i < a.length && j < b.length) {
+    if (a[i][0] < b[j][0]) { // a smaller
+      data.push(a[i++])
+    } else if (b[i][0] < a[i][0]) { // b smaller
+      data.push(b[j++])
+    } else { // if equal, then filter out duplicates and always take the value of a
+      const value = a[i]
+      data.push(value)
+
+      while (i < a.length && a[i][0] === value[0]) i++
+      while (j < b.length && b[j][0] === value[0]) j++
+    }
+  }
+
+  while (i < a.length) data.push(a[i++])
+  while (j < b.length) data.push(b[j++])
+
+  return data
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,6 +50,9 @@ export class DataService {
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval) => {
+      this.timeSeriesData.forEach((dataset: Dataset, key: string) => {
+        this.filterOutOldData(dataset.series.getValue(), timeInterval)
+      })
       this.fetchDatasets()
     })
   }
@@ -71,6 +98,40 @@ export class DataService {
     if (!timeIntervalEquals(newTimeInterval, currentTimeInterval)) {
       this.timeInterval.next(newTimeInterval)
     }
+  }
+
+  filterOutOldData(data: Series[], timeInterval: TimeInterval): void {
+    const timeIntervalsNumber = {start: timeInterval.start.toDate().getTime(), end: timeInterval.end.toDate().getTime()}
+    for (const series of data) {
+      series.data = series.data.filter(
+        (value) => value[0] >= timeIntervalsNumber.start && value[0] <= timeIntervalsNumber.end
+      )
+    }
+  }
+
+  insertNewData(key: string, data: Series[]) {
+    const BehaviorSubject = this.getBehaviorSubject(key)
+    const oldData = BehaviorSubject.getValue()
+
+    // sort newData
+    for (const value of data) {
+      value.data.sort((a, b) => a[0] - b[0])
+    }
+
+    const newData: Series[] = data.filter((series) => !oldData.find((oldSeries) => oldSeries.id === series.id))
+    for (const series of oldData) {
+      const newSeries = data.find((newSeries) => newSeries.id === series.id)
+      if (newSeries) {
+        const merged = sortedMerge(series.data, newSeries.data)
+        newData.push({...newSeries, data: merged})
+      } else {
+        newData.push(series)
+      }
+    }
+
+    this.filterOutOldData(newData, this.timeInterval.getValue())
+
+    BehaviorSubject.next(newData)
   }
 
   async fetchDatasets(customIntervalsToo: boolean = false) {
@@ -129,6 +190,7 @@ export class DataService {
         ],
         unit:kpiValue.unit? kpiValue.unit : undefined, 
         consumption:true,
+        id:localKey
       },
       ]
 
@@ -151,7 +213,7 @@ export class DataService {
       for (const entry of timeSeriesResult) {
         let data: number[][];
         const carrierName = entry.carrier_name
-        const seriesKey = carrierName + (entry.local ? '' : ' (external)')
+        const seriesKey = registry.endpointKey + '.' + carrierName + (entry.local ? '.local' : '.external')
 
         const currentSeries = seriesMap.get(seriesKey)
         if (!currentSeries) {
@@ -159,6 +221,7 @@ export class DataService {
           let name = this.themeService.energyTypesToName.get(carrierName)
           if (!name) name = carrierName
           seriesMap.set(seriesKey, {
+            id: seriesKey,
             name: name,
             type: carrierName,
             data: data,
@@ -175,13 +238,8 @@ export class DataService {
           entry.value,
         ])
       }
-      // sort newData
-      const seriesArray = Array.from(seriesMap.values())
-      for (const value of seriesArray) {
-        value.data.sort((a, b) => a[0] - b[0])
-      }
 
-      this.getBehaviorSubject(localKey).next(seriesArray);
+      this.insertNewData(localKey, Array.from(seriesMap.values()));
     });
   }
 }

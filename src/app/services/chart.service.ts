@@ -23,9 +23,11 @@ export class ChartService {
     if (aggregateExternal) {
       const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
       externalEnergy.sort((a, b) => a[0] - b[0])
+      const type = 'external'
       data = [{
+        id: type + ' ' + datasetKey,
         name: 'Imported Energy',
-        type: 'external',
+        type: type,
         data: externalEnergy,
       }, ...data.filter(entry => entry.local)]
     }
@@ -36,7 +38,7 @@ export class ChartService {
 
       const newSeries = {
           name: series.name,
-          id: series.type + ' ' + datasetKey, 
+          id: series.id, 
           data:series.data,
           type: diagram.seriesType,
           color: color,

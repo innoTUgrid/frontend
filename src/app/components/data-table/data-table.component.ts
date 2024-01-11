@@ -11,6 +11,7 @@ type TimeSeriesDataPoint = {
 }
 
 class DataTableSeries implements Series {
+  id:string
   name: string
   type: string
   data: number[][]
@@ -39,6 +40,7 @@ class DataTableSeries implements Series {
     this.unit = data.unit
     this.consumption = data.consumption
     this.local = data.local
+    this.id = data.id
   }
 
   nextPage(e: PageEvent) {
