@@ -46,6 +46,7 @@ class DataTableSeries implements Series {
   nextPage(e: PageEvent) {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
+    this.updateDataFiltered()
   }
   
   updateDataFiltered() {
