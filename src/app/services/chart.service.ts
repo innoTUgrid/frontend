@@ -53,10 +53,16 @@ export class ChartService {
     }
   }
 
+  filterOtherStepUnits(data: Series[]): Series[] {
+    const currentTimeInterval = this.dataService.getCurrentTimeInterval()
+
+    return data.filter((series) => series.timeUnit === currentTimeInterval.stepUnit)
+  }
+
   subscribeSeries(
     diagram: HighchartsDiagram, 
     datasetKey: string, 
-    beforeProcessData: (data: Series[]) => Series[] = (data) => data,
+    beforeProcessData: (data: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
   ): Subscription {
     const s = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
       data = beforeProcessData(data)
