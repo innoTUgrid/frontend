@@ -11,6 +11,9 @@ export type Series = {
   unit?: string,
   consumption?: boolean,
   local?: boolean,
+  xAxis?: number,
+  color?: string,
+  pointPlacement?: number,
 };
 
 export type Dataset = {
@@ -59,7 +62,16 @@ export type TimeSeriesResult = {
   unit: string;
 }
 
-export type TimeUnit = 'miliseconds' | 'seconds' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+export enum TimeUnit {
+  MILLISECONDS = 'miliseconds',
+  SECONDS = 'seconds',
+  MINUTE = 'minute',
+  HOUR = 'hour',
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year',
+}
 export type TimeInterval = {
   start: Moment;
   end: Moment;

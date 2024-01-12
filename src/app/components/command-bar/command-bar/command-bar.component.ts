@@ -53,7 +53,7 @@ export class CommandBarComponent {
       start: this.timeInterval.start.clone().startOf('day'), 
       end: singleDate ? this.timeInterval.start.clone().endOf('day') : this.timeInterval.end.clone().endOf('day'),
       step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
-      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
+      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? TimeUnit.MONTH : this.selectedGranularity as TimeUnit
     }
     this.dataService.updateTimeInterval(this.timeInterval);
   }
@@ -66,7 +66,7 @@ export class CommandBarComponent {
       start: moment("2019-01-01T00:00:00.000Z"),
       end: moment("2019-02-01T00:00:00.000Z"),
       step: 1,
-      stepUnit: "day"
+      stepUnit: TimeUnit.DAY
     }
     this.dataService.updateTimeInterval(timeInterval)
   }

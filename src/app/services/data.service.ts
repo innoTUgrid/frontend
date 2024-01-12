@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HighchartsDiagram, DatasetKey, SingleValueDiagram, KPIEndpointKey, KPIList } from '@app/types/kpi.model';
-import { CustomIntervalRegistry, DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult } from '@app/types/time-series-data.model';
+import { CustomIntervalRegistry, DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit } from '@app/types/time-series-data.model';
 import moment from 'moment';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, interval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
@@ -46,15 +46,34 @@ export class DataService {
 
   datasetConfigurations: Map<string, DatasetRegistry> = new Map<string, DatasetRegistry>();
 
-  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([{start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:"day"}]);
+  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([
+    {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
+    // the next two are the current year and the last year
+    // {start: moment().startOf('year'), end: moment(), step:1, stepUnit:TimeUnit.MONTH},
+    // {start: moment().subtract(1, 'year').startOf('year'), end: moment().subtract(1, 'year').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
+    // {start: moment('2019-01-01T00:00:00Z').startOf('year'), end: moment('2019-01-01T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
+    // {start: moment('2019-01-02T00:00:00Z').startOf('year'), end: moment('2019-01-02T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
+  ]);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
-      this.timeSeriesData.forEach((dataset: Dataset, key: string) => {
-        this.filterOutOldData(dataset.series.getValue(), timeInterval)
-      })
       this.fetchDatasets()
     })
+  }
+
+  getCurrentTimeInterval(timeInterval?: TimeInterval[]): TimeInterval {
+    if (timeInterval) return timeInterval[0]
+    return this.timeInterval.getValue()[0]
+  }
+
+  getCurrentComparisionTimeIntervals(timeInterval?: TimeInterval[]): TimeInterval[] {
+    if (timeInterval) return timeInterval.slice(0, 2)
+    const timeIntervals = this.timeInterval.getValue()
+    if (timeIntervals.length >= 2) {
+      return timeIntervals.slice(0, 2)
+    } else {
+      return timeIntervals
+    }
   }
 
   getDataset(key: string): Dataset {
@@ -83,6 +102,13 @@ export class DataService {
 
   unregisterDataset(id: string) {
     this.datasetConfigurations.delete(id)
+  }
+
+  updateTimeIntervalComparision(year1?: TimeInterval, year2?: TimeInterval) {
+    const newTimeIntervals = [...this.timeInterval.getValue()]
+    if (year1) newTimeIntervals[0] = year1
+    if (year2) newTimeIntervals[1] = year2
+    this.timeInterval.next(newTimeIntervals)
   }
 
   updateTimeInterval(timeInterval: Partial<TimeInterval>): void {
@@ -198,9 +224,12 @@ export class DataService {
     });
   }
 
+  toSeriesId(endpoint: string, type: string, local: boolean): string {
+    return `${endpoint}.${type}.${local ? 'local' : 'external'}`
+  }
+
   async fetchTimeSeriesData(registry: DatasetRegistry, timeInterval: TimeInterval, localKey: string) {
     const url = `${environment.apiUrl}/v1/kpi/${registry.endpointKey}/`;
-    console.log('fetching', registry.endpointKey, timeInterval)
     this.http.get<TimeSeriesResult[]>(url, {
       params: {
         from: timeInterval.start.toISOString(),
@@ -214,7 +243,7 @@ export class DataService {
       for (const entry of timeSeriesResult) {
         let data: number[][];
         const carrierName = entry.carrier_name
-        const seriesKey = registry.endpointKey + '.' + carrierName + (entry.local ? '.local' : '.external')
+        const seriesKey = this.toSeriesId(registry.endpointKey, carrierName, entry.local)
 
         const currentSeries = seriesMap.get(seriesKey)
         if (!currentSeries) {

@@ -4,6 +4,7 @@ import { DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } fro
 import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
+import { DatasetRegistry, Series } from '@app/types/time-series-data.model';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -29,6 +30,14 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     this.chart = chart;
   }
 
+  registry: DatasetRegistry = {
+    id: this.id,
+    endpointKey: this.kpiName,
+    beforeUpdate: () => {
+      this.chart?.showLoading()
+    }
+  }
+
   xAxis: Highcharts.XAxisOptions[] = [{
     id: 'xAxis', // update xAxis and do not create a new one
     // title: {text:'Time'},
@@ -43,13 +52,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     enabled: true,
     forced: true,
     units: [['day', [1]]]
-  }
-
-  plotLines: Highcharts.YAxisPlotLinesOptions = {
-    width: 2,
-    value: 0,
-    zIndex: 5,
-    
   }
 
   chartProperties: Highcharts.Options = {
@@ -92,7 +94,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   }
 
   onSeriesUpdate() {
-    if (this.chart) this.chartService.updateAverageLine(this.chart, this.plotLines)
+    if (this.chart) this.chartService.updateAverageLine(this.chart)
   }
 
   ngOnDestroy() {
@@ -101,16 +103,24 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     this.dataService.unregisterDataset(this.id)
   }
 
-  ngOnInit() {
-    this.dataService.registerDataset({
-      id: this.id,
-      endpointKey: this.kpiName,
-      beforeUpdate: () => {
-        this.chart?.showLoading()
-      }
-    })
+  aggregateExternalData(data: Series[]): Series[] {
+    const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
+    externalEnergy.sort((a, b) => a[0] - b[0])
+    const type = 'external'
+    const newData: Series[] = [{
+      id: type + ' ' + this.kpiName,
+      name: 'Imported Energy',
+      type: type,
+      data: externalEnergy,
+    }, ...data.filter(entry => entry.local)]
 
-    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, true))
+    return newData
+  }
+
+  ngOnInit() {
+    this.dataService.registerDataset(this.registry)
+
+    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this)))
     this.subscriptions.push(this.chartService.subscribeInterval(this))
   }
   

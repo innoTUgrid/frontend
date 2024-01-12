@@ -15,26 +15,14 @@ export class ChartService {
 
   constructor() { }
 
-  updateSeries(diagram: HighchartsDiagram, datasetKey: string, aggregateExternal: boolean = false, data?: Series[]) {
+  updateSeries(diagram: HighchartsDiagram, datasetKey: string, data?: Series[]) {
     if (!data) {
       return
     }
 
-    if (aggregateExternal) {
-      const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
-      externalEnergy.sort((a, b) => a[0] - b[0])
-      const type = 'external'
-      data = [{
-        id: type + ' ' + datasetKey,
-        name: 'Imported Energy',
-        type: type,
-        data: externalEnergy,
-      }, ...data.filter(entry => entry.local)]
-    }
-
     const allSeries = []
     for (const series of data) {
-      const color = this.themeService.colorMap.get(series.type)
+      const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
       const newSeries = {
           name: series.name,
@@ -46,26 +34,38 @@ export class ChartService {
           marker:{
             lineColor: color,
           },
+          xAxis: (series.xAxis) ? series.xAxis : 0,
+          pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
         }
       allSeries.push(newSeries)
     }
     if (diagram.chart) {
       diagram.chart.update({
         series: allSeries,
-      }, true, true)
+      }, false, true)
       diagram.chart.hideLoading()
     } else {
       diagram.chartProperties.series = allSeries
-      diagram.updateFlag = true
     }
     if (diagram.onSeriesUpdate) {
       diagram.onSeriesUpdate()
     }
+
+    if (diagram.chart) {
+      diagram.chart.redraw(true)
+    } else {
+      diagram.updateFlag = true
+    }
   }
 
-  subscribeSeries(diagram: HighchartsDiagram, datasetKey: string, aggregateExternal: boolean = false): Subscription {
+  subscribeSeries(
+    diagram: HighchartsDiagram, 
+    datasetKey: string, 
+    beforeProcessData: (data: Series[]) => Series[] = (data) => data,
+  ): Subscription {
     const s = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
-      this.updateSeries(diagram, datasetKey, aggregateExternal, data)
+      data = beforeProcessData(data)
+      this.updateSeries(diagram, datasetKey, data)
     });
     return s
   }
@@ -124,7 +124,7 @@ export class ChartService {
   }
 
 
-  updateAverageLine(chart: Highcharts.Chart, plotLineConfig?: Highcharts.YAxisPlotLinesOptions, seriesIndices?: number[]) {
+  updateAverageLine(chart: Highcharts.Chart, seriesIndices?: number[]) {
     if (!seriesIndices) {
       seriesIndices = []
       chart.series.forEach((series, index) => seriesIndices?.push(index))
@@ -140,14 +140,16 @@ export class ChartService {
         }
         sum /= groupedData.length
   
-        const plotLines = {...plotLineConfig}
-        plotLines.value = sum
+        const plotLines: Highcharts.YAxisPlotLinesOptions = {
+          width: 2,
+          value: sum,
+          zIndex: 5,
+        }
         chart.update({
           yAxis: {
-            color: '#FF0000',
             plotLines: [plotLines]
           }
-        }, true, true, true)
+        }, false, true)
       }
     }
   }
