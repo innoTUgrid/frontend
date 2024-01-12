@@ -96,7 +96,7 @@ export class ChartService {
       const updatedSeries = beforeProcessData(dataset.series)
       this.updateSeries(diagram, datasetKey, {
         series: updatedSeries,
-        lastCall: dataset.lastCall,
+        timeIntervals: dataset.timeIntervals,
       })
     });
     return s

@@ -59,6 +59,11 @@ export class DataService {
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
       this.fetchedEndpoints.clear()
+      for (const [id, dataset] of this.timeSeriesData) {
+        const value = dataset.getValue()
+        value.series = this.filterOutOldData(value.series, timeInterval)
+        value.timeIntervals = []
+      }
       this.fetchDatasets()
     })
   }
@@ -83,10 +88,7 @@ export class DataService {
     if (!dataset) {
       dataset = new BehaviorSubject<Dataset>({
         series: [],
-        lastCall: {
-          timeIntervals: [],
-          updatedSeries: [],
-        }
+        timeIntervals: [],
       })
       this.timeSeriesData.set(key, dataset)
     }
@@ -157,9 +159,10 @@ export class DataService {
     return newData
   }
 
-  insertNewData(key: string, data: Series[]) {
+  insertNewData(key: string, data: Series[], timeInterval:TimeInterval) {
     const BehaviorSubject = this.getDataset(key)
-    const oldDataSeries = this.filterOutOldData(BehaviorSubject.getValue().series, this.timeInterval.getValue())
+    const oldDataset = BehaviorSubject.getValue()
+    const oldDataSeries = oldDataset.series
 
     // sort newData
     for (const value of data) {
@@ -168,22 +171,17 @@ export class DataService {
 
     const newData: Dataset = {
       series: [],
-      lastCall: {
-        timeIntervals: this.timeInterval.getValue(),
-        updatedSeries: [],
-      }
+      timeIntervals: [...oldDataset.timeIntervals.filter((interval) => !timeIntervalEquals(interval, timeInterval)), timeInterval]
     }
 
 
     newData.series = data.filter((series) => !oldDataSeries.find((oldSeries) => oldSeries.id === series.id && oldSeries.timeUnit === series.timeUnit))
-    newData.lastCall.updatedSeries = [...newData.series]
     for (const oldSeries of oldDataSeries) {
       let newSeries = data.find((newSeries) => newSeries.id === oldSeries.id && newSeries.timeUnit === oldSeries.timeUnit)
       if (newSeries) {
         const merged = sortedMerge(oldSeries.data, newSeries.data)
         newSeries.data = merged
         newData.series.push(newSeries)
-        newData.lastCall.updatedSeries.push(newSeries)
       } else {
         newData.series.push(oldSeries)
       }
@@ -207,12 +205,20 @@ export class DataService {
       }
     })
 
+    const localData = this.timeSeriesData.get(endpointKey)?.getValue()
+    if (localData) {
+      // filter out time intervals that are already loaded
+      timeIntervals = timeIntervals.filter((interval) => !localData.timeIntervals.some((localInterval) => timeIntervalEquals(interval, localInterval)))
+    }
+
+    this.fetchedEndpoints.add(endpointKey)
     if (timeIntervals.length > 0) {
       let fetch = this.fetchTimeSeriesData.bind(this)
       if (KPIList.includes(endpointKey)) fetch = this.fetchKPIData.bind(this)
 
-      this.fetchedEndpoints.add(endpointKey)
       timeIntervals.forEach((interval) => fetch(endpointKey, interval, endpointKey))
+    } else {
+      if (localData) this.getDataset(endpointKey).next(localData);
     }
   }
 
@@ -241,10 +247,7 @@ export class DataService {
 
       const dataset: Dataset = {
         series: series,
-        lastCall: {
-          timeIntervals: [timeInterval],
-          updatedSeries: series
-        }
+        timeIntervals: [timeInterval],
       }
 
       this.getDataset(localKey).next(dataset);
@@ -297,7 +300,7 @@ export class DataService {
         ])
       }
 
-      this.insertNewData(localKey, Array.from(seriesMap.values()));
+      this.insertNewData(localKey, Array.from(seriesMap.values()), timeInterval);
     });
   }
 }

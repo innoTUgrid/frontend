@@ -24,7 +24,7 @@ export type APICallInfo = {
 
 export type Dataset = {
   series: Series[],
-  lastCall: APICallInfo,
+  timeIntervals: TimeInterval[],
 }
 
 export class TimeSeriesDataDictionary extends Map<string, BehaviorSubject<Dataset>> {
