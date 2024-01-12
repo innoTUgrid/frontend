@@ -42,19 +42,14 @@ export class ChartService {
     if (diagram.chart) {
       diagram.chart.update({
         series: allSeries,
-      }, false, true)
+      }, true, true)
       diagram.chart.hideLoading()
     } else {
       diagram.chartProperties.series = allSeries
+      diagram.updateFlag = true
     }
     if (diagram.onSeriesUpdate) {
       diagram.onSeriesUpdate()
-    }
-
-    if (diagram.chart) {
-      diagram.chart.redraw(true)
-    } else {
-      diagram.updateFlag = true
     }
   }
 
@@ -118,33 +113,31 @@ export class ChartService {
   }
 
 
-  updateAverageLine(chart: Highcharts.Chart, seriesIndices?: number[]) {
-    if (!seriesIndices) {
-      seriesIndices = []
-      chart.series.forEach((series, index) => seriesIndices?.push(index))
-    }
+  updateAverageLine(chart: Highcharts.Chart, stacked:boolean) {
+    const seriesIndex = 0
+
+    const series = chart.series[seriesIndex] as any
+    const groupedData = series.groupedData
+    console.log(series, groupedData)
     
-    for (const seriesIndex of seriesIndices) {
-      const series = chart.series[seriesIndex] as any
-      const groupedData = series.groupedData
-      if (groupedData) {
-        let sum = 0
-        for (const group of groupedData) {
+    if (groupedData) {
+      let sum = 0
+      for (const group of groupedData) {
+        if (stacked) {
           sum += group.stackTotal
+        } else {
+          sum += group.y
         }
-        sum /= groupedData.length
-  
-        const plotLines: Highcharts.YAxisPlotLinesOptions = {
-          width: 2,
-          value: sum,
-          zIndex: 5,
-        }
-        chart.update({
-          yAxis: {
-            plotLines: [plotLines]
-          }
-        }, false, true)
       }
+      sum /= groupedData.length
+
+      const plotLines: Highcharts.YAxisPlotLinesOptions = {
+        id: 'average ' + seriesIndex.toString(),
+        width: 2,
+        value: sum,
+        zIndex: 5,
+      }
+      chart.yAxis[0].addPlotLine(plotLines)
     }
   }
 }

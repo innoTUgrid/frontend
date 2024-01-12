@@ -95,7 +95,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   }
 
   onSeriesUpdate() {
-    if (this.chart) this.chartService.updateAverageLine(this.chart)
+    if (this.chart) this.chartService.updateAverageLine(this.chart, true)
   }
 
   ngOnDestroy() {
