@@ -18,7 +18,7 @@ function sortedMerge(a: number[][], b: number[][]): number[][] {
   while (i < a.length && j < b.length) {
     if (a[i][0] < b[j][0]) { // a smaller
       data.push(a[i++])
-    } else if (b[i][0] < a[i][0]) { // b smaller
+    } else if (b[j][0] < a[i][0]) { // b smaller
       data.push(b[j++])
     } else { // if equal, then filter out duplicates and always take the value of a
       const value = a[i]
