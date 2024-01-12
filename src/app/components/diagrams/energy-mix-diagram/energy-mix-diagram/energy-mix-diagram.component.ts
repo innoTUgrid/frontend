@@ -69,7 +69,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
         endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
         beforeUpdate: () => {this.beforeDataUpdate()}
       })
-    this.timeIntervalSubscription = this.chartService.subscribeSeriesInterval(this)
+    this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
   }
 
 
@@ -93,13 +93,13 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     units: [['day', [1]]]
   }
 
-  xAxis: Highcharts.XAxisOptions = {
+  xAxis: Highcharts.XAxisOptions[] = [{
     id: 'xAxis',
     type: 'datetime',
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
-  }
+  }]
 
   yAxis: Highcharts.YAxisOptions = {
     title: {

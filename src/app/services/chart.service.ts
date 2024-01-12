@@ -70,24 +70,27 @@ export class ChartService {
     return s
   }
 
-  subscribeSeriesInterval(diagram: HighchartsDiagram): Subscription {
-    const s = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval) => {
-      const minuteFormat = '%H:%M'
-      const dayFormat = '%e. %b'
-      diagram.xAxis.dateTimeLabelFormats = {
-        minute: minuteFormat,
-        day: timeInterval.stepUnit === 'day' ? dayFormat : minuteFormat,
-      }
-
-      if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
-        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        diagram.chart.axes[0].setDataGrouping(diagram.dataGrouping, false)
-        diagram.chart.xAxis[0].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), false, true);
-      } else { // this is only reachable for code that uses highcharts-angular
-        diagram.xAxis.min = timeInterval.start.toDate().getTime();
-        diagram.xAxis.max = timeInterval.end.toDate().getTime();
-        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        diagram.updateFlag = false
+  subscribeInterval(diagram: HighchartsDiagram): Subscription {
+    const s = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
+      // iterate over timeInetrvals with index
+      for (const [index, timeInterval] of timeIntervals.entries()) {
+        const minuteFormat = '%H:%M'
+        const dayFormat = '%e. %b'
+        diagram.xAxis[index].dateTimeLabelFormats = {
+          minute: minuteFormat,
+          day: timeInterval.stepUnit === 'day' ? dayFormat : minuteFormat,
+        }
+  
+        if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
+          diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+          diagram.chart.axes[index].setDataGrouping(diagram.dataGrouping, false)
+          diagram.chart.xAxis[index].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), false, true);
+        } else { // this is only reachable for code that uses highcharts-angular
+          diagram.xAxis[index].min = timeInterval.start.toDate().getTime();
+          diagram.xAxis[index].max = timeInterval.end.toDate().getTime();
+          diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+          diagram.updateFlag = false
+        }
       }
     });
     return s

@@ -20,7 +20,7 @@ export interface DataSubscription {
 export interface HighchartsDiagram extends DataSubscription {
     chart: Highcharts.Chart|undefined
     chartProperties: Highcharts.Options
-    xAxis: Highcharts.XAxisOptions
+    xAxis: Highcharts.XAxisOptions[]
     dataGrouping: Highcharts.DataGroupingOptionsObject
     updateFlag: boolean
     seriesType: SeriesTypes

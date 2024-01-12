@@ -62,7 +62,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
 
     Highcharts: typeof Highcharts = Highcharts; // required
     chart: Highcharts.Chart | undefined
-    xAxis: Highcharts.XAxisOptions = {
+    xAxis: Highcharts.XAxisOptions[] = [{
         min: 0,
         max: 1,
         minorTickInterval: null,
@@ -75,7 +75,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
                 return (number * 100).toString();
             },
         },
-    }
+    }]
 
     dataGrouping: Highcharts.DataGroupingOptionsObject = {
         approximation: 'average',

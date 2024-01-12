@@ -29,14 +29,14 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     this.chart = chart;
   }
 
-  xAxis: Highcharts.XAxisOptions = {
+  xAxis: Highcharts.XAxisOptions[] = [{
     id: 'xAxis', // update xAxis and do not create a new one
     // title: {text:'Time'},
     type: 'datetime',
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
-  }
+  }]
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {
     approximation: 'sum',
@@ -111,7 +111,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     })
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, true))
-    this.subscriptions.push(this.chartService.subscribeSeriesInterval(this))
+    this.subscriptions.push(this.chartService.subscribeInterval(this))
   }
   
   constructor() {

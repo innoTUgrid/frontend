@@ -15,7 +15,7 @@ export type Series = {
 
 export type Dataset = {
   series: BehaviorSubject<Series[]>,
-  timeRange?: TimeInterval,
+  timeRange?: TimeInterval[],
 }
 
 export class TimeSeriesDataDictionary extends Map<string, Dataset> {
@@ -27,7 +27,7 @@ export class TimeSeriesDataDictionary extends Map<string, Dataset> {
 // this type should be a type that has information about a dataset that is registered by a component such that the data service keeps it up to date 
 export type CustomIntervalRegistry = {
   key: string, // this is the key that is used to access the data in the data service
-  fixedTimeInterval: TimeInterval, // when this is given, then the data service will update the data for this dataset at the given interval
+  fixedTimeIntervals: TimeInterval[], // when this is given, then the data service will update the data for this dataset at the given interval
 }
 
 export type DatasetRegistry = {

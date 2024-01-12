@@ -111,9 +111,9 @@ export class CommandBarComponent {
     });
 
     const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
-      if (timeInterval != this.timeInterval) {
-        this.timeInterval = timeInterval;
-        this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
+      if (timeInterval[0] != this.timeInterval) {
+        this.timeInterval = timeInterval[0];
+        this.selectedGranularity = (timeInterval[0].stepUnit == 'month' && timeInterval[0].step == 3) ? Granularity.QUARTER : timeInterval[0].stepUnit;
       }
     });
     this.subscriptions.push(s0, s1, s2);
