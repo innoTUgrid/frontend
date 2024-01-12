@@ -12,7 +12,7 @@ function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
 }
 
 function sortedMerge(a: number[][], b: number[][]): number[][] {
-  const data = new Array<number[]>(a.length + b.length)
+  const data = []
   let i = 0
   let j = 0
   while (i < a.length && j < b.length) {
@@ -100,9 +100,10 @@ export class DataService {
       this.datasetConfigurations.set(registry.endpointKey, registries)
     }
 
-    this.datasetConfigurations.set(registry.endpointKey, [...registries.filter((r) => r.id !== registry.id), registry])
+    const newRegistries = [...registries.filter((r) => r.id !== registry.id), registry]
+    this.datasetConfigurations.set(registry.endpointKey, newRegistries)
 
-    this.fetchDataset(registry.endpointKey, registries)
+    this.fetchDataset(registry.endpointKey, newRegistries)
 
     return registry
   }
@@ -142,18 +143,23 @@ export class DataService {
     this.timeInterval.next([newTimeInterval])
   }
 
-  filterOutOldData(data: Series[], timeIntervals: TimeInterval[]): void {
+  filterOutOldData(data: Series[], timeIntervals: TimeInterval[]): Series[] {
     const timeIntervalsNumber = timeIntervals.map((interval) => { return {start: interval.start.valueOf(), end: interval.end.valueOf()}})
+    const newData: Series[] = []
     for (const series of data) {
-      series.data = series.data.filter(
-        (value) => timeIntervalsNumber.some((interval) => value[0] >= interval.start && value[0] <= interval.end)
-      )
+      if (timeIntervals.some((interval) => interval.stepUnit === series.timeUnit)) {
+        series.data = series.data.filter(
+          (value) => timeIntervalsNumber.some((interval) => value[0] >= interval.start && value[0] <= interval.end)
+        )
+        newData.push(series)
+      }
     }
+    return newData
   }
 
   insertNewData(key: string, data: Series[]) {
     const BehaviorSubject = this.getDataset(key)
-    const oldData = BehaviorSubject.getValue()
+    const oldDataSeries = this.filterOutOldData(BehaviorSubject.getValue().series, this.timeInterval.getValue())
 
     // sort newData
     for (const value of data) {
@@ -169,9 +175,9 @@ export class DataService {
     }
 
 
-    newData.series = data.filter((series) => !oldData.series.find((oldSeries) => oldSeries.id === series.id && oldSeries.timeUnit === series.timeUnit))
+    newData.series = data.filter((series) => !oldDataSeries.find((oldSeries) => oldSeries.id === series.id && oldSeries.timeUnit === series.timeUnit))
     newData.lastCall.updatedSeries = [...newData.series]
-    for (const oldSeries of oldData.series) {
+    for (const oldSeries of oldDataSeries) {
       let newSeries = data.find((newSeries) => newSeries.id === oldSeries.id && newSeries.timeUnit === oldSeries.timeUnit)
       if (newSeries) {
         const merged = sortedMerge(oldSeries.data, newSeries.data)
@@ -183,8 +189,6 @@ export class DataService {
       }
     }
 
-    this.filterOutOldData(newData.series, this.timeInterval.getValue())
-
     BehaviorSubject.next(newData)
   }
 
@@ -195,7 +199,7 @@ export class DataService {
   }
 
   async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
-    if (this.fetchedEndpoints.has(endpointKey)) return;
+    if (this.fetchedEndpoints.has(endpointKey) || registries.length == 0) return;
 
     registries.forEach((registry) => {
       if (registry.beforeUpdate) {
