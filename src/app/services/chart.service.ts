@@ -6,6 +6,14 @@ import { DatasetKey, HighchartsDiagram, SingleValueDiagram } from '@app/types/kp
 import { Subscription } from 'rxjs';
 import { Series as HighchartsSeries } from 'highcharts';
 
+function array2DEquals(a: number[][], b: number[][]): boolean {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i][0] !== b[i][0] || a[i][1] !== b[i][1]) return false
+  }
+  return true
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,7 +55,7 @@ export class ChartService {
         const chartSeries = diagram.chart.get(series.id) as HighchartsSeries
         if (chartSeries) {
           const currentSeries: any = diagram.chartProperties.series?.find((s) => s.id === series.id)
-          if (currentSeries && currentSeries.data !== series.data) {
+          if (currentSeries && !array2DEquals(currentSeries.data, series.data)) {
             chartSeries.update(newSeries, false)
             hasChanged = true
           }

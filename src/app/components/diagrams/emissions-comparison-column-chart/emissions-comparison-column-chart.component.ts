@@ -73,6 +73,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-neutral-color-40').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 

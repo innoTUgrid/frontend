@@ -27,6 +27,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   updateFlag = false
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 

@@ -60,6 +60,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 

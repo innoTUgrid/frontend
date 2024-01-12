@@ -42,6 +42,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   timeIntervalSubscription?: Subscription;
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
