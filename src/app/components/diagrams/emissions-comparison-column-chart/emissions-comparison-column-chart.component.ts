@@ -121,37 +121,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   },
   };
 
-  data = {
-    2023: [
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 12],
-    ],
-    2022: [
-      ['CO₂ Emissions', 22],
-      ['CO₂ Emissions', 27],
-      ['CO₂ Emissions', 15],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 24],
-      ['CO₂ Emissions', 29],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 26],
-      ['CO₂ Emissions', 25],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-    ],
-  };
-
   constructor() {
   }
 
@@ -220,76 +189,9 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     this.subscriptions.push(this.chartService.subscribeInterval(this))
   }
 
-  setChartData(): void {
-    const earlierYear = this.earlierYear; 
-    const laterYear = this.laterYear;
-    const dataAsObject: { [key: number]: (string | number)[][] } = this.data;
-    const earlierYearData = this.getData(dataAsObject[earlierYear], earlierYear);
-    const laterYearData = this.getData(dataAsObject[laterYear], laterYear);
-  
-   
-    //const meanData = dataAsObject[laterYear].reduce((sum, point) => sum + point[1], 0)
-    const meanData = dataAsObject[laterYear].reduce((sum, point) => sum + Number(point[1]), 0) / dataAsObject[laterYear].length;
-    const roundedMeanData = Number(meanData.toFixed(2));
-    const meanDataArray = Array.from({ length: 12 }, () => roundedMeanData);
-
-  
-    this.chartProperties.series = [
-      {
-        type: 'column', 
-        name: earlierYear.toString(),
-        id: 'main',
-        pointPlacement: -0.1,
-        data: earlierYearData.slice(),
-        dataLabels: {
-          enabled: false,
-        },
-        color: this.earlierYearColor,
-      },
-      {
-        type: 'column', 
-        name: laterYear.toString(),
-        data: laterYearData.slice(),
-        dataLabels: [{
-          enabled: true,
-          inside: true,
-          style: {
-            fontSize: '14px',
-            color: 'white'
-          }
-        }],
-        color: this.laterYearColor,
-      },
-      {
-        type: 'line', // Add a line series for the mean
-        name: `Mean of ${laterYear}`,
-        data: meanDataArray,
-        color: this.meanColor, // Choose the color you prefer
-        marker: {
-          enabled: false // Disable markers on the line
-        }
-      },
-    ];
-  
-    this.updateFlag = true;
-  }
-
   onSeriesUpdate() {
     if (this.chart) {
       this.chartService.updateAverageLine(this.chart, false)
     }
-    
   }
-  
-  
-  getData(data: any, year: number): any[] {
-    return data.map((point: any[]) => ({
-      name: `${point[0]} ${year}`,
-      y: point[1],
-    }));
-  }
-
-  
-  
-  
 }
