@@ -203,12 +203,6 @@ export class DataService {
       }
     })
 
-    // const localData = this.timeSeriesData.get(localKey)
-    // if (localData && localData.timeRange) {
-    //   // filter out time intervals that are already loaded
-    //   timeIntervals = timeIntervals.filter((interval) => !localData.timeRange?.some((localInterval) => timeIntervalEquals(interval, localInterval)))
-    // }
-
     if (timeIntervals.length > 0) {
       let fetch = this.fetchTimeSeriesData.bind(this)
       if (KPIList.includes(endpointKey)) fetch = this.fetchKPIData.bind(this)

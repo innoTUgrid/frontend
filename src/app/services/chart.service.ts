@@ -81,6 +81,9 @@ export class ChartService {
     datasetKey: string, 
     beforeProcessData: (dataset: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
   ): Subscription {
+    if (diagram.chart) {
+      diagram.chart.update({series: []}, false, true)
+    }
     const s = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
       const updatedSeries = beforeProcessData(dataset.series)
       this.updateSeries(diagram, datasetKey, {
@@ -99,7 +102,7 @@ export class ChartService {
         if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
           diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
           diagram.chart.axes[index].setDataGrouping(diagram.dataGrouping, false)
-          diagram.chart.xAxis[index].setExtremes(timeInterval.start.valueOf(), timeInterval.end.valueOf(), false, true);
+          diagram.chart.xAxis[index].setExtremes(timeInterval.start.valueOf(), timeInterval.end.valueOf(), false);
         } else { // this is only reachable for code that uses highcharts-angular
           diagram.xAxis[index].min = timeInterval.start.valueOf();
           diagram.xAxis[index].max = timeInterval.end.valueOf();
@@ -184,12 +187,14 @@ export class ChartService {
       }
       sum /= groupedData.length
 
+      const plotLineId = 'average ' + seriesIndex.toString()
       const plotLines: Highcharts.YAxisPlotLinesOptions = {
-        id: 'average ' + seriesIndex.toString(),
+        id: plotLineId,
         width: 2,
         value: sum,
         zIndex: 5,
       }
+      chart.yAxis[0].removePlotLine(plotLineId)
       chart.yAxis[0].addPlotLine(plotLines)
     }
   }

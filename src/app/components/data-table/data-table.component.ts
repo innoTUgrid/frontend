@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild, inject } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Dataset, DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
@@ -73,6 +74,7 @@ type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index:
 })
 export class DataTableComponent {
   dataService: DataService = inject(DataService);
+  chartService: ChartService = inject(ChartService);
   readonly id = "DataTableComponent." + Math.random().toString(36).substring(7);
 
   _kpiName?: DatasetKey;
@@ -124,7 +126,7 @@ export class DataTableComponent {
   ngOnInit() {
     if (this.kpiName) {
       this.dataService.getDataset(this.kpiName).subscribe((dataset: Dataset) => {
-        this.updateData(dataset.series)
+        this.updateData(this.chartService.filterOtherStepUnits(dataset.series))
       })
     }
   }

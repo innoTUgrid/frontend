@@ -147,7 +147,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
         const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
         const newSeries: Series = {
-          id: interval.start.toString() + '-' + interval.end.toString() + ' ' + index.toString(),
+          id: `MonthlyCO2Comparision.${index.toString()}`,
           name: interval.start.format('YYYY'),
           data: this.chartService.sumAllDataTypes(relevantSeries, interval),
           timeUnit: interval.stepUnit,
