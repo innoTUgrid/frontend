@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import HC_exporting from 'highcharts/modules/exporting';
-import HC_exportData from 'highcharts/modules/export-data';
-import HC_noData from 'highcharts/modules/no-data-to-display';
+import { Component, OnInit, inject } from '@angular/core';
+import * as Highcharts from 'highcharts/highstock';
+import { ChartService } from '@app/services/chart.service';
+import { DataService } from '@app/services/data.service';
+import { Subscription, timeInterval } from 'rxjs';
+import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { Series, TimeUnit } from '@app/types/time-series-data.model';
 
 
 @Component({
@@ -10,10 +12,43 @@ import HC_noData from 'highcharts/modules/no-data-to-display';
   templateUrl: './emissions-comparison-column-chart.component.html',
   styleUrls: ['./emissions-comparison-column-chart.component.scss']
 })
-export class EmissionsComparisonColumnChartComponent implements OnInit{
+export class EmissionsComparisonColumnChartComponent implements OnInit, HighchartsDiagram{
   Highcharts: typeof Highcharts = Highcharts;
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
+
+  chartService: ChartService = inject(ChartService);
+  dataService: DataService = inject(DataService);
+
+  id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
+  subscriptions: Subscription[] = [];
+  kpiName = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+
+  dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
+    month: '%b',
+  }
+
+  xAxis: Highcharts.XAxisOptions[] = [{
+    id: 'first Year',
+    type: 'datetime',
+    dateTimeLabelFormats: this.dateTimeLabelFormats,
+    tickPixelInterval: 50,
+  }, 
+  {
+    id: 'second Year',
+    type: 'datetime',
+    // dateTimeLabelFormats: this.dateTimeLabelFormats,
+    visible: false,
+  }
+]
+
+  dataGrouping: Highcharts.DataGroupingOptionsObject = {
+    approximation: 'sum',
+    enabled: true,
+    forced: true,
+    units: [[TimeUnit.MONTH, [1]]]
+  }
+  seriesType: SeriesTypes = 'column'
 
   earlierYear = 2022;
   laterYear = 2023;
@@ -28,7 +63,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
 
   chartProperties: Highcharts.Options = {
     chart: {
-      type: 'column',
+      type: this.seriesType,
       style: {
         fontFamily: 'Lucida Grande, sans-serif',
         fontSize: '1em',
@@ -45,9 +80,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
     credits: {
       enabled: false
     },
-    xAxis: {
-      categories: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-    },
+    xAxis: this.xAxis,
     yAxis: {
       title: {
         text: 'CO₂ Equivalents (kg)'
@@ -62,8 +95,11 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
         borderWidth: 0,
         dataLabels: {
           enabled: true,
+          format: '{point.y:.0f} kg',
         },
         groupPadding: 0.1, // Adjust this value as needed
+
+        dataGrouping: this.dataGrouping,
       },
     },
     legend: {
@@ -110,13 +146,73 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
   };
 
   constructor() {
-    HC_exporting(Highcharts);
-    HC_exportData(Highcharts);
-    HC_noData(Highcharts);
   }
 
-  ngOnInit(): void {
-    this.setChartData();
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
+    this.dataService.unregisterDataset(this.id)
+  }
+
+  splitYearlyData(data: Series[]): Series[] {
+    const intervals = this.dataService.getCurrentComparisionTimeIntervals()
+    let newData = data
+    
+    if (intervals.length >= 2) {
+      newData = []
+      for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
+        const relevantSeries: Series[] = data
+        const newSeries: Series = {
+          id: interval.start.toString() + '-' + interval.end.toString() + ' ' + index.toString(),
+          name: (index == 0) ? interval.start.format('YYYY') : '2018',
+          data: [],
+          type: (index == 0) ? interval.start.format('YYYY') : '2018',
+          xAxis: index,
+          color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
+          pointPlacement: (index == 0) ? -0.2 : undefined,
+        }
+
+        const dataMap = new Map<number, number>()
+        for (const series of relevantSeries) {
+          let i = 0;
+          const data_len = series.data.length
+
+          while (i < data_len) { // using this type of loop for performance reasons
+            const point = series.data[i]
+            if (point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf()) {
+              const value = dataMap.get(point[0])
+              if (value) {
+                dataMap.set(point[0], value + point[1])
+              } else {
+                dataMap.set(point[0], point[1])
+              }
+            }
+
+            i++;
+          }
+        }
+
+        const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
+        newSeries.data = newDatapoints
+        newData.push(newSeries)
+      }
+    }
+    console.log(newData)
+    console.log(this.dataService.getBehaviorSubject(this.kpiName).getValue())
+    return newData
+  }
+
+  ngOnInit() {
+    this.dataService.registerDataset({
+      id: this.id,
+      endpointKey: this.kpiName,
+      beforeUpdate: () => {
+        this.chart?.showLoading()
+      }
+    })
+
+    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
+    this.subscriptions.push(this.chartService.subscribeInterval(this))
   }
 
   setChartData(): void {
@@ -171,6 +267,14 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
     ];
   
     this.updateFlag = true;
+  }
+
+  onSeriesUpdate() {
+    if (this.chart) {
+      this.chartService.updateAverageLine(this.chart, [0])
+      // console.log(this.chart.axes[0].setDataGrouping(this.dataGrouping, false))
+    }
+    
   }
   
   

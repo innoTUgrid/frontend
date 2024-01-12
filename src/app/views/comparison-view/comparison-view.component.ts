@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
@@ -10,6 +10,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import * as moment from 'moment';
 import * as _moment from 'moment';
 import { Moment } from 'moment';
+import { DataService } from '@app/services/data.service';
+import { TimeUnit } from '@app/types/time-series-data.model';
 
 export const MY_FORMATS = {
   parse: {
@@ -36,9 +38,12 @@ export const MY_FORMATS = {
   ],
 })
 export class ComparisonViewComponent {
-  firstYear = new FormControl(moment('2022'));
-  secondYear = new FormControl(moment('2023'));
+  dataService: DataService = inject(DataService);
+
+  firstYear = new FormControl(moment('2019'));
+  secondYear = new FormControl(moment('2019'));
   isDatepickerOpen = false;
+
 
 
   chosenYearHandler(normalizedYear: Moment, datepicker: MatDatepicker<Moment>, year: string) {
@@ -62,8 +67,23 @@ export class ComparisonViewComponent {
     this.isDatepickerOpen = true;
   }
 
+  toTimeInterval(year:Moment) {
+    return {
+      start: year.startOf('year'),
+      end: year.endOf('year'),
+      step: 1,
+      stepUnit: TimeUnit.MONTH
+    }
+  }
+
   onDatepickerClosed() {
     this.isDatepickerOpen = false;
+
+    
+    this.dataService.updateTimeIntervalComparision(
+      (this.firstYear.value) ? this.toTimeInterval(this.firstYear.value) : undefined,
+      (this.secondYear.value) ? this.toTimeInterval(this.secondYear.value) : undefined
+    )
   }
 
 
