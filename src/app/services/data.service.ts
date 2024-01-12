@@ -62,7 +62,7 @@ export class DataService {
       for (const [id, dataset] of this.timeSeriesData) {
         const value = dataset.getValue()
         value.series = this.filterOutOldData(value.series, timeInterval)
-        value.timeIntervals = []
+        value.timeIntervals = value.timeIntervals.filter((interval) => timeInterval.some((newInterval) => timeIntervalEquals(interval, newInterval)))
       }
       this.fetchDatasets()
     })

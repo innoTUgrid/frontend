@@ -99,22 +99,26 @@ export class ChartService {
     return s
   }
 
-  subscribeInterval(diagram: HighchartsDiagram): Subscription {
-    const s = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
-      // iterate over timeInetrvals with index
-      for (const [index, timeInterval] of timeIntervals.entries()) {
-        if (index >= diagram.xAxis.length) break
-        if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
-          diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-          diagram.chart.axes[index].setDataGrouping(diagram.dataGrouping, false)
-          diagram.chart.xAxis[index].setExtremes(timeInterval.start.valueOf(), timeInterval.end.valueOf(), false);
-        } else { // this is only reachable for code that uses highcharts-angular
-          diagram.xAxis[index].min = timeInterval.start.valueOf();
-          diagram.xAxis[index].max = timeInterval.end.valueOf();
-          diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-          diagram.updateFlag = false
-        }
+  updateInterval(diagram: HighchartsDiagram, timeIntervals: TimeInterval[], redraw: boolean) {
+    for (const [index, timeInterval] of timeIntervals.entries()) {
+      if (index >= diagram.xAxis.length) break
+      if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
+        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        diagram.chart.axes[index].setDataGrouping(diagram.dataGrouping, false)
+        diagram.chart.xAxis[index].setExtremes(timeInterval.start.valueOf(), timeInterval.end.valueOf(), false, false);
+      } else { // this is only reachable for code that uses highcharts-angular
+        diagram.xAxis[index].min = timeInterval.start.valueOf();
+        diagram.xAxis[index].max = timeInterval.end.valueOf();
+        diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
+        diagram.updateFlag = false
       }
+      if (diagram.chart && redraw) diagram.chart.redraw()
+    }
+  }
+
+  subscribeInterval(diagram: HighchartsDiagram, redraw: boolean= true): Subscription {
+    const s = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
+      this.updateInterval(diagram, timeIntervals, redraw)
     });
     return s
   }

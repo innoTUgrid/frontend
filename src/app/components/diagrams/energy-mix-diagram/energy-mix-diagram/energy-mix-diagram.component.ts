@@ -53,20 +53,20 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     return id + '-' + endpointKey
   }
 
-  beforeDataUpdate() {
-    this.chart?.showLoading()
+  beforeDataUpdate(kpi: DatasetKey) {
+    if (this.kpiName === kpi) this.chart?.showLoading()
   }
 
   registries: DatasetRegistry[] = [
     {
       id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
       endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
-      beforeUpdate: () => {this.beforeDataUpdate()}
+      beforeUpdate: () => {this.beforeDataUpdate(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}
     },
     {
       id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
       endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
-      beforeUpdate: () => {this.beforeDataUpdate()}
+      beforeUpdate: () => {this.beforeDataUpdate(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}
     }
   ]
 
