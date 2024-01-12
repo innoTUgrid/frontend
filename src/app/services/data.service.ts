@@ -47,12 +47,12 @@ export class DataService {
   datasetConfigurations: Map<string, DatasetRegistry> = new Map<string, DatasetRegistry>();
 
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([
-    {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
+    // {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
     // the next two are the current year and the last year
     // {start: moment().startOf('year'), end: moment(), step:1, stepUnit:TimeUnit.MONTH},
     // {start: moment().subtract(1, 'year').startOf('year'), end: moment().subtract(1, 'year').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
-    // {start: moment('2019-01-01T00:00:00Z').startOf('year'), end: moment('2019-01-01T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
-    // {start: moment('2019-01-02T00:00:00Z').startOf('year'), end: moment('2019-01-02T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
+    {start: moment('2019-01-01T00:00:00Z').startOf('year'), end: moment('2019-01-01T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
+    {start: moment('2019-01-02T00:00:00Z').startOf('year'), end: moment('2019-01-02T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
   ]);
 
   constructor() {
@@ -104,10 +104,25 @@ export class DataService {
     this.datasetConfigurations.delete(id)
   }
 
-  updateTimeIntervalComparision(year1?: TimeInterval, year2?: TimeInterval) {
+  resetCache() {
+    this.timeSeriesData.forEach((dataset) => {
+      dataset.timeRange = undefined
+    })
+  }
+
+  updateTimeIntervalComparision(year1?: TimeInterval, year2?: TimeInterval, resetCache: boolean = false) {
     const newTimeIntervals = [...this.timeInterval.getValue()]
+    
+    if (
+        (!year1 || timeIntervalEquals(year1, newTimeIntervals[0])) &&
+        (!year2 || timeIntervalEquals(year2, newTimeIntervals[1]))
+        ) 
+          return;
+
     if (year1) newTimeIntervals[0] = year1
     if (year2) newTimeIntervals[1] = year2
+
+    if (resetCache) this.resetCache()
     this.timeInterval.next(newTimeIntervals)
   }
 
@@ -121,9 +136,7 @@ export class DataService {
       stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : currentTimeInterval.stepUnit,
     }
 
-    if (!timeIntervalEquals(newTimeInterval, currentTimeInterval)) {
-      this.timeInterval.next([newTimeInterval])
-    }
+    this.timeInterval.next([newTimeInterval])
   }
 
   filterOutOldData(data: Series[], timeIntervals: TimeInterval[]): void {

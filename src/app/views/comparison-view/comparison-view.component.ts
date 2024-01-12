@@ -54,7 +54,7 @@ export class ComparisonViewComponent {
         this.firstYear.setValue(ctrlValue);
       }
     }else{
-            const ctrlValue = this.secondYear.value;
+      const ctrlValue = this.secondYear.value;
       if(ctrlValue) {
         ctrlValue.year(normalizedYear.year());
         this.secondYear.setValue(ctrlValue);
@@ -68,12 +68,13 @@ export class ComparisonViewComponent {
   }
 
   toTimeInterval(year:Moment) {
-    return {
-      start: year.startOf('year'),
-      end: year.endOf('year'),
+    const newIntervals = {
+      start: moment(year.startOf('year')),
+      end: moment(year.endOf('year')),
       step: 1,
       stepUnit: TimeUnit.MONTH
     }
+    return newIntervals
   }
 
   onDatepickerClosed() {
@@ -82,7 +83,8 @@ export class ComparisonViewComponent {
     
     this.dataService.updateTimeIntervalComparision(
       (this.firstYear.value) ? this.toTimeInterval(this.firstYear.value) : undefined,
-      (this.secondYear.value) ? this.toTimeInterval(this.secondYear.value) : undefined
+      (this.secondYear.value) ? this.toTimeInterval(this.secondYear.value) : undefined,
+      true
     )
   }
 

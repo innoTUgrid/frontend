@@ -45,6 +45,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
+    tickPixelInterval: 50,
   }]
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {

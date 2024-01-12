@@ -25,7 +25,14 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   kpiName = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
 
   dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
+    millisecond: '%b',
+    second: '%b',
+    minute: '%b',
+    hour: '%b',
+    day: '%b',
+    week: '%b',
     month: '%b',
+    year: '%b',
   }
 
   xAxis: Highcharts.XAxisOptions[] = [{
@@ -164,9 +171,9 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         const relevantSeries: Series[] = data
         const newSeries: Series = {
           id: interval.start.toString() + '-' + interval.end.toString() + ' ' + index.toString(),
-          name: (index == 0) ? interval.start.format('YYYY') : '2018',
+          name: interval.start.format('YYYY'),
           data: [],
-          type: (index == 0) ? interval.start.format('YYYY') : '2018',
+          type: interval.start.format('YYYY'),
           xAxis: index,
           color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
           pointPlacement: (index == 0) ? -0.2 : undefined,
@@ -197,8 +204,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         newData.push(newSeries)
       }
     }
-    console.log(newData)
-    console.log(this.dataService.getBehaviorSubject(this.kpiName).getValue())
     return newData
   }
 
@@ -272,7 +277,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   onSeriesUpdate() {
     if (this.chart) {
       this.chartService.updateAverageLine(this.chart, [0])
-      // console.log(this.chart.axes[0].setDataGrouping(this.dataGrouping, false))
     }
     
   }

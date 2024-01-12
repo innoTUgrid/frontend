@@ -74,12 +74,6 @@ export class ChartService {
     const s = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
       // iterate over timeInetrvals with index
       for (const [index, timeInterval] of timeIntervals.entries()) {
-        const minuteFormat = '%H:%M'
-        const dayFormat = '%e. %b'
-        diagram.xAxis[index].dateTimeLabelFormats = {
-          minute: minuteFormat,
-          day: timeInterval.stepUnit === 'day' ? dayFormat : minuteFormat,
-        }
   
         if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
           diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]

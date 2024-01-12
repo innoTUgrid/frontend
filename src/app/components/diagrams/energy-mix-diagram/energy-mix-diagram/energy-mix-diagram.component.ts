@@ -99,6 +99,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
+    tickPixelInterval: 50,
   }]
 
   yAxis: Highcharts.YAxisOptions = {
