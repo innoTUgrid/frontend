@@ -31,7 +31,6 @@ export class ChartService {
     const data = dataset.series
 
     const allSeries = []
-    let hasChanged = false
     for (const series of data) {
       const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
@@ -57,18 +56,16 @@ export class ChartService {
           const currentSeries: any = diagram.chartProperties.series?.find((s) => s.id === series.id)
           if (currentSeries && !array2DEquals(currentSeries.data, series.data)) {
             chartSeries.update(newSeries, false)
-            hasChanged = true
           }
         } else {
-          diagram.chart.addSeries(newSeries, true, false)
-          hasChanged = true
+          diagram.chart.addSeries(newSeries, false)
         }
       }
     }
     diagram.chartProperties.series = allSeries
     if (diagram.chart) {
       diagram.chart.hideLoading()
-      if (hasChanged) diagram.chart.redraw()
+      diagram.chart.redraw()
     } else {
       diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
