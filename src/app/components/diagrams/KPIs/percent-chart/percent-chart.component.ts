@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
-import { HighchartsDiagram, DatasetKey, SeriesTypes, SingleValueDiagram } from 'src/app/types/kpi.model';
+import { HighchartsDiagram, DatasetKey, SeriesTypes, SingleValueDiagram, KPIEndpointKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
+import { DatasetRegistry } from '@app/types/time-series-data.model';
 
 @Component({
     selector: 'app-percent-chart',
@@ -30,10 +31,8 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     @Input() set kpiName(value: DatasetKey | undefined) {
         this._kpiName = value;
         if (value) {
-            this.dataService.registerDataset({
-                id:this.id,
-                endpointKey: value,
-            })
+            this.registry.endpointKey = value;
+            this.dataService.registerDataset(this.registry)
            this.chartService.updateSingleValue(this) 
            this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, value);
         }
@@ -41,6 +40,11 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
 
     get kpiName(): DatasetKey | undefined {  
         return this._kpiName;
+    }
+
+    registry: DatasetRegistry = {
+        id:this.id,
+        endpointKey: KPIEndpointKey.AUTARKY,
     }
 
     @Input() set title(value: string) {
@@ -180,7 +184,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
 
     ngOnDestroy(): void {
         this.unsubscribeAll()
-        this.dataService.unregisterDataset(this.id)
+        this.dataService.unregisterDataset(this.registry)
     }
 
     ngOnInit(): void {

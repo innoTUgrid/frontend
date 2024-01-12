@@ -5,6 +5,7 @@ import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesEndpointKey } fro
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
+import { DatasetRegistry } from '@app/types/time-series-data.model';
 
 
 
@@ -55,28 +56,30 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     this.chart?.showLoading()
   }
 
+  registries: DatasetRegistry[] = [
+    {
+      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
+      endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
+      beforeUpdate: () => {this.beforeDataUpdate()}
+    },
+    {
+      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
+      endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
+      beforeUpdate: () => {this.beforeDataUpdate()}
+    }
+  ]
+
   ngOnInit(): void {
     if (this._kpiName) this.changeSeriesType(this._kpiName)
-    this.dataService.registerDataset(
-      {
-        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
-        endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
-        beforeUpdate: () => {this.beforeDataUpdate()}
-      })
-    this.dataService.registerDataset(
-      {
-        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
-        endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
-        beforeUpdate: () => {this.beforeDataUpdate()}
-      })
+
+    this.registries.forEach(registry => {this.dataService.registerDataset(registry)})
     this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
   }
 
 
   ngOnDestroy() {
     this.unsubscribeAll()
-    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS))
-    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
+    this.registries.forEach(registry => {this.dataService.unregisterDataset(registry)})
   }
 
   unsubscribeAll() {

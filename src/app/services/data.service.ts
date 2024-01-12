@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HighchartsDiagram, DatasetKey, SingleValueDiagram, KPIEndpointKey, KPIList } from '@app/types/kpi.model';
-import { CustomIntervalRegistry, DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit } from '@app/types/time-series-data.model';
+import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit } from '@app/types/time-series-data.model';
 import moment from 'moment';
 import { BehaviorSubject, Observable, Subject, interval } from 'rxjs';
 import { ThemeService } from './theme.service';
@@ -44,7 +44,7 @@ export class DataService {
 
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
 
-  datasetConfigurations: Map<string, DatasetRegistry> = new Map<string, DatasetRegistry>();
+  datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
 
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([
     // {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
@@ -93,15 +93,24 @@ export class DataService {
   }
 
   registerDataset(registry: DatasetRegistry): DatasetRegistry {
-    this.datasetConfigurations.set(registry.id, registry)
+    let registries = this.datasetConfigurations.get(registry.endpointKey)
+    if (!registries) {
+      registries = []
+      this.datasetConfigurations.set(registry.endpointKey, registries)
+    } 
 
-    this.fetchDataset(registry)
+    this.datasetConfigurations.set(registry.endpointKey, [...registries.filter((r) => r.id !== registry.id), registry])
+
+    this.fetchDataset(registry.endpointKey, registries)
 
     return registry
   }
 
-  unregisterDataset(id: string) {
-    this.datasetConfigurations.delete(id)
+  unregisterDataset(registry: DatasetRegistry) {
+    const registries = this.datasetConfigurations.get(registry.endpointKey)
+    if (registries) {
+      this.datasetConfigurations.set(registry.endpointKey, registries.filter((r) => r.id !== registry.id))
+    }
   }
 
   resetCache() {
@@ -173,46 +182,41 @@ export class DataService {
     BehaviorSubject.next(newData)
   }
 
-  async fetchDatasets(customIntervalsToo: boolean = false) {
-    for (const [id, registry] of this.datasetConfigurations) {
-      if (!registry.customInterval || customIntervalsToo) {
-        this.fetchDataset(registry)
-      }
+  async fetchDatasets() {
+    for (const [id, registries] of this.datasetConfigurations) {
+      this.fetchDataset(id, registries)
     }
   }
 
-  async fetchDataset(registry: DatasetRegistry) {
-    let localKey: string = registry.endpointKey
+  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[]) {
     let timeIntervals = this.timeInterval.getValue()
-    if (registry.customInterval) {
-      localKey = registry.customInterval.key
-      timeIntervals = registry.customInterval.fixedTimeIntervals
-    }
 
-    if (registry.beforeUpdate) {
-      registry.beforeUpdate()
-    }
+    registries.forEach((registry) => {
+      if (registry.beforeUpdate) {
+        registry.beforeUpdate()
+      }
+    })
 
-    const localData = this.timeSeriesData.get(localKey)
-    if (localData && localData.timeRange) {
-      // filter out time intervals that are already loaded
-      timeIntervals = timeIntervals.filter((interval) => !localData.timeRange?.some((localInterval) => timeIntervalEquals(interval, localInterval)))
-    }
+    // const localData = this.timeSeriesData.get(localKey)
+    // if (localData && localData.timeRange) {
+    //   // filter out time intervals that are already loaded
+    //   timeIntervals = timeIntervals.filter((interval) => !localData.timeRange?.some((localInterval) => timeIntervalEquals(interval, localInterval)))
+    // }
 
     if (timeIntervals.length > 0) {
       // this is important such that while an endpoint loades data, no other call on the same endpoint is made
-      this.getDataset(localKey).timeRange = timeIntervals
+      this.getDataset(endpointKey).timeRange = timeIntervals
 
       let fetch = this.fetchTimeSeriesData.bind(this)
-      if (KPIList.includes(registry.endpointKey)) fetch = this.fetchKPIData.bind(this)
+      if (KPIList.includes(endpointKey)) fetch = this.fetchKPIData.bind(this)
 
-      timeIntervals.forEach((interval) => fetch(registry, interval, localKey))
+      timeIntervals.forEach((interval) => fetch(endpointKey, interval, endpointKey))
   
     }
   }
 
-  async fetchKPIData(registry: DatasetRegistry, timeInterval: TimeInterval, localKey: string) {
-    const url = `${environment.apiUrl}/v1/kpi/${registry.endpointKey}/`;
+  async fetchKPIData(endpointKey: DatasetKey, timeInterval: TimeInterval, localKey: string) {
+    const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
     this.http.get<KPIResult>(url, {
       params: {
         from: timeInterval.start.toISOString(),
@@ -221,7 +225,7 @@ export class DataService {
     })
     .subscribe((kpiValue) => {
       const series: Series[] = [
-        {type:registry.endpointKey, name:kpiValue.name, data:[
+        {type:endpointKey, name:kpiValue.name, data:[
           [
             moment().valueOf(), 
             kpiValue.value, 
@@ -229,7 +233,8 @@ export class DataService {
         ],
         unit:kpiValue.unit? kpiValue.unit : undefined, 
         consumption:true,
-        id:localKey
+        id:localKey,
+        timeUnit: timeInterval.stepUnit,
       },
       ]
 
@@ -241,8 +246,8 @@ export class DataService {
     return `${endpoint}.${type}.${local ? 'local' : 'external'}`
   }
 
-  async fetchTimeSeriesData(registry: DatasetRegistry, timeInterval: TimeInterval, localKey: string) {
-    const url = `${environment.apiUrl}/v1/kpi/${registry.endpointKey}/`;
+  async fetchTimeSeriesData(endpointKey: DatasetKey, timeInterval: TimeInterval, localKey: string) {
+    const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
     this.http.get<TimeSeriesResult[]>(url, {
       params: {
         from: timeInterval.start.toISOString(),
@@ -256,7 +261,7 @@ export class DataService {
       for (const entry of timeSeriesResult) {
         let data: number[][];
         const carrierName = entry.carrier_name
-        const seriesKey = this.toSeriesId(registry.endpointKey, carrierName, entry.local)
+        const seriesKey = this.toSeriesId(endpointKey, carrierName, entry.local)
 
         const currentSeries = seriesMap.get(seriesKey)
         if (!currentSeries) {
@@ -269,8 +274,9 @@ export class DataService {
             type: carrierName,
             data: data,
             unit: entry.unit,
-            consumption: (registry.endpointKey === 'consumption') ? true : false,
+            consumption: (endpointKey === 'consumption') ? true : false,
             local: entry.local,
+            timeUnit: timeInterval.stepUnit
           })
         } else {
           data = currentSeries.data;

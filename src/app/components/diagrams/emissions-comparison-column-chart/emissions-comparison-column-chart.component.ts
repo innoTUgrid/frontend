@@ -4,7 +4,7 @@ import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { Subscription, timeInterval } from 'rxjs';
 import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { Series, TimeUnit } from '@app/types/time-series-data.model';
+import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 
 
 @Component({
@@ -23,6 +23,14 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
   kpiName = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+
+  registry: DatasetRegistry = {
+    id: this.id,
+    endpointKey: this.kpiName,
+    beforeUpdate: () => {
+      this.chart?.showLoading()
+    }
+  }
 
   dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
     millisecond: '%b',
@@ -127,7 +135,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
-    this.dataService.unregisterDataset(this.id)
+    this.dataService.unregisterDataset(this.registry)
   }
 
   splitYearlyData(data: Series[]): Series[] {
@@ -142,6 +150,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
           id: interval.start.toString() + '-' + interval.end.toString() + ' ' + index.toString(),
           name: interval.start.format('YYYY'),
           data: [],
+          timeUnit: interval.stepUnit,
           type: interval.start.format('YYYY'),
           xAxis: index,
           color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
@@ -177,13 +186,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   }
 
   ngOnInit() {
-    this.dataService.registerDataset({
-      id: this.id,
-      endpointKey: this.kpiName,
-      beforeUpdate: () => {
-        this.chart?.showLoading()
-      }
-    })
+    this.dataService.registerDataset(this.registry)
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
     this.subscriptions.push(this.chartService.subscribeInterval(this))

@@ -8,6 +8,7 @@ export type Series = {
   name:string, 
   type:string, 
   data:number[][]
+  timeUnit: TimeUnit,
   unit?: string,
   consumption?: boolean,
   local?: boolean,
@@ -27,18 +28,9 @@ export class TimeSeriesDataDictionary extends Map<string, Dataset> {
   }
 }
 
-// this type should be a type that has information about a dataset that is registered by a component such that the data service keeps it up to date 
-export type CustomIntervalRegistry = {
-  key: string, // this is the key that is used to access the data in the data service
-  fixedTimeIntervals: TimeInterval[], // when this is given, then the data service will update the data for this dataset at the given interval
-}
-
 export type DatasetRegistry = {
   id: string, // this is the id of the component that registered the dataset
   endpointKey: DatasetKey,
-
-  // when a registry has a customInterval, then it is not updated by the data service
-  customInterval?: CustomIntervalRegistry
 
   // events
   beforeUpdate?: () => void,

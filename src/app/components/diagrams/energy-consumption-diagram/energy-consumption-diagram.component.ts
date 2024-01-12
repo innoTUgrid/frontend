@@ -101,7 +101,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
-    this.dataService.unregisterDataset(this.id)
+    this.dataService.unregisterDataset(this.registry)
   }
 
   aggregateExternalData(data: Series[]): Series[] {
@@ -113,6 +113,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
       name: 'Imported Energy',
       type: type,
       data: externalEnergy,
+      timeUnit: this.dataService.getCurrentTimeInterval().stepUnit
     }, ...data.filter(entry => entry.local)]
 
     return newData
