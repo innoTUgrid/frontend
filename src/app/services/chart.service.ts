@@ -4,6 +4,7 @@ import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/ty
 import { DataService } from './data.service';
 import { DatasetKey, HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
 import { Subscription } from 'rxjs';
+import { Series as HighchartsSeries } from 'highcharts';
 
 @Injectable({
   providedIn: 'root'
@@ -15,16 +16,18 @@ export class ChartService {
 
   constructor() { }
 
-  updateSeries(diagram: HighchartsDiagram, datasetKey: string, data?: Series[]) {
-    if (!data) {
+  updateSeries(diagram: HighchartsDiagram, datasetKey: string, dataset?: Dataset) {
+    if (!dataset) {
       return
     }
+    const data = dataset.series
 
     const allSeries = []
+    let hasChanged = false
     for (const series of data) {
       const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
-      const newSeries = {
+      const newSeries: Highcharts.SeriesOptionsType = {
           name: series.name,
           id: series.id, 
           data:series.data,
@@ -37,13 +40,27 @@ export class ChartService {
           xAxis: (series.xAxis) ? series.xAxis : 0,
           pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
         }
+
       allSeries.push(newSeries)
+
+      if (diagram.chart) {
+        const chartSeries = diagram.chart.get(series.id) as HighchartsSeries
+        if (chartSeries) {
+          const currentSeries: any = diagram.chartProperties.series?.find((s) => s.id === series.id)
+          if (currentSeries && currentSeries.data !== series.data) {
+            chartSeries.update(newSeries, false)
+            hasChanged = true
+          }
+        } else {
+          diagram.chart.addSeries(newSeries, true, false)
+          hasChanged = true
+        }
+      }
     }
+    diagram.chartProperties.series = allSeries
     if (diagram.chart) {
-      diagram.chart.update({
-        series: allSeries,
-      }, true, true)
       diagram.chart.hideLoading()
+      if (hasChanged) diagram.chart.redraw()
     } else {
       diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
@@ -62,11 +79,14 @@ export class ChartService {
   subscribeSeries(
     diagram: HighchartsDiagram, 
     datasetKey: string, 
-    beforeProcessData: (data: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
+    beforeProcessData: (dataset: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
   ): Subscription {
-    const s = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
-      data = beforeProcessData(data)
-      this.updateSeries(diagram, datasetKey, data)
+    const s = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
+      const updatedSeries = beforeProcessData(dataset.series)
+      this.updateSeries(diagram, datasetKey, {
+        series: updatedSeries,
+        lastCall: dataset.lastCall,
+      })
     });
     return s
   }
@@ -75,14 +95,14 @@ export class ChartService {
     const s = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
       // iterate over timeInetrvals with index
       for (const [index, timeInterval] of timeIntervals.entries()) {
-  
+        if (index >= diagram.xAxis.length) break
         if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
           diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
           diagram.chart.axes[index].setDataGrouping(diagram.dataGrouping, false)
-          diagram.chart.xAxis[index].setExtremes(timeInterval.start.toDate().getTime(), timeInterval.end.toDate().getTime(), false, true);
+          diagram.chart.xAxis[index].setExtremes(timeInterval.start.valueOf(), timeInterval.end.valueOf(), false, true);
         } else { // this is only reachable for code that uses highcharts-angular
-          diagram.xAxis[index].min = timeInterval.start.toDate().getTime();
-          diagram.xAxis[index].max = timeInterval.end.toDate().getTime();
+          diagram.xAxis[index].min = timeInterval.start.valueOf();
+          diagram.xAxis[index].max = timeInterval.end.valueOf();
           diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
           diagram.updateFlag = false
         }
@@ -111,11 +131,39 @@ export class ChartService {
   }
 
   subscribeSingleValueDiagram(diagram: SingleValueDiagram, datasetKey:DatasetKey, average: boolean = true) {
-    const s1 = this.dataService.getBehaviorSubject(datasetKey).subscribe((data:Series[]) => {
-      this.updateSingleValue(diagram, average, data)
+    const s1 = this.dataService.getDataset(datasetKey).subscribe((dataset:Dataset) => {
+      this.updateSingleValue(diagram, average, dataset.series)
     });
 
     return [s1]
+  }
+
+  sumAllDataTypes(data: Series[], interval?: TimeInterval): number[][] {
+    let relevantSeries: Series[] = data
+    if (interval) relevantSeries = data.filter(series => series.timeUnit === interval.stepUnit)
+
+    const dataMap = new Map<number, number>()
+    for (const series of relevantSeries) {
+      let i = 0;
+      const data_len = series.data.length
+
+      while (i < data_len) { // using this type of loop for performance reasons
+        const point = series.data[i]
+        if (!interval || (point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf())) {
+          const value = dataMap.get(point[0])
+          if (value) {
+            dataMap.set(point[0], value + point[1])
+          } else {
+            dataMap.set(point[0], point[1])
+          }
+        }
+
+        i++;
+      }
+    }
+
+    const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
+    return newDatapoints
   }
 
 
@@ -124,7 +172,6 @@ export class ChartService {
 
     const series = chart.series[seriesIndex] as any
     const groupedData = series.groupedData
-    console.log(series, groupedData)
     
     if (groupedData) {
       let sum = 0

@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import * as _moment from 'moment';
 import { Moment } from 'moment';
 import { DataService } from '@app/services/data.service';
-import { TimeUnit } from '@app/types/time-series-data.model';
+import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 
 export const MY_FORMATS = {
   parse: {
@@ -77,15 +77,28 @@ export class ComparisonViewComponent {
     return newIntervals
   }
 
+  yearlyTimeIterval: TimeInterval = {
+    start: moment('2018').endOf('year'),
+    end: moment('2020').startOf('year'),
+    stepUnit: TimeUnit.YEAR,
+    step: 1,
+  }
+
+  ngOnInit() {
+    this.onDatepickerClosed()
+  }
+
   onDatepickerClosed() {
     this.isDatepickerOpen = false;
 
     
-    this.dataService.updateTimeIntervalComparision(
-      (this.firstYear.value) ? this.toTimeInterval(this.firstYear.value) : undefined,
-      (this.secondYear.value) ? this.toTimeInterval(this.secondYear.value) : undefined,
-      true
-    )
+    if (this.firstYear.value && this.secondYear.value) {
+      this.dataService.timeInterval.next([
+        this.toTimeInterval(this.firstYear.value),
+        this.toTimeInterval(this.secondYear.value),
+        this.yearlyTimeIterval
+      ])
+    }
   }
 
 

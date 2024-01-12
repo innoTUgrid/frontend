@@ -145,11 +145,11 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     if (intervals.length >= 2) {
       newData = []
       for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
-        const relevantSeries: Series[] = data
+        const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
         const newSeries: Series = {
           id: interval.start.toString() + '-' + interval.end.toString() + ' ' + index.toString(),
           name: interval.start.format('YYYY'),
-          data: [],
+          data: this.chartService.sumAllDataTypes(relevantSeries, interval),
           timeUnit: interval.stepUnit,
           type: interval.start.format('YYYY'),
           xAxis: index,
@@ -157,28 +157,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
           pointPlacement: (index == 0) ? -0.2 : undefined,
         }
 
-        const dataMap = new Map<number, number>()
-        for (const series of relevantSeries) {
-          let i = 0;
-          const data_len = series.data.length
-
-          while (i < data_len) { // using this type of loop for performance reasons
-            const point = series.data[i]
-            if (point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf()) {
-              const value = dataMap.get(point[0])
-              if (value) {
-                dataMap.set(point[0], value + point[1])
-              } else {
-                dataMap.set(point[0], point[1])
-              }
-            }
-
-            i++;
-          }
-        }
-
-        const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
-        newSeries.data = newDatapoints
         newData.push(newSeries)
       }
     }

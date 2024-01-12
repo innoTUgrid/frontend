@@ -46,6 +46,7 @@ export class DataService {
 
   datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
 
+  readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([
     // {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
     // the next two are the current year and the last year
@@ -57,6 +58,7 @@ export class DataService {
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
+      this.fetchedEndpoints.clear()
       this.fetchDatasets()
     })
   }
@@ -76,20 +78,19 @@ export class DataService {
     }
   }
 
-  getDataset(key: string): Dataset {
+  getDataset(key: string): BehaviorSubject<Dataset> {
     let dataset = this.timeSeriesData.get(key)
     if (!dataset) {
-      dataset = {
-        series: new BehaviorSubject<Series[]>([])
-      }
+      dataset = new BehaviorSubject<Dataset>({
+        series: [],
+        lastCall: {
+          timeIntervals: [],
+          updatedSeries: [],
+        }
+      })
       this.timeSeriesData.set(key, dataset)
     }
     return dataset
-  }
-
-  getBehaviorSubject(key: string): BehaviorSubject<Series[]> {
-    let dataset = this.getDataset(key)
-    return dataset.series
   }
 
   registerDataset(registry: DatasetRegistry): DatasetRegistry {
@@ -97,7 +98,7 @@ export class DataService {
     if (!registries) {
       registries = []
       this.datasetConfigurations.set(registry.endpointKey, registries)
-    } 
+    }
 
     this.datasetConfigurations.set(registry.endpointKey, [...registries.filter((r) => r.id !== registry.id), registry])
 
@@ -113,13 +114,7 @@ export class DataService {
     }
   }
 
-  resetCache() {
-    this.timeSeriesData.forEach((dataset) => {
-      dataset.timeRange = undefined
-    })
-  }
-
-  updateTimeIntervalComparision(year1?: TimeInterval, year2?: TimeInterval, resetCache: boolean = false) {
+  updateTimeIntervalComparision(year1?: TimeInterval, year2?: TimeInterval) {
     const newTimeIntervals = [...this.timeInterval.getValue()]
     
     if (
@@ -131,7 +126,6 @@ export class DataService {
     if (year1) newTimeIntervals[0] = year1
     if (year2) newTimeIntervals[1] = year2
 
-    if (resetCache) this.resetCache()
     this.timeInterval.next(newTimeIntervals)
   }
 
@@ -158,7 +152,7 @@ export class DataService {
   }
 
   insertNewData(key: string, data: Series[]) {
-    const BehaviorSubject = this.getBehaviorSubject(key)
+    const BehaviorSubject = this.getDataset(key)
     const oldData = BehaviorSubject.getValue()
 
     // sort newData
@@ -166,18 +160,30 @@ export class DataService {
       value.data.sort((a, b) => a[0] - b[0])
     }
 
-    const newData: Series[] = data.filter((series) => !oldData.find((oldSeries) => oldSeries.id === series.id))
-    for (const series of oldData) {
-      const newSeries = data.find((newSeries) => newSeries.id === series.id)
-      if (newSeries) {
-        const merged = sortedMerge(series.data, newSeries.data)
-        newData.push({...newSeries, data: merged})
-      } else {
-        newData.push(series)
+    const newData: Dataset = {
+      series: [],
+      lastCall: {
+        timeIntervals: this.timeInterval.getValue(),
+        updatedSeries: [],
       }
     }
 
-    this.filterOutOldData(newData, this.timeInterval.getValue())
+
+    newData.series = data.filter((series) => !oldData.series.find((oldSeries) => oldSeries.id === series.id && oldSeries.timeUnit === series.timeUnit))
+    newData.lastCall.updatedSeries = [...newData.series]
+    for (const oldSeries of oldData.series) {
+      let newSeries = data.find((newSeries) => newSeries.id === oldSeries.id && newSeries.timeUnit === oldSeries.timeUnit)
+      if (newSeries) {
+        const merged = sortedMerge(oldSeries.data, newSeries.data)
+        newSeries.data = merged
+        newData.series.push(newSeries)
+        newData.lastCall.updatedSeries.push(newSeries)
+      } else {
+        newData.series.push(oldSeries)
+      }
+    }
+
+    this.filterOutOldData(newData.series, this.timeInterval.getValue())
 
     BehaviorSubject.next(newData)
   }
@@ -188,8 +194,8 @@ export class DataService {
     }
   }
 
-  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[]) {
-    let timeIntervals = this.timeInterval.getValue()
+  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
+    if (this.fetchedEndpoints.has(endpointKey)) return;
 
     registries.forEach((registry) => {
       if (registry.beforeUpdate) {
@@ -204,14 +210,11 @@ export class DataService {
     // }
 
     if (timeIntervals.length > 0) {
-      // this is important such that while an endpoint loades data, no other call on the same endpoint is made
-      this.getDataset(endpointKey).timeRange = timeIntervals
-
       let fetch = this.fetchTimeSeriesData.bind(this)
       if (KPIList.includes(endpointKey)) fetch = this.fetchKPIData.bind(this)
 
+      this.fetchedEndpoints.add(endpointKey)
       timeIntervals.forEach((interval) => fetch(endpointKey, interval, endpointKey))
-  
     }
   }
 
@@ -238,7 +241,15 @@ export class DataService {
       },
       ]
 
-      this.getBehaviorSubject(localKey).next(series);
+      const dataset: Dataset = {
+        series: series,
+        lastCall: {
+          timeIntervals: [timeInterval],
+          updatedSeries: series
+        }
+      }
+
+      this.getDataset(localKey).next(dataset);
     });
   }
 

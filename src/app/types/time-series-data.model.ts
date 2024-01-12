@@ -17,13 +17,18 @@ export type Series = {
   pointPlacement?: number,
 };
 
-export type Dataset = {
-  series: BehaviorSubject<Series[]>,
-  timeRange?: TimeInterval[],
+export type APICallInfo = {
+  timeIntervals: TimeInterval[],
+  updatedSeries: Series[],
 }
 
-export class TimeSeriesDataDictionary extends Map<string, Dataset> {
-  constructor(iterable?: Iterable<[string, Dataset]>) {
+export type Dataset = {
+  series: Series[],
+  lastCall: APICallInfo,
+}
+
+export class TimeSeriesDataDictionary extends Map<string, BehaviorSubject<Dataset>> {
+  constructor(iterable?: Iterable<[string, BehaviorSubject<Dataset>]>) {
     super(iterable);
   }
 }

@@ -123,8 +123,8 @@ export class DataTableComponent {
   subsciptions: any[] = []
   ngOnInit() {
     if (this.kpiName) {
-      this.dataService.getBehaviorSubject(this.kpiName).subscribe((data: Series[]) => {
-        this.updateData(data)
+      this.dataService.getDataset(this.kpiName).subscribe((dataset: Dataset) => {
+        this.updateData(dataset.series)
       })
     }
   }
