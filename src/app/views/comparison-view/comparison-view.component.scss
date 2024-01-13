@@ -33,9 +33,15 @@
     
   }
 
-  #granularity-selection{
+  #baseline-year-selection{
     margin-top: 1.3vh;
-    max-width: 10em;
+    max-width: 13em;
+    min-width: 5em;
+  }
+
+  #comparison-year-selection{
+    margin-top: 1.3vh;
+    max-width: 13em;
     min-width: 5em;
   }
 
