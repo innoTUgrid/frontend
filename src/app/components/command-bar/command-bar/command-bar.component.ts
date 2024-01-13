@@ -53,7 +53,7 @@ export class CommandBarComponent {
       start: this.timeInterval.start.clone().startOf('day'), 
       end: singleDate ? this.timeInterval.start.clone().endOf('day') : this.timeInterval.end.clone().endOf('day'),
       step: (this.selectedGranularity == Granularity.QUARTER) ? 3 : 1,
-      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? Granularity.MONTH : this.selectedGranularity as TimeUnit
+      stepUnit: (this.selectedGranularity == Granularity.QUARTER) ? TimeUnit.MONTH : this.selectedGranularity as TimeUnit
     }
     this.dataService.updateTimeInterval(this.timeInterval);
   }
@@ -66,7 +66,7 @@ export class CommandBarComponent {
       start: moment("2019-01-01T00:00:00.000Z"),
       end: moment("2019-02-01T00:00:00.000Z"),
       step: 1,
-      stepUnit: "day"
+      stepUnit: TimeUnit.DAY
     }
     this.dataService.updateTimeInterval(timeInterval)
   }
@@ -111,9 +111,9 @@ export class CommandBarComponent {
     });
 
     const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
-      if (timeInterval != this.timeInterval) {
-        this.timeInterval = timeInterval;
-        this.selectedGranularity = (timeInterval.stepUnit == 'month' && timeInterval.step == 3) ? Granularity.QUARTER : timeInterval.stepUnit;
+      if (timeInterval[0] != this.timeInterval) {
+        this.timeInterval = timeInterval[0];
+        this.selectedGranularity = (timeInterval[0].stepUnit == 'month' && timeInterval[0].step == 3) ? Granularity.QUARTER : timeInterval[0].stepUnit;
       }
     });
     this.subscriptions.push(s0, s1, s2);

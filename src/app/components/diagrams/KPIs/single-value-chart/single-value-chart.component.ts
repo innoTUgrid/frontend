@@ -2,8 +2,9 @@
 import { Component, Input, inject } from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
+import { DatasetRegistry } from '@app/types/time-series-data.model';
 import { Subscription } from 'rxjs';
-import { DatasetKey, SingleValueDiagram } from 'src/app/types/kpi.model';
+import { DatasetKey, KPIEndpointKey, SingleValueDiagram } from 'src/app/types/kpi.model';
 
 @Component({
   selector: 'app-single-value-chart',
@@ -36,10 +37,8 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() set kpiName(value: DatasetKey | undefined) {
     this._kpiName = value;
     if (value) {
-      this.dataService.registerDataset({
-        id:this.id,
-        endpointKey: value,
-      })
+      this.registry.endpointKey = value;
+      this.dataService.registerDataset(this.registry)
       this.chartService.updateSingleValue(this, false)
       this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, value, false);
     }
@@ -49,6 +48,11 @@ export class SingleValueChartComponent implements SingleValueDiagram {
     return this._kpiName;
   }
 
+  registry: DatasetRegistry = {
+    id:this.id,
+    endpointKey: KPIEndpointKey.CO2_SAVINGS,
+  }
+
   subscriptions: Subscription[] = [];
 
   ngOnInit() {
@@ -56,7 +60,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   
   ngOnDestroy() {
     this.unsubscribeAll()
-    this.dataService.unregisterDataset(this.id)
+    this.dataService.unregisterDataset(this.registry)
   }
 
   unsubscribeAll() {

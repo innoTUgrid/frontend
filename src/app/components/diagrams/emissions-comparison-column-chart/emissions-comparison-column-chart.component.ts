@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import HC_exporting from 'highcharts/modules/exporting';
-import HC_exportData from 'highcharts/modules/export-data';
-import HC_noData from 'highcharts/modules/no-data-to-display';
+import { Component, OnInit, inject } from '@angular/core';
+import * as Highcharts from 'highcharts/highstock';
+import { ChartService } from '@app/services/chart.service';
+import { DataService } from '@app/services/data.service';
+import { Subscription, timeInterval } from 'rxjs';
+import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 
 
 @Component({
@@ -10,10 +12,58 @@ import HC_noData from 'highcharts/modules/no-data-to-display';
   templateUrl: './emissions-comparison-column-chart.component.html',
   styleUrls: ['./emissions-comparison-column-chart.component.scss']
 })
-export class EmissionsComparisonColumnChartComponent implements OnInit{
+export class EmissionsComparisonColumnChartComponent implements OnInit, HighchartsDiagram{
   Highcharts: typeof Highcharts = Highcharts;
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
+
+  chartService: ChartService = inject(ChartService);
+  dataService: DataService = inject(DataService);
+
+  id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
+  subscriptions: Subscription[] = [];
+  kpiName = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+
+  registry: DatasetRegistry = {
+    id: this.id,
+    endpointKey: this.kpiName,
+    beforeUpdate: () => {
+      this.chart?.showLoading()
+    }
+  }
+
+  dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
+    millisecond: '%b',
+    second: '%b',
+    minute: '%b',
+    hour: '%b',
+    day: '%b',
+    week: '%b',
+    month: '%b',
+    year: '%b',
+  }
+
+  xAxis: Highcharts.XAxisOptions[] = [{
+    id: 'first Year',
+    type: 'datetime',
+    dateTimeLabelFormats: this.dateTimeLabelFormats,
+    tickPixelInterval: 50,
+  }, 
+  {
+    id: 'second Year',
+    type: 'datetime',
+    // dateTimeLabelFormats: this.dateTimeLabelFormats,
+    visible: false,
+  }
+]
+
+  dataGrouping: Highcharts.DataGroupingOptionsObject = {
+    approximation: 'sum',
+    enabled: true,
+    forced: true,
+    units: [[TimeUnit.MONTH, [1]]]
+  }
+  seriesType: SeriesTypes = 'column'
 
   earlierYear = 2022;
   laterYear = 2023;
@@ -23,12 +73,13 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
   meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-neutral-color-40').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
   chartProperties: Highcharts.Options = {
     chart: {
-      type: 'column',
+      type: this.seriesType,
       style: {
         fontFamily: 'Lucida Grande, sans-serif',
         fontSize: '1em',
@@ -45,9 +96,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
     credits: {
       enabled: false
     },
-    xAxis: {
-      categories: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-    },
+    xAxis: this.xAxis,
     yAxis: {
       title: {
         text: 'CO₂ Equivalents (kg)'
@@ -62,8 +111,11 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
         borderWidth: 0,
         dataLabels: {
           enabled: true,
+          format: '{point.y:.0f} kg',
         },
         groupPadding: 0.1, // Adjust this value as needed
+
+        dataGrouping: this.dataGrouping,
       },
     },
     legend: {
@@ -78,110 +130,50 @@ export class EmissionsComparisonColumnChartComponent implements OnInit{
   },
   };
 
-  data = {
-    2023: [
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 12],
-    ],
-    2022: [
-      ['CO₂ Emissions', 22],
-      ['CO₂ Emissions', 27],
-      ['CO₂ Emissions', 15],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 24],
-      ['CO₂ Emissions', 29],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 26],
-      ['CO₂ Emissions', 25],
-      ['CO₂ Emissions', 20],
-      ['CO₂ Emissions', 23],
-      ['CO₂ Emissions', 20],
-    ],
-  };
-
   constructor() {
-    HC_exporting(Highcharts);
-    HC_exportData(Highcharts);
-    HC_noData(Highcharts);
   }
 
-  ngOnInit(): void {
-    this.setChartData();
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
+    this.dataService.unregisterDataset(this.registry)
   }
 
-  setChartData(): void {
-    const earlierYear = this.earlierYear; 
-    const laterYear = this.laterYear;
-    const dataAsObject: { [key: number]: (string | number)[][] } = this.data;
-    const earlierYearData = this.getData(dataAsObject[earlierYear], earlierYear);
-    const laterYearData = this.getData(dataAsObject[laterYear], laterYear);
-  
-   
-    //const meanData = dataAsObject[laterYear].reduce((sum, point) => sum + point[1], 0)
-    const meanData = dataAsObject[laterYear].reduce((sum, point) => sum + Number(point[1]), 0) / dataAsObject[laterYear].length;
-    const roundedMeanData = Number(meanData.toFixed(2));
-    const meanDataArray = Array.from({ length: 12 }, () => roundedMeanData);
-
-  
-    this.chartProperties.series = [
-      {
-        type: 'column', 
-        name: earlierYear.toString(),
-        id: 'main',
-        pointPlacement: -0.1,
-        data: earlierYearData.slice(),
-        dataLabels: {
-          enabled: false,
-        },
-        color: this.earlierYearColor,
-      },
-      {
-        type: 'column', 
-        name: laterYear.toString(),
-        data: laterYearData.slice(),
-        dataLabels: [{
-          enabled: true,
-          inside: true,
-          style: {
-            fontSize: '14px',
-            color: 'white'
-          }
-        }],
-        color: this.laterYearColor,
-      },
-      {
-        type: 'line', // Add a line series for the mean
-        name: `Mean of ${laterYear}`,
-        data: meanDataArray,
-        color: this.meanColor, // Choose the color you prefer
-        marker: {
-          enabled: false // Disable markers on the line
+  splitYearlyData(data: Series[]): Series[] {
+    const intervals = this.dataService.getCurrentComparisionTimeIntervals()
+    let newData = data
+    
+    if (intervals.length >= 2) {
+      newData = []
+      for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
+        const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
+        const newSeries: Series = {
+          id: `MonthlyCO2Comparision.${index.toString()}`,
+          name: interval.start.format('YYYY'),
+          data: this.chartService.sumAllDataTypes(relevantSeries, interval),
+          timeUnit: interval.stepUnit,
+          type: interval.start.format('YYYY'),
+          xAxis: index,
+          color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
+          pointPlacement: (index == 0) ? -0.2 : undefined,
         }
-      },
-    ];
-  
-    this.updateFlag = true;
-  }
-  
-  
-  getData(data: any, year: number): any[] {
-    return data.map((point: any[]) => ({
-      name: `${point[0]} ${year}`,
-      y: point[1],
-    }));
+
+        newData.push(newSeries)
+      }
+    }
+    return newData
   }
 
-  
-  
-  
+  ngOnInit() {
+    this.dataService.registerDataset(this.registry)
+
+    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
+    this.subscriptions.push(this.chartService.subscribeInterval(this))
+  }
+
+  onSeriesUpdate() {
+    if (this.chart) {
+      this.chartService.updateAverageLine(this.chart, false)
+    }
+  }
 }

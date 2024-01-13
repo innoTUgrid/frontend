@@ -5,6 +5,7 @@ import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesEndpointKey } fro
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
+import { DatasetRegistry } from '@app/types/time-series-data.model';
 
 
 
@@ -41,6 +42,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   timeIntervalSubscription?: Subscription;
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -51,32 +53,34 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     return id + '-' + endpointKey
   }
 
-  beforeDataUpdate() {
-    this.chart?.showLoading()
+  beforeDataUpdate(kpi: DatasetKey) {
+    if (this.kpiName === kpi) this.chart?.showLoading()
   }
+
+  registries: DatasetRegistry[] = [
+    {
+      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
+      endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
+      beforeUpdate: () => {this.beforeDataUpdate(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}
+    },
+    {
+      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
+      endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
+      beforeUpdate: () => {this.beforeDataUpdate(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}
+    }
+  ]
 
   ngOnInit(): void {
     if (this._kpiName) this.changeSeriesType(this._kpiName)
-    this.dataService.registerDataset(
-      {
-        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
-        endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
-        beforeUpdate: () => {this.beforeDataUpdate()}
-      })
-    this.dataService.registerDataset(
-      {
-        id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
-        endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
-        beforeUpdate: () => {this.beforeDataUpdate()}
-      })
-    this.timeIntervalSubscription = this.chartService.subscribeSeriesInterval(this)
+
+    this.registries.forEach(registry => {this.dataService.registerDataset(registry)})
+    this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
   }
 
 
   ngOnDestroy() {
     this.unsubscribeAll()
-    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS))
-    this.dataService.unregisterDataset(this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION))
+    this.registries.forEach(registry => {this.dataService.unregisterDataset(registry)})
   }
 
   unsubscribeAll() {
@@ -93,13 +97,14 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     units: [['day', [1]]]
   }
 
-  xAxis: Highcharts.XAxisOptions = {
+  xAxis: Highcharts.XAxisOptions[] = [{
     id: 'xAxis',
     type: 'datetime',
     dateTimeLabelFormats: {
       minute: '%H:%M',
     },
-  }
+    tickPixelInterval: 50,
+  }]
 
   yAxis: Highcharts.YAxisOptions = {
     title: {

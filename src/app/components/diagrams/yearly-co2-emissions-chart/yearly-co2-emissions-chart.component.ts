@@ -1,22 +1,66 @@
-import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import HC_exporting from 'highcharts/modules/exporting';
-import HC_exportData from 'highcharts/modules/export-data';
-import HC_noData from 'highcharts/modules/no-data-to-display';
+import { Component, OnInit, inject } from '@angular/core';
+import { ChartService } from '@app/services/chart.service';
+import { DataService } from '@app/services/data.service';
+import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { DatasetRegistry, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
+import * as Highcharts from 'highcharts/highstock';
+import moment from 'moment';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-yearly-co2-emissions-chart',
   templateUrl: './yearly-co2-emissions-chart.component.html',
   styleUrls: ['./yearly-co2-emissions-chart.component.scss']
 })
-export class YearlyCo2EmissionsChartComponent implements OnInit {
+export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts;
+  dataService: DataService = inject(DataService);
+  chartService: ChartService = inject(ChartService);
+
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
+  id = "YearlyCo2EmissionsChartComponent." + Math.random().toString(36).substring(7);
+
+  subscriptions: Subscription[] = [];
+
+  dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
+    millisecond: '%Y',
+    second: '%Y',
+    minute: '%Y',
+    hour: '%Y',
+    day: '%Y',
+    week: '%Y',
+    month: '%Y',
+    year: '%Y',
+  }
+
+  xAxis: Highcharts.XAxisOptions[] = [{
+    id: 'first Year',
+    type: 'datetime',
+    dateTimeLabelFormats: this.dateTimeLabelFormats,
+    tickPixelInterval: 50,
+  }]
+  dataGrouping: Highcharts.DataGroupingOptionsObject = {
+    approximation: 'sum',
+    enabled: true,
+    forced: true,
+    units: [['month', [1]]]
+  }
+  seriesType: SeriesTypes = 'line'
+
+  endpointKey: TimeSeriesEndpointKey = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+  registry: DatasetRegistry = {
+    id: this.id,
+    endpointKey: this.endpointKey,
+    beforeUpdate: () => {
+      this.chart?.showLoading()
+    }
+  }
 
   lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -38,9 +82,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit {
     credits: {
       enabled: false
     },
-    xAxis: {
-      categories: ['2019', '2020', '2021', '2022', '2023'],
-    },
+    xAxis: this.xAxis,
     yAxis: {
       title: {
         text: 'CO₂ Equivalents (kg)'
@@ -52,8 +94,10 @@ export class YearlyCo2EmissionsChartComponent implements OnInit {
     plotOptions: {
       line: {
         dataLabels: {
-          enabled: true
+          enabled: true,
+          format: '{point.y:.0f} kg',
         },
+        dataGrouping: this.dataGrouping
       }
     },
     legend: {
@@ -64,28 +108,33 @@ export class YearlyCo2EmissionsChartComponent implements OnInit {
    }
   };
 
-  data = [34, 29, 25, 26, 23];
-
   constructor() {
-    HC_exporting(Highcharts);
-    HC_exportData(Highcharts);
-    HC_noData(Highcharts);
   }
 
-  ngOnInit(): void {
-    this.setChartData();
+  loadYearlyData(data: Series[]): Series[] {
+    const filtered =  data.filter(series => series.timeUnit === TimeUnit.YEAR)
+    const summed = this.chartService.sumAllDataTypes(filtered)
+
+    return [{
+      id: 'Yearly CO₂ Emissions',
+      name: 'Yearly CO₂ Emissions',
+      type: 'emissions',
+      data: summed,
+      timeUnit: TimeUnit.YEAR,
+      color: this.lineColor,
+    }]
   }
 
-  setChartData(): void {
-    this.chartProperties.series = [
-      {
-        type: 'line',
-        name: 'CO₂ Emissions',
-        data: this.data.slice(),
-        color: this.lineColor,
-      },
-    ];
 
-    this.updateFlag = true;
+  ngOnInit() {
+    this.dataService.registerDataset(this.registry)
+
+    this.subscriptions.push(this.chartService.subscribeSeries(this, this.endpointKey, this.loadYearlyData.bind(this)))
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
+    this.dataService.unregisterDataset(this.registry)
   }
 }

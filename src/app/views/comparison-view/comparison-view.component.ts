@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
@@ -10,6 +10,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import * as moment from 'moment';
 import * as _moment from 'moment';
 import { Moment } from 'moment';
+import { DataService } from '@app/services/data.service';
+import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 
 export const MY_FORMATS = {
   parse: {
@@ -36,9 +38,12 @@ export const MY_FORMATS = {
   ],
 })
 export class ComparisonViewComponent {
-  firstYear = new FormControl(moment('2022'));
-  secondYear = new FormControl(moment('2023'));
+  dataService: DataService = inject(DataService);
+
+  firstYear = new FormControl(moment('2019'));
+  secondYear = new FormControl(moment('2019'));
   isDatepickerOpen = false;
+
 
 
   chosenYearHandler(normalizedYear: Moment, datepicker: MatDatepicker<Moment>, year: string) {
@@ -49,7 +54,7 @@ export class ComparisonViewComponent {
         this.firstYear.setValue(ctrlValue);
       }
     }else{
-            const ctrlValue = this.secondYear.value;
+      const ctrlValue = this.secondYear.value;
       if(ctrlValue) {
         ctrlValue.year(normalizedYear.year());
         this.secondYear.setValue(ctrlValue);
@@ -62,8 +67,38 @@ export class ComparisonViewComponent {
     this.isDatepickerOpen = true;
   }
 
+  toTimeInterval(year:Moment) {
+    const newIntervals = {
+      start: moment(year.startOf('year')),
+      end: moment(year.endOf('year')),
+      step: 1,
+      stepUnit: TimeUnit.MONTH
+    }
+    return newIntervals
+  }
+
+  yearlyTimeIterval: TimeInterval = {
+    start: moment('2018').endOf('year'),
+    end: moment('2020').startOf('year'),
+    stepUnit: TimeUnit.YEAR,
+    step: 1,
+  }
+
+  ngOnInit() {
+    this.onDatepickerClosed()
+  }
+
   onDatepickerClosed() {
     this.isDatepickerOpen = false;
+
+    
+    if (this.firstYear.value && this.secondYear.value) {
+      this.dataService.timeInterval.next([
+        this.toTimeInterval(this.firstYear.value),
+        this.toTimeInterval(this.secondYear.value),
+        this.yearlyTimeIterval
+      ])
+    }
   }
 
 
