@@ -206,4 +206,8 @@ export class ChartService {
       chart.yAxis[0].addPlotLine(plotLines)
     }
   }
+
+  static numberWithCommas(x: string | number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
 }

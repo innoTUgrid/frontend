@@ -6,6 +6,7 @@ import { Subscription, timeInterval } from 'rxjs';
 import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 
+const numberWithCommas = ChartService.numberWithCommas
 
 @Component({
   selector: 'app-emissions-comparison-column-chart',
@@ -111,7 +112,10 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         borderWidth: 0,
         dataLabels: {
           enabled: true,
-          format: '{point.y:.0f} kg',
+          formatter: function () {
+            if (!this.y) return ''
+            return numberWithCommas(this.y.toFixed(0)) + ' kg';
+          }
         },
         groupPadding: 0.1, // Adjust this value as needed
 
