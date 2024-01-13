@@ -211,6 +211,8 @@ export class DataService {
       // filter out time intervals that are already loaded
       timeIntervals = timeIntervals.filter((interval) => !localData.timeIntervals.some((localInterval) => timeIntervalEquals(interval, localInterval)))
     }
+    // filter out timeIntervals that are doubled in the array
+    timeIntervals = timeIntervals.filter((interval, index) => timeIntervals.findIndex((i) => timeIntervalEquals(i, interval)) === index)
 
     this.fetchedEndpoints.add(endpointKey)
     if (timeIntervals.length > 0) {
