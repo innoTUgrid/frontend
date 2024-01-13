@@ -7,7 +7,10 @@ import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/type
 import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 
 const numberWithCommas = ChartService.numberWithCommas
-
+function dataFormatter(this: {y?: number | null | undefined}) {
+  if (!this.y) return ''
+  return numberWithCommas(this.y.toFixed(0)) + ' kg';
+}
 @Component({
   selector: 'app-emissions-comparison-column-chart',
   templateUrl: './emissions-comparison-column-chart.component.html',
@@ -106,19 +109,18 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     exporting: {
       enabled: true,
     },
+    tooltip: {
+      pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:,.0f} kg</b><br/>',
+    },
     plotOptions: {
       column: {
         grouping: false,
         borderWidth: 0,
         dataLabels: {
           enabled: true,
-          formatter: function () {
-            if (!this.y) return ''
-            return numberWithCommas(this.y.toFixed(0)) + ' kg';
-          }
+          format: '{point.y:,.0f} kg',
         },
         groupPadding: 0.1, // Adjust this value as needed
-
         dataGrouping: this.dataGrouping,
       },
     },
@@ -151,15 +153,16 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       newData = []
       for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
         const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
+        const dataSummed = this.chartService.sumAllDataTypes(relevantSeries, interval)
         const newSeries: Series = {
           id: `MonthlyCO2Comparision.${index.toString()}`,
           name: interval.start.format('YYYY'),
-          data: this.chartService.sumAllDataTypes(relevantSeries, interval),
+          data: dataSummed,
           timeUnit: interval.stepUnit,
           type: interval.start.format('YYYY'),
           xAxis: index,
           color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
-          pointPlacement: (index == 0) ? -0.2 : undefined,
+          pointPlacement: (index == 1) ? -0.2 : undefined,
         }
 
         newData.push(newSeries)

@@ -16,3 +16,9 @@ HC_exporting(Highcharts);
 HC_exportData(Highcharts);
 HC_noData(Highcharts);
 SolidGauge(Highcharts);
+
+Highcharts.setOptions({
+  lang: {
+    thousandsSep: '.'
+  }
+})
