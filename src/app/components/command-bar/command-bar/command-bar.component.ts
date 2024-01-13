@@ -110,6 +110,8 @@ export class CommandBarComponent {
       this.dataService.updateTimeInterval(timeInterval);
     });
 
+    this.resetFilters()
+
     const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
       if (timeInterval[0] != this.timeInterval) {
         this.timeInterval = timeInterval[0];

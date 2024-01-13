@@ -12,6 +12,7 @@ import * as _moment from 'moment';
 import { Moment } from 'moment';
 import { DataService } from '@app/services/data.service';
 import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
+import { Subscription } from 'rxjs';
 
 export const MY_FORMATS = {
   parse: {
@@ -84,6 +85,8 @@ export class ComparisonViewComponent {
     step: 1,
   }
 
+  subscriptions: Subscription[] = [];
+
   ngOnInit() {
     this.onDatepickerClosed()
   }
@@ -99,6 +102,15 @@ export class ComparisonViewComponent {
         this.yearlyTimeIterval
       ])
     }
+
+    this.subscriptions.push(this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
+      if (timeIntervals.length > 0) this.firstYear.setValue(timeIntervals[0].start)
+      if (timeIntervals.length > 1) this.secondYear.setValue(timeIntervals[1].start)
+    }))
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
 

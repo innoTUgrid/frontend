@@ -51,14 +51,7 @@ export class DataService {
   datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
 
   readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
-  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([
-    // {start: moment("2019-01-01T00:00:00.000Z"), end: moment("2019-02-01T00:00:00.000Z"), step:1, stepUnit:TimeUnit.DAY},
-    // the next two are the current year and the last year
-    // {start: moment().startOf('year'), end: moment(), step:1, stepUnit:TimeUnit.MONTH},
-    // {start: moment().subtract(1, 'year').startOf('year'), end: moment().subtract(1, 'year').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
-    {start: moment('2019-01-01T00:00:00Z').startOf('year'), end: moment('2019-01-01T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
-    {start: moment('2019-01-02T00:00:00Z').startOf('year'), end: moment('2019-01-02T11:00:00Z').endOf('year'), step:1, stepUnit:TimeUnit.MONTH},
-  ]);
+  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
@@ -139,14 +132,18 @@ export class DataService {
   updateTimeInterval(timeInterval: Partial<TimeInterval>): void {
     // only update valid values
     const currentTimeInterval = this.timeInterval.getValue()[0]
-    const newTimeInterval = {
-      start: (timeInterval.start?.isValid()) ? timeInterval.start : currentTimeInterval.start,
-      end: (timeInterval.end?.isValid()) ? timeInterval.end : currentTimeInterval.end,
-      step: (timeInterval.step) ? timeInterval.step : currentTimeInterval.step,
-      stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : currentTimeInterval.stepUnit,
+    if (currentTimeInterval) {
+      const newTimeInterval = {
+        start: (timeInterval.start?.isValid()) ? timeInterval.start : currentTimeInterval.start,
+        end: (timeInterval.end?.isValid()) ? timeInterval.end : currentTimeInterval.end,
+        step: (timeInterval.step) ? timeInterval.step : currentTimeInterval.step,
+        stepUnit: (timeInterval.stepUnit) ? timeInterval.stepUnit : currentTimeInterval.stepUnit,
+      }
+  
+      this.timeInterval.next([newTimeInterval])
+    } else {
+      this.timeInterval.next([timeInterval as TimeInterval])
     }
-
-    this.timeInterval.next([newTimeInterval])
   }
 
   filterOutOldData(data: Series[], timeIntervals: TimeInterval[]): Series[] {
