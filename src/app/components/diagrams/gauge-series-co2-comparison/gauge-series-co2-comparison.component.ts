@@ -37,7 +37,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
   }
 
   setChartData(): void {
-    const comparisonValue = 120;
+    const comparisonValue = 20;
 
     this.chartOptions = {
       chart: {
@@ -66,8 +66,8 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
         background: undefined
       },
       yAxis: {
-        min: 0,
-        max: 200,
+        min: -100,
+        max: 100,
         tickPixelInterval: 72,
         tickInterval: 25,
         tickPosition: 'inside',
@@ -79,36 +79,28 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit {
           distance: 25,
           useHTML: true,
           formatter() {
-            let color = 'var(--highcharts-color-15)';
+            let color = 'var(--highcharts-color-15)'; //red
             let valueNumber = +this.value;
-            if (valueNumber < 75) {
+            if (valueNumber < 0) { //green
               color = 'var(--highcharts-color-0)';
-            } else if (valueNumber >= 75 && valueNumber <= 125) {
-              color = 'var(--highcharts-color-6)';
-            }
+            } 
   
-            return `<span style='font-family:"Lucida Grande, sans-serif"; font-size: 1.2em; font-weight: bold; color: ${color}'>${this.value} %</span>`;
+            return `<span style='font-size: 1.2em; font-weight: bold; color: ${color}'>${this.value}%</span>`;
           },
         },
         plotBands: [
           {
             color: 'var(--highcharts-color-0)', // green
+            from: -100,
+            to: -1,
+            thickness: 20,
+          },
+          {
             from: 0,
-            to: 75,
+            to: 100,
+            color: 'var(--highcharts-color-15)', // yellow
             thickness: 20,
-          },
-          {
-            from: 76,
-            to: 125,
-            color: 'var(--highcharts-color-6)', // yellow
-            thickness: 20,
-          },
-          {
-            from: 126,
-            to: 200,
-            color: 'var(--highcharts-color-15)', // red
-            thickness: 20,
-          },
+          }
         ],
       },
       series: [{
