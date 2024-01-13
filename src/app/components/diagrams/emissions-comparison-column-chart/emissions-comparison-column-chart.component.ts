@@ -83,6 +83,11 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         fontFamily: 'Lucida Grande, sans-serif',
         fontSize: '1em',
       },
+      events: {
+        redraw: () => {
+          if (this.chart) this.chartService.updateAverageLine(this.chart, false)
+        }
+      }
     },
     title: {
       text: `Monthly CO₂ Emissions Comparison`,
@@ -173,9 +178,4 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     this.subscriptions.push(this.chartService.subscribeInterval(this))
   }
 
-  onSeriesUpdate() {
-    if (this.chart) {
-      this.chartService.updateAverageLine(this.chart, false)
-    }
-  }
 }

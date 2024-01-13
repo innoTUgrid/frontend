@@ -59,6 +59,11 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'column',
+      events: {
+        redraw: () => {
+          if (this.chart) this.chartService.updateAverageLine(this.chart, true)
+        }
+      }
     },
     title: {
       text: 'Consumed Electricity by Source',
@@ -93,10 +98,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
         dataGrouping: this.dataGrouping,
       }
     },
-  }
-
-  onSeriesUpdate() {
-    if (this.chart) this.chartService.updateAverageLine(this.chart, true)
   }
 
   ngOnDestroy() {
