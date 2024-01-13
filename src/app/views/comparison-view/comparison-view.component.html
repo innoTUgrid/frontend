@@ -14,7 +14,7 @@
 
     <mat-form-field id="comparison-year-selection">
       <mat-label>Comparison year</mat-label>
-        <input matInput [matDatepicker]="dp2" placeholder="Year" [formControl]="secondYear">
+        <input matInput [matDatepicker]="dp2" [formControl]="secondYear">
         <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
         <mat-datepicker #dp2
                         [startView]="'multi-year'"
