@@ -19,6 +19,8 @@ SolidGauge(Highcharts);
 
 Highcharts.setOptions({
   lang: {
-    thousandsSep: '.'
+    thousandsSep: '.',
+    decimalPoint: ','
+    
   }
 })
