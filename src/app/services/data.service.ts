@@ -61,7 +61,7 @@ export class DataService {
       this.fetchedEndpoints.clear()
       for (const [id, dataset] of this.timeSeriesData) {
         const value = dataset.getValue()
-        value.series = this.filterOutOldData(value.series, timeInterval)
+        if (!KPIList.includes(id)) value.series = this.filterOutOldData(value.series, timeInterval)
         value.timeIntervals = value.timeIntervals.filter((interval) => timeInterval.some((newInterval) => timeIntervalEquals(interval, newInterval)))
       }
       this.fetchDatasets()
@@ -234,7 +234,7 @@ export class DataService {
       const series: Series[] = [
         {type:endpointKey, name:kpiValue.name, data:[
           [
-            moment().valueOf(), 
+            Math.round((timeInterval.start.valueOf() + timeInterval.end.valueOf())/2), 
             kpiValue.value, 
           ]
         ],
