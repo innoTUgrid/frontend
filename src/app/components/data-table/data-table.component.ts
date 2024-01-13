@@ -5,6 +5,7 @@ import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Dataset, DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
+import moment from 'moment';
 
 type TimeSeriesDataPoint = {
   timestamp: number,
@@ -108,8 +109,8 @@ export class DataTableComponent {
     ];
 
   subColumns: MtxGridColumn[] = [
-      { header: 'Time', field: 'timestamp', type: 'date', formatter(data: TimeSeriesDataPoint) { return new Date(data.timestamp).toISOString() }},
-      { header: 'Value', field: 'value' },
+      { header: 'Time', field: 'timestamp', type: 'date', formatter(data: TimeSeriesDataPoint) { return moment(data.timestamp).format('DD/MM/YYYY [at] hh:mm') }},
+      { header: 'Value', field: 'value', type: 'number', formatter(data: TimeSeriesDataPoint) { return data.value.toFixed(2) }},
   ]
 
   data: DataTableSeries[] = []
