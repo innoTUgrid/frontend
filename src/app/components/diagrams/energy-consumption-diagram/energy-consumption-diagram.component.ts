@@ -62,7 +62,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
       events: {
         redraw: () => {
           if (this.chart) this.chartService.updateAverageLine(this.chart, true)
-          console.log('redrawing consumption chart')
         }
       }
     },
