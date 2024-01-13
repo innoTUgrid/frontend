@@ -66,6 +66,7 @@ export class DataService {
       for (const [id, dataset] of this.timeSeriesData) {
         const value = dataset.getValue()
         value.timeIntervals = value.timeIntervals.filter((localInterval) => timeInterval.some((newInterval) => timeIntervalIncludes(localInterval, newInterval)))
+        if (KPIList.includes(id)) this.filterOutOldData(value.series, value.timeIntervals)
       }
       this.fetchDatasets()
     })
