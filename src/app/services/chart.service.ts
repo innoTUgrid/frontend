@@ -111,7 +111,7 @@ export class ChartService {
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
         diagram.updateFlag = false
       }
-      if (diagram.chart && redraw) diagram.chart.redraw()
+      if (timeIntervals.length > 0 && diagram.chart && redraw) diagram.chart.redraw()
     }
   }
 
