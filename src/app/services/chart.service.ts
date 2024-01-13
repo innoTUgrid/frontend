@@ -91,9 +91,8 @@ export class ChartService {
     }
     const s = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
       const updatedSeries = beforeProcessData(dataset.series)
-      this.updateSeries(diagram, datasetKey, {
+      this.updateSeries(diagram, datasetKey, {...dataset,
         series: updatedSeries,
-        timeIntervals: dataset.timeIntervals,
       })
     });
     return s

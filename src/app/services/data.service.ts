@@ -11,6 +11,10 @@ function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
   return a.start.isSame(b.start) && a.end.isSame(b.end) && a.step === b.step && a.stepUnit === b.stepUnit
 }
 
+function timeIntervalIncludes(larger: TimeInterval, smaller: TimeInterval): boolean {
+  return larger.start.isSameOrBefore(smaller.start) && larger.end.isSameOrAfter(smaller.end) && larger.step === smaller.step && larger.stepUnit === smaller.stepUnit
+}
+
 function sortedMerge(a: number[][], b: number[][]): number[][] {
   const data = []
   let i = 0
@@ -61,8 +65,7 @@ export class DataService {
       this.fetchedEndpoints.clear()
       for (const [id, dataset] of this.timeSeriesData) {
         const value = dataset.getValue()
-        if (!KPIList.includes(id)) value.series = this.filterOutOldData(value.series, timeInterval)
-        value.timeIntervals = value.timeIntervals.filter((interval) => timeInterval.some((newInterval) => timeIntervalEquals(interval, newInterval)))
+        value.timeIntervals = value.timeIntervals.filter((localInterval) => timeInterval.some((newInterval) => timeIntervalIncludes(localInterval, newInterval)))
       }
       this.fetchDatasets()
     })
