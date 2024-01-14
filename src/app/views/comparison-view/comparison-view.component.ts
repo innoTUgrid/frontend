@@ -88,13 +88,7 @@ export class ComparisonViewComponent {
   subscriptions: Subscription[] = [];
 
   ngOnInit() {
-    this.onDatepickerClosed()
-  }
-
-  onDatepickerClosed() {
-    this.isDatepickerOpen = false;
-
-    const currentTimeIntervals = this.dataService.timeInterval.getValue()
+    const currentTimeIntervals = this.dataService.timeInterval.value;
     if (this.secondYear.value && currentTimeIntervals.length < 3) {
       this.dataService.timeInterval.next([
         (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
@@ -107,6 +101,18 @@ export class ComparisonViewComponent {
       if (timeIntervals.length > 0) this.firstYear.setValue(timeIntervals[0].start)
       if (timeIntervals.length > 1) this.secondYear.setValue(timeIntervals[1].start)
     }))
+  }
+
+  onDatepickerClosed() {
+    this.isDatepickerOpen = false;
+
+    if (this.firstYear.value && this.secondYear.value) {
+      this.dataService.timeInterval.next([
+        this.toTimeInterval(this.firstYear.value),
+        this.toTimeInterval(this.secondYear.value),
+        this.yearlyTimeIterval
+      ])
+    }
   }
 
   ngOnDestroy() {
