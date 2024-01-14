@@ -53,7 +53,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
     }
     if (this.value[0] === this.value[1]) return 0
     if (this.value[0] === 0) return Number.POSITIVE_INFINITY
-    if (this.value[1] === 0) return Number.NEGATIVE_INFINITY
     const diff = this.value[1] - this.value[0]
     return diff/this.value[0] * 100
   }
@@ -96,7 +95,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
       dataLabels: {
         formatter: () => {
           if (this.percentageChange || this.percentageChange === 0) {
-            return `${this.percentageChange} ${([Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].includes(this.percentageChange)) ? '': '%'}`
+            return `${this.percentageChange} ${(this.percentageChange === Number.POSITIVE_INFINITY) ? '': '%'}`
           } else {
             return ''
           }
@@ -172,7 +171,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
           let prefix = ''
           if (valueNumber >= 100) prefix = '> '
-          if (valueNumber <= -100) prefix = '< '
 
           return `<span style='font-size: 1.2em; font-weight: bold; color: ${color}'>${prefix}${this.value}%</span>`;
         },
