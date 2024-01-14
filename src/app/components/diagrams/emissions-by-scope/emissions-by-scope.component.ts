@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
 
@@ -47,9 +47,8 @@ export class EmissionsByScopeComponent implements OnInit {
         fontSize: '0.95em',
       }
     },
-    credits: {
-      enabled: false
-    },
+    credits: {enabled: false},
+    exporting: {enabled: true},
     plotOptions: {
       pie: {
         allowPointSelect: true,

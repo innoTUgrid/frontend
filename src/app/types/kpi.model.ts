@@ -27,7 +27,7 @@ export interface HighchartsDiagram extends DataSubscription {
 }
 
 export interface SingleValueDiagram extends DataSubscription {
-    value: number
+    value: number | number[]
 }
 
 export type SeriesTypes = "area" | "column" | "line" | "spline" | "solidgauge"

@@ -59,7 +59,6 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { EmissionsComparisonColumnChartComponent } from './components/diagrams/emissions-comparison-column-chart/emissions-comparison-column-chart.component';
 import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-co2-emissions-chart/yearly-co2-emissions-chart.component';
 import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
-import { ScopeEmissionComparisionComponent } from './components/diagrams/scope-emission-comparision/scope-emission-comparision.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-scope/emissions-by-scope.component';
@@ -92,7 +91,6 @@ import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-sc
     EmissionsComparisonColumnChartComponent,
     YearlyCo2EmissionsChartComponent,
     GaugeSeriesCo2ComparisonComponent,
-    ScopeEmissionComparisionComponent,
     DataTableComponent,
     EmissionsByScopeComponent,
   ],

@@ -33,7 +33,6 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
         if (value) {
             this.registry.endpointKey = value;
             this.dataService.registerDataset(this.registry)
-            this.chartService.updateSingleValue(this) 
             this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, value);
         }
     }

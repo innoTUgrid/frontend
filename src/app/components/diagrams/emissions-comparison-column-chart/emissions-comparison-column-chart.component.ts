@@ -92,7 +92,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       }
     },
     title: {
-      text: `Monthly CO₂ Emissions Comparison`,
+      text: `Monthly CO₂ Emissions`,
       margin: 50,
       style: {
         fontSize: '1em',
