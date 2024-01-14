@@ -41,7 +41,7 @@ export class EmissionsByScopeComponent implements OnInit {
       },
     },
     title: {
-      text: 'Emissions by Scope',
+      text: 'CO₂ Emissions by Scope',
       margin: 50,
       style: {
         fontSize: '0.95em',
