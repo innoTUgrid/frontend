@@ -94,10 +94,10 @@ export class ComparisonViewComponent {
   onDatepickerClosed() {
     this.isDatepickerOpen = false;
 
-    
-    if (this.firstYear.value && this.secondYear.value) {
+    const currentTimeIntervals = this.dataService.timeInterval.getValue()
+    if (this.secondYear.value && currentTimeIntervals.length < 3) {
       this.dataService.timeInterval.next([
-        this.toTimeInterval(this.firstYear.value),
+        (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
         this.toTimeInterval(this.secondYear.value),
         this.yearlyTimeIterval
       ])

@@ -95,6 +95,8 @@ export class CommandBarComponent {
     const currentRoute = this.activatedRoute.snapshot.url;
     this.selectedView = currentRoute[currentRoute.length - 1].path;
 
+    if (this.dataService.timeInterval.getValue().length === 0) this.resetFilters();
+
     const s0 = this.observer.observe(['(max-width: 1600px)']).subscribe((res) => {
       this.granularityType = res.matches ? 'select' : 'button';
     });
@@ -109,8 +111,6 @@ export class CommandBarComponent {
 
       this.dataService.updateTimeInterval(timeInterval);
     });
-
-    this.resetFilters()
 
     const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
       if (timeInterval[0] != this.timeInterval) {
