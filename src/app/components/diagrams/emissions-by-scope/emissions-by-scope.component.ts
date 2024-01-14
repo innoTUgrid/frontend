@@ -3,10 +3,6 @@ import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
 
-interface CustomPoint extends Highcharts.Point {
-  value: number;
-}
-
 @Component({
   selector: 'app-emissions-by-scope',
   templateUrl: './emissions-by-scope.component.html',
@@ -47,6 +43,19 @@ export class EmissionsByScopeComponent implements OnInit {
         fontSize: '0.95em',
       }
     },
+    tooltip: {
+      useHTML: true,
+      pointFormatter: function () {
+        const point = this as Highcharts.Point & { trend: string };
+        const color = point.color || 'black';
+        const formattedY = (point.y ?? 0).toLocaleString('de-DE');
+        return `
+
+          <b style="color: ${color};">Emissions</b>: 
+          <b>${formattedY} kg</b>
+        `;
+      },
+    },
     credits: {enabled: false},
     exporting: {enabled: true},
     plotOptions: {
@@ -80,7 +89,7 @@ export class EmissionsByScopeComponent implements OnInit {
 
         return `
           <b>${point.name}</b>:&nbsp;&nbsp;
-          <span style="color: ${color};">${formattedY} CO₂</span>
+          <span style="color: ${color};">${formattedY} kg</span>
           &nbsp;${trend}&nbsp;
           <span>${formattedPercentage}%</span>
         `;
