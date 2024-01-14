@@ -39,7 +39,6 @@ export class SingleValueChartComponent implements SingleValueDiagram {
     if (value) {
       this.registry.endpointKey = value;
       this.dataService.registerDataset(this.registry)
-      this.chartService.updateSingleValue(this, false)
       this.subscriptions = this.chartService.subscribeSingleValueDiagram(this, value, false);
     }
   }

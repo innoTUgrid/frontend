@@ -131,19 +131,24 @@ export class ChartService {
       return sum
   }
 
-  updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data?: Series[]) {
-      if (!data) {
-        return
-      }
+  updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data: Series[], timeIntervals: TimeInterval[]) {
+    const values = []
+    for (const [index, timeInterval] of timeIntervals?.entries()) {
+      const series = this.sumAllDataTypes(data, timeInterval)
+      const newValue = this.calculateSingleValue(series, average)
+      values.push(newValue)
+    }
 
-      if (data.length > 1) console.error(`SingleValueDiagram can only display one series, but got ${data.length}`)
-      const series = data.map(entry => entry.data).flat()
-      diagram.value = this.calculateSingleValue(series, average)
+    if (Array.isArray(diagram.value)) {
+      diagram.value = values
+    } else {
+      diagram.value = (values.length > 0) ? values[0] : 0
+    }
   }
 
   subscribeSingleValueDiagram(diagram: SingleValueDiagram, datasetKey:DatasetKey, average: boolean = true) {
     const s1 = this.dataService.getDataset(datasetKey).subscribe((dataset:Dataset) => {
-      this.updateSingleValue(diagram, average, dataset.series)
+      this.updateSingleValue(diagram, average, dataset.series, this.dataService.timeInterval.getValue())
     });
 
     return [s1]
