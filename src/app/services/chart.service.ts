@@ -183,12 +183,13 @@ export class ChartService {
   }
 
 
-  updateAverageLine(chart: Highcharts.Chart, stacked:boolean) {
-    const seriesIndex = 0
-
+  updateAverageLine(chart: Highcharts.Chart, stacked:boolean, seriesIndex: number = 0) {
     const series = chart.series[seriesIndex] as any
     const groupedData = series.groupedData
     
+    const plotLineId = 'average ' + seriesIndex.toString()
+    chart.yAxis[0].removePlotLine(plotLineId)
+
     if (groupedData) {
       let sum = 0
       for (const group of groupedData) {
@@ -200,14 +201,12 @@ export class ChartService {
       }
       sum /= groupedData.length
 
-      const plotLineId = 'average ' + seriesIndex.toString()
       const plotLines: Highcharts.YAxisPlotLinesOptions = {
         id: plotLineId,
         width: 2,
         value: sum,
         zIndex: 5,
       }
-      chart.yAxis[0].removePlotLine(plotLineId)
       chart.yAxis[0].addPlotLine(plotLines)
     }
   }

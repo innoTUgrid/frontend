@@ -87,7 +87,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       },
       events: {
         redraw: () => {
-          if (this.chart) this.chartService.updateAverageLine(this.chart, false)
+          if (this.chart) this.chartService.updateAverageLine(this.chart, false, 1)
         }
       }
     },
