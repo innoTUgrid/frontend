@@ -6,6 +6,8 @@ import { Subscription, timeInterval } from 'rxjs';
 import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 
+const addThousandsSeparator = ChartService.addThousandsSeparator
+
 @Component({
   selector: 'app-emissions-comparison-column-chart',
   templateUrl: './emissions-comparison-column-chart.component.html',
@@ -118,7 +120,17 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         borderWidth: 0,
         dataLabels: {
           enabled: true,
-          format: '{point.y:,.0f} kg',
+          // format: '{point.y:,.0f} kg',
+          formatter: function() {
+            const otherSeries = this.series.chart.series.find((s) => s.index !== this.series.index)
+
+            // this is a hotfix to show only data labels for the baseline series when both have the same values
+            if (this.y && (this.series.index == 1 ||
+             (otherSeries && otherSeries.name != this.series.name)
+            )) {
+              return `${addThousandsSeparator(this.y.toFixed(0))} kg`
+            }else return null
+          }
         },
         groupPadding: 0.1, // Adjust this value as needed
         dataGrouping: this.dataGrouping,
@@ -161,14 +173,15 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
           timeUnit: interval.stepUnit,
           type: interval.start.format('YYYY'),
           xAxis: index,
-          color: (index == 0) ? this.earlierYearColor : this.laterYearColor,
-          pointPlacement: (index == 1) ? -0.2 : undefined,
+          color: (index == 0) ? this.laterYearColor : this.earlierYearColor,
+          pointPlacement: (index == 0) ? -0.2 : undefined,
         }
 
         newData.push(newSeries)
       }
     }
-    return newData
+    // this is needed, because the baseline series has index 0, but should be drawn on top of the other
+    return newData.reverse()
   }
 
   ngOnInit() {
