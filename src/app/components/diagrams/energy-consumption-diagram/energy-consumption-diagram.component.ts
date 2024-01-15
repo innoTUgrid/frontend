@@ -66,7 +66,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
       }
     },
     title: {
-      text: 'Consumed Electricity by Source',
+      text: 'Consumed Energy by Source',
       style: {
         fontSize: '1em',
       }
