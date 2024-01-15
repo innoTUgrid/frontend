@@ -37,6 +37,11 @@ export class ThemeService {
     ['external', this.otherConventionalColor],
   ]);
 
+  unitToName = new Map([
+    ['kwh', 'kWh'],
+    ['kgco2eq', 'kg'],
+  ]);
+
   energyTypesToName = new Map([
     ['biogas-local', 'Biogas (local)'],
     ['biogas', 'Biogas'],

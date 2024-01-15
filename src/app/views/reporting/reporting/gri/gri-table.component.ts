@@ -5,7 +5,8 @@ import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
-import * as XLSX from 'xlsx';
+import {saveAs} from "file-saver";
+import { ThemeService } from '@app/services/theme.service';
 
 enum DataTypes {
   BIOGAS = 'biogas',
@@ -18,6 +19,7 @@ export interface Element {
   year_first: string;
   year_second: string;
   data_loader?: (interval:TimeInterval) => string;
+  unit_loader?: () => string;
 }
 
 @Component({
@@ -30,6 +32,9 @@ export class TableBasicExample {
   @ViewChild('TABLE') table!: ElementRef;
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
+  themeService: ThemeService = inject(ThemeService);
+
+  @Input() csvDelimitier: string = ';';
 
   @Input() title: string = '';
 
@@ -64,16 +69,22 @@ export class TableBasicExample {
     this.subscriptions.forEach((subscription) => {subscription.unsubscribe()})
   }
 
-  // Excel export function
-  ExportTOExcel()
-  {
-    const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'GRI_Report');
-    
-    XLSX.writeFile(wb, 'GRI_Report.xlsx');
-    
+  export() {
+    // setting header
+    const csvArray = [this.columns.map((element) => {
+      return `"${element.header}"`
+    })]
+
+    // loading data
+    csvArray.push(...this.list.map((element) => {
+      return [`"${element.gri_modul}"`, `"${element.description}"`, `"${element.unit}"`, `"${element.year_first}"`, `"${element.year_second}"`]
+    }))
+
+    const csvString = csvArray.map((row) => row.join(this.csvDelimitier)).join('\r\n')
+    var blob = new Blob([csvString], {type: 'text/csv' })
+    saveAs(blob, "GRI_Report.csv");
   }
+
 
   columns: MtxGridColumn[] = [
     { header: 'GRI Modul', field: 'gri_modul', width: '30%' },
@@ -94,6 +105,9 @@ export class TableBasicExample {
         element.year_first = element.data_loader(timeIntervals[0])
         element.year_second = element.data_loader(timeIntervals[1])
       }
+      if (element.unit_loader) {
+        element.unit = element.unit_loader()
+      }
     }
     this.list = [...this.list]
   }
@@ -108,12 +122,29 @@ export class TableBasicExample {
     }
   }
 
+  unitLoader(datasetKey: DatasetKey): () => string {
+    return () => {
+      const dataset = this.dataService.getDataset(datasetKey).getValue()
+      let unit = '-'
+      if (dataset.series.length > 0) {
+        const series = dataset.series[0]
+        if (series && series.unit) {
+          const newName = this.themeService.unitToName.get(series.unit)
+          if (newName) {
+            unit = newName
+          }
+        }
+      }
+      return unit
+    }
+  }
+
   list: Element[] = [
 
     // GRI 302-1
     {gri_modul: "GRI 302-1 Energy consumption within the organization", description: "a. Total fuel consumption within the organization from non-renewable sources including fuel types used", unit: "-", year_first:"-", year_second:"-"}, // no data for this
-    {gri_modul: "", description: "b. Total fuel consumption within the organization from renewable sources including fuel types used", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS])}, // Biogas kwh (consumption endpoint)
-    {gri_modul: "", description: "c. i. Electricity consumption", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // total consumption (consumption endpoint)
+    {gri_modul: "", description: "b. Total fuel consumption within the organization from renewable sources including fuel types used", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // Biogas kwh (consumption endpoint)
+    {gri_modul: "", description: "c. i. Electricity consumption", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // total consumption (consumption endpoint)
     {gri_modul: "", description: "c. ii. Heating consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "c. iii. Cooling consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "c. iv. Steam consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
@@ -128,14 +159,14 @@ export class TableBasicExample {
     // GRI 305-1
     {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-"}, // total scope 1 emissions 
     {gri_modul: "", description: "b. Gases included in the calculation", unit:"-", year_first:"-", year_second:"-"}, // fixed value 
-    {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, [DataTypes.BIOGAS])}, // emissions of biogas
+    {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}, // emissions of biogas
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "e. Source of the emission factors and the global warming potential (GWP) rates used, or a reference to the GWP source", unit:"-", year_first:"-", year_second:"-"}, // source of emission factors, not yet implemented
     {gri_modul: "", description: "f. Consolidation approach for emissions; whether equity share, financial control, or operational control", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "g. Standards, methodologies, assumptions, and/or calculation tools used", unit:"-", year_first:"-", year_second:"-"}, // fulltext TODO
 
     // GRI 305-2
-    {gri_modul: "GRI 305-2 Energy indirect (Scope 2) GHG emissions", description: "a. Gross location-based energy indirect (Scope 2) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}, // total scope 2 emissions
+    {gri_modul: "GRI 305-2 Energy indirect (Scope 2) GHG emissions", description: "a. Gross location-based energy indirect (Scope 2) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}, // total scope 2 emissions
     {gri_modul: "", description: "b. If applicable, gross market-based energy indirect (Scope 2) GHG emissions", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "c. Gases included in the calculation", unit:"-", year_first:"-", year_second:"-"}, // fixed value co2
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // leer
