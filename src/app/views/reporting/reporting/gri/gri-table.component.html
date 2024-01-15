@@ -1,48 +1,15 @@
 
-<div>    <button mat-raised-button color="primary" (click)="ExportTOExcel()">Export as Excel</button></div>
-
-<div class="example-container mat-elevation-z8 " #TABLE>
-    <table mat-table #table [dataSource]="dataSource">
-
-    <!-- gri_modul Column -->
-    <ng-container matColumnDef="gri_modul">
-        <th mat-header-cell *matHeaderCellDef> GRI modul </th>
-        <td mat-cell *matCellDef="let element"> {{element.gri_modul}} </td>
-    </ng-container>
-
-
-    <!-- description Column -->
-    <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef> Description </th>
-        <td mat-cell *matCellDef="let element"> {{element.description}} </td>
-    </ng-container>
-    
-    <!-- unit Column -->
-    <ng-container matColumnDef="unit">
-        <th mat-header-cell *matHeaderCellDef> Unit </th>
-        <td mat-cell *matCellDef="let element" class="custom-background-color"> {{element.unit}} </td>
-    </ng-container>
-
-    <!-- year_2023 Column -->
-    <ng-container matColumnDef="year_2023">
-        <th mat-header-cell *matHeaderCellDef> Year 2023 </th>
-        <td mat-cell *matCellDef="let element" class="custom-background-color"> {{element.year_2023}} </td>
-    </ng-container>
-
-    <!-- year_2022 Column -->
-    <ng-container matColumnDef="year_2022">
-        <th mat-header-cell *matHeaderCellDef> Year 2022</th>
-        <td mat-cell *matCellDef="let element" class="custom-background-color"> {{element.year_2022}} </td>
-    </ng-container>
-            
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
-  <div>
-
-  <div class="empty-space"></div>
-
+<div class="header">
+    <div class="header-title">{{title}}</div>  
+    <button class="header-actions" mat-raised-button color="primary" (click)="ExportTOExcel()">Export as Excel</button>
 </div>
-  
+
+<mtx-grid 
+    [data]="list"
+    [columns]="columns"
+    [showPaginator]="false"
+    [pageSize]="list.length"
+    [showColumnMenuButton]="false"
+>
+</mtx-grid>
+
