@@ -38,6 +38,7 @@ export class ThemeService {
   ]);
 
   energyTypesToName = new Map([
+    ['biogas-local', 'Biogas (local)'],
     ['biogas', 'Biogas'],
     ['biomass', 'Biomass'],
     ['other-renewables', 'Other Renewables'],
@@ -45,6 +46,7 @@ export class ThemeService {
     ['hydro', 'Hydro Power'],
     ['onwind', 'Onshore Wind'],
     ['solar', 'Solar'],
+    ['solar-local', 'Solar (local)'],
     ['brown-coal', 'Brown Coal'],
     ['natural-gas', 'Natural Gas'],
     ['other-conventionals', 'Other Conventionals'],
