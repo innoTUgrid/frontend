@@ -281,7 +281,7 @@ export class DataService {
         const currentSeries = seriesMap.get(seriesKey)
         if (!currentSeries) {
           data = []
-          let name = this.themeService.energyTypesToName.get(carrierName)
+          let name = this.themeService.energyTypesToName.get(carrierName + (entry.local ? '-local' : ''))
           if (!name) name = carrierName
           seriesMap.set(seriesKey, {
             id: seriesKey,

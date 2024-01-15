@@ -66,9 +66,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   }
   seriesType: SeriesTypes = 'column'
 
-  earlierYear = 2022;
-  laterYear = 2023;
-
   earlierYearColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-16').trim();
   laterYearColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
   meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-neutral-color-40').trim();
@@ -120,7 +117,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
         borderWidth: 0,
         dataLabels: {
           enabled: true,
-          // format: '{point.y:,.0f} kg',
           formatter: function() {
             const otherSeries = this.series.chart.series.find((s) => s.index !== this.series.index)
 

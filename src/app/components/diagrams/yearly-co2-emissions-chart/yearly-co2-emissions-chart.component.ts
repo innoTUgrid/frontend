@@ -91,11 +91,14 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
     exporting: {
       enabled: true,
     },
+    tooltip: {
+      pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:,.0f} kg</b><br/>',
+    },
     plotOptions: {
       line: {
         dataLabels: {
           enabled: true,
-          format: '{point.y:.0f} kg',
+          format: '{point.y:,.0f} kg',
         },
         dataGrouping: this.dataGrouping
       }
