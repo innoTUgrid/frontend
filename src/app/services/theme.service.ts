@@ -34,7 +34,7 @@ export class ThemeService {
     ['hard-coal', this.hardCoalColor],
     ['coal', this.brownCoalColor],
     ['pump-storage', this.pumpStorageColor],
-    ['external', this.otherConventionalColor],
+    ['total-external', this.otherConventionalColor],
   ]);
 
   unitToName = new Map([

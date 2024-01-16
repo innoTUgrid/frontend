@@ -32,11 +32,9 @@ export class ChartService {
     const data = dataset.series
 
     const allSeries = []
-    let updateSeries: boolean = false
     for (const series of data) {
       const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
-      // series.data.sort((a, b) => a[0] - b[0])
       const newSeries: Highcharts.SeriesOptionsType = {
           name: series.name,
           id: series.id, 
@@ -49,6 +47,7 @@ export class ChartService {
           },
           xAxis: (series.xAxis) ? series.xAxis : 0,
           pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
+          dataGrouping: diagram.dataGrouping,
         }
 
       allSeries.push(newSeries)
@@ -102,9 +101,12 @@ export class ChartService {
         diagram.xAxis[index].min = timeInterval.start.valueOf();
         diagram.xAxis[index].max = timeInterval.end.valueOf();
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        diagram.updateFlag = false
       }
-      if (timeIntervals.length > 0 && diagram.chart && redraw) diagram.chart.redraw()
+    }
+    if (timeIntervals.length > 0 && redraw) {
+      if (diagram.chart) {
+        diagram.chart.redraw()
+      } else diagram.updateFlag = true
     }
   }
 
