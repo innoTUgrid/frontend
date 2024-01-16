@@ -15,15 +15,6 @@ function array2DEquals(a: number[][], b: number[][]): boolean {
   return true
 }
 
-function compareStrings (a: string, b: string) {
-  if (a < b) {
-    return -1;
-  } else if (b < a) {
-    return 1;
-  }
-  return 0
-}
-
 @Injectable({
   providedIn: 'root'
 })
