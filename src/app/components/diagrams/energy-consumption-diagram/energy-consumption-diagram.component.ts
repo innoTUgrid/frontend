@@ -108,9 +108,8 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
 
   aggregateExternalData(data: Series[]): Series[] {
     data = this.chartService.filterOtherStepUnits(data)
-
-    const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
-    externalEnergy.sort((a, b) => a[0] - b[0])
+    
+    const externalEnergy = this.chartService.sumAllDataTypes(data.filter(entry => !entry.local))
     const type = 'external'
     const newData: Series[] = [{
       id: type + ' ' + this.kpiName,

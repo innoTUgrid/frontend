@@ -72,6 +72,6 @@ export enum TimeUnit {
 export type TimeInterval = {
   start: Moment;
   end: Moment;
-  step: number;
+  step: number; // this property is only for highcharts used. It is not used for the API calls
   stepUnit: TimeUnit;
 };

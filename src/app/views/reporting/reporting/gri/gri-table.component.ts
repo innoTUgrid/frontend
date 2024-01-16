@@ -55,7 +55,6 @@ export class TableBasicExample {
     const s = combineLatest([this.dataService.timeInterval.getValue(), ...this.registries.map((registry) => this.dataService.getDataset(registry.endpointKey))])
     .subscribe((datasets) => {
       const timeIntervals = this.dataService.timeInterval.getValue()
-      console.log(timeIntervals)
       this.updateData(timeIntervals)
     })
     this.subscriptions.push(s)
