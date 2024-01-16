@@ -62,6 +62,7 @@ import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-s
 import { LayoutModule } from '@angular/cdk/layout';
 import { DataTableComponent } from './components/data-table/data-table.component';
 import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-scope/emissions-by-scope.component';
+import { ComparisionBarComponent } from './components/command-bar/comparision-bar/comparision-bar.component';
 
 
 @NgModule({
@@ -93,6 +94,7 @@ import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-sc
     GaugeSeriesCo2ComparisonComponent,
     DataTableComponent,
     EmissionsByScopeComponent,
+    ComparisionBarComponent,
   ],
   imports: [
     BrowserModule,

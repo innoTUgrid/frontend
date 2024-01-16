@@ -1,42 +1,14 @@
-<div id="comparison-command-bar" class="flex-container">
-    <mat-form-field id="baseline-year-selection">
-      <mat-label>Baseline year</mat-label>
-      <input matInput [matDatepicker]="dp" [formControl]="firstYear">
-      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-      <mat-datepicker #dp
-                      [startView]="'multi-year'"
-                      (yearSelected)="chosenYearHandler($event, dp, 'first')"
-                      (opened)="onDatepickerOpened()"
-                      (closed)="onDatepickerClosed()"
-                      panelClass="period-picker">
-      </mat-datepicker>
-    </mat-form-field>
+<app-comparision-bar [additionalTimeIntervals]="[yearlyTimeIterval]"></app-comparision-bar>
 
-    <mat-form-field id="comparison-year-selection">
-      <mat-label>Comparison year</mat-label>
-        <input matInput [matDatepicker]="dp2" [formControl]="secondYear">
-        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2
-                        [startView]="'multi-year'"
-                        (yearSelected)="chosenYearHandler($event, dp2, 'second')"
-                        (opened)="onDatepickerOpened()"
-                        (closed)="onDatepickerClosed()"
-                        panelClass="period-picker">
-        </mat-datepicker>
-      </mat-form-field>
-
-      
+<div class="page-container">
+  <h2 class="title">CO₂ Emissions</h2>
+  <div class="diagram-container top">
+    <app-emissions-comparison-column-chart class="item left"></app-emissions-comparison-column-chart>
+    <app-gauge-series-co2-comparison class="item right"></app-gauge-series-co2-comparison>
   </div>
-
-  <div class="page-container">
-    <h2 class="title">CO₂ Emissions</h2>
-    <div class="diagram-container top">
-      <app-emissions-comparison-column-chart class="item left"></app-emissions-comparison-column-chart>
-      <app-gauge-series-co2-comparison class="item right"></app-gauge-series-co2-comparison>
-    </div>
-    <div class="divider"></div>
-    <div class="diagram-container bottom">
-      <app-yearly-co2-emissions-chart class="item left"></app-yearly-co2-emissions-chart>
-      <app-emissions-by-scope class="item right"></app-emissions-by-scope>
-    </div>
+  <div class="divider"></div>
+  <div class="diagram-container bottom">
+    <app-yearly-co2-emissions-chart class="item left"></app-yearly-co2-emissions-chart>
+    <app-emissions-by-scope class="item right"></app-emissions-by-scope>
   </div>
+</div>

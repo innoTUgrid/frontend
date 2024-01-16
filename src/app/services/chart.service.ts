@@ -2,9 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { ThemeService } from './theme.service';
 import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/types/time-series-data.model';
 import { DataService } from './data.service';
-import { DatasetKey, HighchartsDiagram, SingleValueDiagram } from '@app/types/kpi.model';
+import { DatasetKey, HighchartsDiagram, SingleValueDiagram, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { Series as HighchartsSeries } from 'highcharts';
+import { DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/dialog';
 
 function array2DEquals(a: number[][], b: number[][]): boolean {
   if (a.length !== b.length) return false
@@ -12,6 +13,15 @@ function array2DEquals(a: number[][], b: number[][]): boolean {
     if (a[i][0] !== b[i][0] || a[i][1] !== b[i][1]) return false
   }
   return true
+}
+
+function compareStrings (a: string, b: string) {
+  if (a < b) {
+    return -1;
+  } else if (b < a) {
+    return 1;
+  }
+  return 0
 }
 
 @Injectable({
@@ -31,7 +41,7 @@ export class ChartService {
     const data = dataset.series
 
     const allSeries = []
-    for (const series of data) {
+    for (const [index, series] of data.entries()) {
       const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
       const newSeries: Highcharts.SeriesOptionsType = {
@@ -46,26 +56,19 @@ export class ChartService {
           },
           xAxis: (series.xAxis) ? series.xAxis : 0,
           pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
+          dataGrouping: diagram.dataGrouping,
+          index: index
         }
 
       allSeries.push(newSeries)
-
-      if (diagram.chart) {
-        const chartSeries = diagram.chart.get(series.id) as HighchartsSeries
-        if (chartSeries) {
-          const currentSeries: any = diagram.chartProperties.series?.find((s) => s.id === series.id)
-          if (currentSeries && !array2DEquals(currentSeries.data, series.data)) {
-            chartSeries.update(newSeries, false)
-          }
-        } else {
-          diagram.chart.addSeries(newSeries, false)
-        }
-      }
     }
+
     diagram.chartProperties.series = allSeries
     if (diagram.chart) {
       diagram.chart.hideLoading()
-      diagram.chart.redraw()
+      diagram.chart.update({
+        series: allSeries
+      }, true, true)
     } else {
       diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
@@ -77,7 +80,6 @@ export class ChartService {
 
   filterOtherStepUnits(data: Series[]): Series[] {
     const currentTimeInterval = this.dataService.getCurrentTimeInterval()
-
     return data.filter((series) => series.timeUnit === currentTimeInterval.stepUnit)
   }
 
@@ -109,9 +111,12 @@ export class ChartService {
         diagram.xAxis[index].min = timeInterval.start.valueOf();
         diagram.xAxis[index].max = timeInterval.end.valueOf();
         diagram.dataGrouping.units = [[timeInterval.stepUnit, [timeInterval.step]]]
-        diagram.updateFlag = false
       }
-      if (timeIntervals.length > 0 && diagram.chart && redraw) diagram.chart.redraw()
+    }
+    if (timeIntervals.length > 0 && redraw) {
+      if (diagram.chart) {
+        diagram.chart.redraw()
+      } else diagram.updateFlag = true
     }
   }
 

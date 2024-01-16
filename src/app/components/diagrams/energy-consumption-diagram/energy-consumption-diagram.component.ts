@@ -107,18 +107,21 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   }
 
   aggregateExternalData(data: Series[]): Series[] {
-    data = this.chartService.filterOtherStepUnits(data)
+    const dataFiltered = this.chartService.filterOtherStepUnits(data)
+    const currentTimeInterval = this.dataService.getCurrentTimeInterval()
 
-    const externalEnergy = data.filter(entry => !entry.local).map(entry => entry.data).flat()
-    externalEnergy.sort((a, b) => a[0] - b[0])
-    const type = 'external'
-    const newData: Series[] = [{
-      id: type + ' ' + this.kpiName,
+    const externalEnergy = this.chartService.sumAllDataTypes(dataFiltered.filter(entry => !entry.local))
+    const type = 'total-external'
+    const newData: Series[] = [
+      {
+      id: this.dataService.toSeriesId(this.registry.endpointKey, type, false, currentTimeInterval.stepUnit),
       name: 'Imported Energy',
       type: type,
       data: externalEnergy,
-      timeUnit: this.dataService.getCurrentTimeInterval().stepUnit
-    }, ...data.filter(entry => entry.local)]
+      timeUnit: this.dataService.getCurrentTimeInterval().stepUnit,
+      xAxis: 0
+    }, 
+    ...dataFiltered.filter(entry => entry.local)]
 
     return newData
   }
