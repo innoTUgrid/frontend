@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetRegistry, Series } from '@app/types/time-series-data.model';
+import { sumAllDataTypes, toSeriesId } from '@app/services/data-utils';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -110,11 +111,11 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     const dataFiltered = this.chartService.filterOtherStepUnits(data)
     const currentTimeInterval = this.dataService.getCurrentTimeInterval()
 
-    const externalEnergy = this.chartService.sumAllDataTypes(dataFiltered.filter(entry => !entry.local))
+    const externalEnergy = sumAllDataTypes(dataFiltered.filter(entry => !entry.local))
     const type = 'total-external'
     const newData: Series[] = [
       {
-      id: this.dataService.toSeriesId(this.registry.endpointKey, type, false, currentTimeInterval.stepUnit),
+      id: toSeriesId(this.registry.endpointKey, type, false, currentTimeInterval.stepUnit),
       name: 'Imported Energy',
       type: type,
       data: externalEnergy,

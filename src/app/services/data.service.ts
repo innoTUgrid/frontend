@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { HighchartsDiagram, DatasetKey, SingleValueDiagram, KPIEndpointKey, KPIList } from '@app/types/kpi.model';
+import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey } from '@app/types/kpi.model';
 import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit } from '@app/types/time-series-data.model';
 import moment from 'moment';
-import { BehaviorSubject, Observable, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
+import { toDatasetTotal, toSeriesId } from './data-utils';
 
 function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
   return a.start.isSame(b.start) && a.end.isSame(b.end) && a.stepUnit === b.stepUnit
@@ -63,6 +64,14 @@ export class DataService {
       }
       this.fetchDatasets()
     })
+
+    this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
+      map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
+
+    this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS).pipe(
+      map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 'Total Emissions', 'emissions-combined'))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.EMISSIONS_TOTAL))
   }
 
   getCurrentTimeInterval(timeInterval?: TimeInterval[]): TimeInterval {
@@ -261,10 +270,6 @@ export class DataService {
     });
   }
 
-  toSeriesId(endpoint: string, type: string, local: boolean, timeUnit:TimeUnit): string {
-    return `${endpoint}.${type}.${local ? 'local' : 'external'}.${timeUnit}`
-  }
-
   async fetchTimeSeriesData(endpointKey: DatasetKey, timeIntervals: TimeInterval[], localKey: string) {
     const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
 
@@ -288,7 +293,7 @@ export class DataService {
         for (const entry of timeSeriesResult) {
           let data: number[][];
           const carrierName = entry.carrier_name
-          const seriesKey = this.toSeriesId(endpointKey, carrierName, entry.local, timeInterval.stepUnit)
+          const seriesKey = toSeriesId(endpointKey, carrierName, entry.local, timeInterval.stepUnit)
   
           const currentSeries = seriesMap.get(seriesKey)
           if (!currentSeries) {

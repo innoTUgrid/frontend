@@ -3,8 +3,9 @@ import * as Highcharts from 'highcharts/highstock';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { Subscription, timeInterval } from 'rxjs';
-import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { ArtificialDatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
+import { sumAllDataTypes } from '@app/services/data-utils';
 
 const addThousandsSeparator = ChartService.addThousandsSeparator
 
@@ -161,7 +162,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       newData = []
       for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
         const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
-        const dataSummed = this.chartService.sumAllDataTypes(relevantSeries, interval)
+        const dataSummed = sumAllDataTypes(relevantSeries, interval)
         const newSeries: Series = {
           id: `MonthlyCO2Comparision.${index.toString()}`,
           name: interval.start.format('YYYY'),

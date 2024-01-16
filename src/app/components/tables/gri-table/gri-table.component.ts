@@ -7,6 +7,7 @@ import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
 import {saveAs} from "file-saver";
 import { ThemeService } from '@app/services/theme.service';
+import { sumAllDataTypes } from '@app/services/data-utils';
 
 enum DataTypes {
   BIOGAS = 'biogas',
@@ -115,7 +116,7 @@ export class TableBasicExample {
     return (timeInterval: TimeInterval) => {
       const dataset = this.dataService.getDataset(datasetKey).getValue()
       const series = dataset.series.filter((s) => types ? types.includes(s.type) : true)
-      const dataSummed = this.chartService.sumAllDataTypes(series, timeInterval)
+      const dataSummed = sumAllDataTypes(series, timeInterval)
       const total = this.chartService.calculateSingleValue(dataSummed, false)
       return ChartService.addThousandsSeparator(total?.toFixed(2).replace('.', ',')) ?? '-'
     }

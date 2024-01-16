@@ -10,7 +10,12 @@ export enum TimeSeriesEndpointKey {
     SCOPE_2_EMISSIONS = "scope_two_emissions",
 }
 
-export type DatasetKey = KPIEndpointKey | TimeSeriesEndpointKey
+export enum ArtificialDatasetKey {
+    ENERGY_CONSUMPTION_TOTAL = TimeSeriesEndpointKey.ENERGY_CONSUMPTION + "_total",
+    EMISSIONS_TOTAL = "emissions_total",
+}
+
+export type DatasetKey = KPIEndpointKey | TimeSeriesEndpointKey | ArtificialDatasetKey
 export const KPIList: string[] = Object.values(KPIEndpointKey)
 
 export interface DataSubscription {

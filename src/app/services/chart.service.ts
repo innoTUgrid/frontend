@@ -4,8 +4,7 @@ import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/ty
 import { DataService } from './data.service';
 import { DatasetKey, HighchartsDiagram, SingleValueDiagram, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Subscription } from 'rxjs';
-import { Series as HighchartsSeries } from 'highcharts';
-import { DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/dialog';
+import { sumAllDataTypes } from './data-utils';
 
 function array2DEquals(a: number[][], b: number[][]): boolean {
   if (a.length !== b.length) return false
@@ -130,7 +129,7 @@ export class ChartService {
   updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data: Series[], timeIntervals: TimeInterval[]) {
     const values = []
     for (const [index, timeInterval] of timeIntervals?.entries()) {
-      const series = this.sumAllDataTypes(data, timeInterval)
+      const series = sumAllDataTypes(data, timeInterval)
       const newValue = this.calculateSingleValue(series, average)
       values.push(newValue)
     }
@@ -149,35 +148,6 @@ export class ChartService {
 
     return [s1]
   }
-
-  sumAllDataTypes(data: Series[], interval?: TimeInterval): number[][] {
-    let relevantSeries: Series[] = data
-    if (interval) relevantSeries = data.filter(series => series.timeUnit === interval.stepUnit)
-
-    const dataMap = new Map<number, number>()
-    for (const series of relevantSeries) {
-      let i = 0;
-      const data_len = series.data.length
-
-      while (i < data_len) { // using this type of loop for performance reasons
-        const point = series.data[i]
-        if (!interval || (point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf())) {
-          const value = dataMap.get(point[0])
-          if (value) {
-            dataMap.set(point[0], value + point[1])
-          } else {
-            dataMap.set(point[0], point[1])
-          }
-        }
-
-        i++;
-      }
-    }
-
-    const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
-    return newDatapoints
-  }
-
 
   updateAverageLine(chart: Highcharts.Chart, stacked:boolean, seriesIndex: number = 0) {
     const series = chart.series[seriesIndex] as any
