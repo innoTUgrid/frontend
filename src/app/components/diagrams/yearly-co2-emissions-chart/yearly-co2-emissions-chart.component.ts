@@ -44,7 +44,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
     approximation: 'sum',
     enabled: true,
     forced: true,
-    units: [['month', [1]]]
+    units: [[TimeUnit.YEAR, [1]]]
   }
   seriesType: SeriesTypes = 'line'
 

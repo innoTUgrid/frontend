@@ -275,7 +275,7 @@ export class DataService {
           params: {
             from: timeInterval.start.toISOString(),
             to: timeInterval.end.toISOString(),
-            interval: '1hour'
+            interval: `1${timeInterval.stepUnit}`
           }
         })
       )
