@@ -24,7 +24,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
 
   id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
-  kpiName = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+  kpiName = ArtificialDatasetKey.EMISSIONS_TOTAL;
 
   registry: DatasetRegistry = {
     id: this.id,
@@ -161,8 +161,11 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     if (intervals.length >= 2) {
       newData = []
       for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
-        const relevantSeries: Series[] = data.filter(series => series.timeUnit === interval.stepUnit)
-        const dataSummed = sumAllDataTypes(relevantSeries, interval)
+        const relevantSeries: Series|undefined = data.find(series => series.timeUnit === interval.stepUnit)
+        let dataSummed: number[][] = []
+        if (relevantSeries) {
+          dataSummed = relevantSeries.data.filter((value:number[]) => value[0] >= interval.start.valueOf() && value[0] <= interval.end.valueOf())
+        }
         const newSeries: Series = {
           id: `MonthlyCO2Comparision.${index.toString()}`,
           name: interval.start.format('YYYY'),

@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { sumAllDataTypes } from '@app/services/data-utils';
 import { DataService } from '@app/services/data.service';
-import { HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { ArtificialDatasetKey, DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts/highstock';
 import moment from 'moment';
@@ -49,7 +49,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   }
   seriesType: SeriesTypes = 'line'
 
-  endpointKey: TimeSeriesEndpointKey = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+  endpointKey: DatasetKey = ArtificialDatasetKey.EMISSIONS_TOTAL;
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.endpointKey,
@@ -117,13 +117,12 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
 
   loadYearlyData(data: Series[]): Series[] {
     const filtered =  data.filter(series => series.timeUnit === TimeUnit.YEAR)
-    const summed = sumAllDataTypes(filtered)
 
     return [{
       id: 'Yearly CO₂ Emissions',
       name: 'Yearly CO₂ Emissions',
       type: 'emissions',
-      data: summed,
+      data: filtered[0].data,
       timeUnit: TimeUnit.YEAR,
       color: this.lineColor,
     }]
