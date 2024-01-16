@@ -4,7 +4,7 @@ import { OverviewComponent } from './views/overview/overview.component';
 import { DatasetsComponent } from './views/datasets/datasets.component';
 import { InfoviewComponent } from './views/infoview/infoview.component';
 import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-view.component';
-import { ReportingComponent } from './views/reporting/reporting/reporting.component'
+import { ReportingComponent } from './views/reporting/reporting.component'
 import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
 
 const routes: Routes = [

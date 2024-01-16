@@ -29,7 +29,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { PercentChartComponent } from './components/diagrams/KPIs/percent-chart/percent-chart.component';
 import { SingleValueChartComponent } from './components/diagrams/KPIs/single-value-chart/single-value-chart.component';
-import { ReportingComponent } from './views/reporting/reporting/reporting.component';
+import { ReportingComponent } from './views/reporting/reporting.component';
 import { HttpClientModule } from '@angular/common/http';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
@@ -37,7 +37,7 @@ import { EnergyFlowViewComponent } from './views/energy-flow-view/energy-flow-vi
 import { EnergyFlowDiagramComponent } from './components/diagrams/energy-flow-diagram/energy-flow-diagram.component';
 
 import {MatGridListModule} from '@angular/material/grid-list';
-import {TableBasicExample} from './views/reporting/reporting/gri/gri-table.component';
+import {TableBasicExample} from './components/tables/gri-table/gri-table.component';
 
 
 import { InfoviewComponent } from './views/infoview/infoview.component';
@@ -60,7 +60,7 @@ import { EmissionsComparisonColumnChartComponent } from './components/diagrams/e
 import { YearlyCo2EmissionsChartComponent } from './components/diagrams/yearly-co2-emissions-chart/yearly-co2-emissions-chart.component';
 import { GaugeSeriesCo2ComparisonComponent } from './components/diagrams/gauge-series-co2-comparison/gauge-series-co2-comparison.component';
 import { LayoutModule } from '@angular/cdk/layout';
-import { DataTableComponent } from './components/data-table/data-table.component';
+import { DataTableComponent } from './components/tables/data-table/data-table.component';
 import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-scope/emissions-by-scope.component';
 import { ComparisionBarComponent } from './components/command-bar/comparision-bar/comparision-bar.component';
 
