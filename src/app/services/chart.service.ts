@@ -15,6 +15,15 @@ function array2DEquals(a: number[][], b: number[][]): boolean {
   return true
 }
 
+function compareStrings (a: string, b: string) {
+  if (a < b) {
+    return -1;
+  } else if (b < a) {
+    return 1;
+  }
+  return 0
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,7 +41,7 @@ export class ChartService {
     const data = dataset.series
 
     const allSeries = []
-    for (const series of data) {
+    for (const [index, series] of data.entries()) {
       const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
 
       const newSeries: Highcharts.SeriesOptionsType = {
@@ -48,6 +57,7 @@ export class ChartService {
           xAxis: (series.xAxis) ? series.xAxis : 0,
           pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
           dataGrouping: diagram.dataGrouping,
+          index: index
         }
 
       allSeries.push(newSeries)
