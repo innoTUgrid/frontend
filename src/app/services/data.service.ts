@@ -65,9 +65,9 @@ export class DataService {
       this.fetchDatasets()
     })
 
-    this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
-      map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
+    // this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
+    //   map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
+    // ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
 
     this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 'Total Emissions', 'emissions-combined'))
