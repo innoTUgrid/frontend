@@ -2,7 +2,7 @@ import {Component,ViewChild, ElementRef, Input, inject} from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
+import { DataEvents, DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
 import {saveAs} from "file-saver";
@@ -47,18 +47,26 @@ export class TableBasicExample {
   ]
 
   subscriptions: Subscription[] = [];
+  loading: boolean = false;
 
   ngOnInit() {
     this.registries.forEach((registry) => {
       this.dataService.registerDataset(registry)
     })
 
-    const s = combineLatest([this.dataService.timeInterval.getValue(), ...this.registries.map((registry) => this.dataService.getDataset(registry.endpointKey))])
+    const s1 = combineLatest(this.registries.map((registry) => this.dataService.getDataset(registry.endpointKey)))
     .subscribe((datasets) => {
       const timeIntervals = this.dataService.timeInterval.getValue()
       this.updateData(timeIntervals)
+      this.loading = false
     })
-    this.subscriptions.push(s)
+    const s2 = this.dataService.timeInterval.subscribe((timeIntervals) => {
+      this.updateData(timeIntervals)
+    })
+    this.subscriptions.push(s1, s2)
+    this.dataService.on(DataEvents.BeforeUpdate, () => {
+      this.loading = true
+    }, this.id)
   }
 
   ngOnDestroy() {
@@ -67,6 +75,7 @@ export class TableBasicExample {
     })
 
     this.subscriptions.forEach((subscription) => {subscription.unsubscribe()})
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
   export() {
