@@ -5,7 +5,6 @@ import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DataEvents, DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
-import {saveAs} from "file-saver";
 import { ThemeService } from '@app/services/theme.service';
 import { sumAllDataTypes } from '@app/services/data-utils';
 
@@ -78,7 +77,7 @@ export class TableBasicExample {
     this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
-  export() {
+  toCSVArray() {
     // setting header
     const csvArray = [this.columns.map((element) => {
       return `"${element.header}"`
@@ -88,12 +87,8 @@ export class TableBasicExample {
     csvArray.push(...this.list.map((element) => {
       return [`"${element.gri_modul}"`, `"${element.description}"`, `"${element.unit}"`, `"${element.year_first}"`, `"${element.year_second}"`]
     }))
-
-    const csvString = csvArray.map((row) => row.join(this.csvDelimitier)).join('\r\n')
-    var blob = new Blob([csvString], {type: 'text/csv' })
-    saveAs(blob, "GRI_Report.csv");
+    return csvArray
   }
-
 
   columns: MtxGridColumn[] = [
     { header: 'GRI Modul', field: 'gri_modul', width: '30%' },

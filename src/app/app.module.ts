@@ -63,6 +63,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { DataTableComponent } from './components/tables/data-table/data-table.component';
 import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-scope/emissions-by-scope.component';
 import { ComparisionBarComponent } from './components/command-bar/comparision-bar/comparision-bar.component';
+import { ExportButtonComponent } from './components/buttons/export-button/export-button.component';
 
 
 @NgModule({
@@ -95,6 +96,7 @@ import { ComparisionBarComponent } from './components/command-bar/comparision-ba
     DataTableComponent,
     EmissionsByScopeComponent,
     ComparisionBarComponent,
+    ExportButtonComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 
 <div class="header">
     <div class="header-title">{{title}}</div>  
-    <button class="header-actions" mat-raised-button color="primary" (click)="export()">Export as CSV</button>
+    <app-export-button color="primary" [dataLoader]="toCSVArray.bind(this)" fileName="GRI_Report.csv"></app-export-button>
 </div>
 
 <mtx-grid 
