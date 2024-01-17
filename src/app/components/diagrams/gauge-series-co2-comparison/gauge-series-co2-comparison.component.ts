@@ -92,7 +92,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
       dataLabels: {
         formatter: () => {
           if (this.percentageChange || this.percentageChange === 0) {
-            return `${this.percentageChange} ${(this.percentageChange === Number.POSITIVE_INFINITY) ? '': '%'}`
+            return `${this.percentageChange.toFixed(1)} ${(this.percentageChange === Number.POSITIVE_INFINITY) ? '': '%'}`
           } else {
             return ''
           }
@@ -193,7 +193,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey))
+    this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey, false))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
       this.chart?.showLoading()
     }, this.id)
