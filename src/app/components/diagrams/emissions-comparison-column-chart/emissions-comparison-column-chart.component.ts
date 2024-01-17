@@ -4,7 +4,7 @@ import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { Subscription, timeInterval } from 'rxjs';
 import { ArtificialDatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
+import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series, TimeUnit } from '@app/types/time-series-data.model';
 import { sumAllDataTypes } from '@app/services/data-utils';
 
 const addThousandsSeparator = ChartService.addThousandsSeparator
@@ -29,9 +29,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.kpiName,
-    beforeUpdate: () => {
-      this.chart?.showLoading()
-    }
   }
 
   dateTimeLabelFormats: Highcharts.AxisDateTimeLabelFormatsOptions = {
@@ -189,6 +186,9 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
     this.subscriptions.push(this.chartService.subscribeInterval(this))
+    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
+      this.chart?.showLoading()
+    }, this.id)
   }
 
 }

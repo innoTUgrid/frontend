@@ -2,9 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
-import { HighchartsDiagram, SeriesTypes, SingleValueDiagram, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { ArtificialDatasetKey, HighchartsDiagram, SeriesTypes, SingleValueDiagram, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Subscription } from 'rxjs';
-import { DatasetRegistry, TimeUnit } from '@app/types/time-series-data.model';
+import { DataEvents, DatasetRegistry, EndpointUpdateEvent, TimeUnit } from '@app/types/time-series-data.model';
 
 //import customPlugin from './customPlugin';
 
@@ -27,14 +27,11 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
   id = "GaugeSeriesCO2Comparision." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
-  datasetKey = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+  datasetKey = ArtificialDatasetKey.EMISSIONS_TOTAL;
 
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.datasetKey,
-    beforeUpdate: () => {
-      this.chart?.showLoading()
-    }
   }
 
   _value:number[] = [];
@@ -197,12 +194,16 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
     this.dataService.registerDataset(this.registry)
 
     this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey))
+    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
+      this.chart?.showLoading()
+    }, this.id)
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
     this.dataService.unregisterDataset(this.registry)
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
   updateChart() {

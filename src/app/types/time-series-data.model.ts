@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
-import { DatasetKey } from './kpi.model';
+import { DatasetKey, EndpointKey } from './kpi.model';
 
 // integrate a property that describes for what time range a single data point is representative
 export type Series = {
@@ -36,12 +36,16 @@ export class TimeSeriesDataDictionary extends Map<string, BehaviorSubject<Datase
 export type DatasetRegistry = {
   id: string, // this is the id of the component that registered the dataset
   endpointKey: DatasetKey,
-
-  // events
-  beforeUpdate?: () => void,
 }
 
-// export type TimeSeriesDataDictionary = Map<string, TimeSeriesData[]>;
+export enum DataEvents {
+  BeforeUpdate = 'beforeUpdate',
+}
+
+export interface EndpointUpdateEvent {
+  endpointKey: EndpointKey,
+  timeIntervals: TimeInterval[],
+}
 
 export type KPIResult = {
   value:number;

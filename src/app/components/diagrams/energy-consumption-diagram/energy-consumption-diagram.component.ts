@@ -4,7 +4,7 @@ import { DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } fro
 import { Subscription } from 'rxjs';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
-import { DatasetRegistry, Series } from '@app/types/time-series-data.model';
+import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series } from '@app/types/time-series-data.model';
 import { sumAllDataTypes, toSeriesId } from '@app/services/data-utils';
 
 @Component({
@@ -35,9 +35,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.kpiName,
-    beforeUpdate: () => {
-      this.chart?.showLoading()
-    }
   }
 
   xAxis: Highcharts.XAxisOptions[] = [{
@@ -101,11 +98,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     },
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
-    this.subscriptions = []
-    this.dataService.unregisterDataset(this.registry)
-  }
 
   aggregateExternalData(data: Series[]): Series[] {
     const dataFiltered = this.chartService.filterOtherStepUnits(data)
@@ -132,6 +124,16 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this)))
     this.subscriptions.push(this.chartService.subscribeInterval(this))
+    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
+      if (event.endpointKey === this.kpiName) this.chart?.showLoading()
+    }, this.id)
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
+    this.dataService.unregisterDataset(this.registry)
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
   
   constructor() {

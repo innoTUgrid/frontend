@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey } from '@app/types/kpi.model';
-import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit } from '@app/types/time-series-data.model';
+import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
+import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
 import moment from 'moment';
 import { BehaviorSubject, Observable, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
@@ -40,6 +40,22 @@ function sortedMerge(a: number[][], b: number[][]): number[][] {
   return data
 }
 
+type Handler<E> = (event: E) => void;
+
+class EventDispatcher<E> { 
+    private handlers: Map<string, Handler<E>> = new Map<string, Handler<E>>();
+    fire(event: E) { 
+        for (let h of this.handlers.values())
+            h(event);
+    }
+    register(handler: Handler<E>, id: string) { 
+        this.handlers.set(id, handler);
+    }
+    unregister(id: string) { 
+      this.handlers.delete(id);
+    }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -49,10 +65,18 @@ export class DataService {
 
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
 
-  datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
+  private datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
+  private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
+    [ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
+    [ArtificialDatasetKey.EMISSIONS_TOTAL, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS]],
+  ])
 
   readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
+
+  private readonly events: Map<DataEvent, EventDispatcher<any>> = new Map<DataEvent, EventDispatcher<any>>([
+    [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
+  ]);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
@@ -65,9 +89,9 @@ export class DataService {
       this.fetchDatasets()
     })
 
-    // this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
-    //   map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
-    // ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
+    this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
+      map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
 
     this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 'Total Emissions', 'emissions-combined'))
@@ -102,6 +126,15 @@ export class DataService {
   }
 
   registerDataset(registry: DatasetRegistry): DatasetRegistry {
+    const endpoints = this.artificialDatasetToEndpoints.get(registry.endpointKey)
+    if (endpoints) {
+      for (const endpoint of endpoints) {
+        const newRegistry = {...registry, endpointKey: endpoint}
+        this.registerDataset(newRegistry)
+      }
+      return registry;
+    }
+
     let registries = this.datasetConfigurations.get(registry.endpointKey)
     if (!registries) {
       registries = []
@@ -116,7 +149,19 @@ export class DataService {
     return registry
   }
 
+  on(event: DataEvent, handler: Handler<any>, id: string) {this.events.get(event)?.register(handler, id)}
+  off(event: DataEvent, id: string) {this.events.get(event)?.unregister(id)}
+
   unregisterDataset(registry: DatasetRegistry) {
+    const endpoints = this.artificialDatasetToEndpoints.get(registry.endpointKey)
+    if (endpoints) {
+      for (const endpoint of endpoints) {
+        const newRegistry = {...registry, endpointKey: endpoint}
+        this.unregisterDataset(newRegistry)
+      }
+      return;
+    }
+
     const registries = this.datasetConfigurations.get(registry.endpointKey)
     if (registries) {
       this.datasetConfigurations.set(registry.endpointKey, registries.filter((r) => r.id !== registry.id))
@@ -210,12 +255,6 @@ export class DataService {
   async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
     if (this.fetchedEndpoints.has(endpointKey) || registries.length == 0) return;
 
-    registries.forEach((registry) => {
-      if (registry.beforeUpdate) {
-        registry.beforeUpdate()
-      }
-    })
-
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()
     if (localData) {
       // filter out time intervals that are already loaded
@@ -223,6 +262,9 @@ export class DataService {
     }
     // filter out timeIntervals that are doubled in the array
     timeIntervals = timeIntervals.filter((interval, index) => timeIntervals.findIndex((i) => timeIntervalEquals(i, interval)) === index)
+
+    // fire event
+    this.events.get(DataEvent.BeforeUpdate)?.fire({endpointKey: endpointKey, timeIntervals: timeIntervals})
 
     this.fetchedEndpoints.add(endpointKey)
     if (timeIntervals.length > 0) {

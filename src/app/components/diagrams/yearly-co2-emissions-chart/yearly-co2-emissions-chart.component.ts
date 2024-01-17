@@ -3,7 +3,7 @@ import { ChartService } from '@app/services/chart.service';
 import { sumAllDataTypes } from '@app/services/data-utils';
 import { DataService } from '@app/services/data.service';
 import { ArtificialDatasetKey, DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
+import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts/highstock';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -53,9 +53,6 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.endpointKey,
-    beforeUpdate: () => {
-      this.chart?.showLoading()
-    }
   }
 
   lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
@@ -133,11 +130,15 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
     this.dataService.registerDataset(this.registry)
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.endpointKey, this.loadYearlyData.bind(this)))
+    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
+      this.chart?.showLoading()
+    }, this.id)
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
     this.dataService.unregisterDataset(this.registry)
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 }

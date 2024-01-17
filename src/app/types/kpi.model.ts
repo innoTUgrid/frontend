@@ -15,7 +15,8 @@ export enum ArtificialDatasetKey {
     EMISSIONS_TOTAL = "emissions_total",
 }
 
-export type DatasetKey = KPIEndpointKey | TimeSeriesEndpointKey | ArtificialDatasetKey
+export type EndpointKey = KPIEndpointKey | TimeSeriesEndpointKey
+export type DatasetKey = EndpointKey | ArtificialDatasetKey
 export const KPIList: string[] = Object.values(KPIEndpointKey)
 
 export interface DataSubscription {
