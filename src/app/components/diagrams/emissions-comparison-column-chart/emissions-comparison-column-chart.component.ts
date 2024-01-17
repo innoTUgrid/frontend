@@ -145,12 +145,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   constructor() {
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
-    this.subscriptions = []
-    this.dataService.unregisterDataset(this.registry)
-  }
-
   splitYearlyData(data: Series[]): Series[] {
     const intervals = this.dataService.getCurrentComparisionTimeIntervals()
     let newData = data
@@ -187,8 +181,15 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
     this.subscriptions.push(this.chartService.subscribeInterval(this))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      this.chart?.showLoading()
+      if (this.chart) this.chart.showLoading()
     }, this.id)
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
+    this.dataService.unregisterDataset(this.registry)
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
 }

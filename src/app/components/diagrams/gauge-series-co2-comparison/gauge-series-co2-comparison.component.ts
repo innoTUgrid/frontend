@@ -195,7 +195,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
     this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey, false))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      this.chart?.showLoading()
+      if (this.chart) this.chart.showLoading()
     }, this.id)
   }
 

@@ -131,7 +131,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
 
     this.subscriptions.push(this.chartService.subscribeSeries(this, this.endpointKey, this.loadYearlyData.bind(this)))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      this.chart?.showLoading()
+      if (this.chart) this.chart.showLoading()
     }, this.id)
   }
 

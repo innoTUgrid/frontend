@@ -70,7 +70,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     this.registries.forEach(registry => {this.dataService.registerDataset(registry)})
     this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (event.endpointKey === this.kpiName) this.chart?.showLoading()
+      if (event.endpointKey === this.kpiName && this.chart) this.chart.showLoading()
     }, this.id)
   }
 

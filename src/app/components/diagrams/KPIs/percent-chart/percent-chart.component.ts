@@ -170,7 +170,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     updateChart() {
         if (this.chart) {
 
-            this.chart?.update({
+            this.chart.update({
                 title: this.chartProperties.title,
                 series: this.series,
             }, true, true, true)
