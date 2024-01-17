@@ -100,6 +100,10 @@ export class TableBasicExample {
       console.error("GRI table needs two time intervals, but got only " + timeIntervals.length + ".")
       return;
     }
+    this.columns[3].header = timeIntervals[0].start.format('YYYY')
+    this.columns[4].header = timeIntervals[1].start.format('YYYY')
+    this.columns = [...this.columns]
+    
     for (const element of this.list) {
       if (element.data_loader) {
         element.year_first = element.data_loader(timeIntervals[0])
