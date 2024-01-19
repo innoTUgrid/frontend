@@ -6,39 +6,7 @@ import { BehaviorSubject, Observable, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env/environment';
-import { toDatasetTotal, toSeriesId } from './data-utils';
-
-function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
-  return a.start.isSame(b.start) && a.end.isSame(b.end) && a.stepUnit === b.stepUnit
-}
-
-function timeIntervalIncludes(larger: TimeInterval, smaller: TimeInterval): boolean {
-  return larger.start.isSameOrBefore(smaller.start) && larger.end.isSameOrAfter(smaller.end) && larger.stepUnit === smaller.stepUnit
-}
-
-function sortedMerge(a: number[][], b: number[][]): number[][] {
-  const data = []
-  let i = 0
-  let j = 0
-  while (i < a.length && j < b.length) {
-    if (a[i][0] < b[j][0]) { // a smaller
-      data.push(a[i++])
-    } else if (b[j][0] < a[i][0]) { // b smaller
-      data.push(b[j++])
-    } else { // if equal, then filter out duplicates and always take the value of a
-      const value = a[i]
-      data.push(value)
-
-      while (i < a.length && a[i][0] === value[0]) i++
-      while (j < b.length && b[j][0] === value[0]) j++
-    }
-  }
-
-  while (i < a.length) data.push(a[i++])
-  while (j < b.length) data.push(b[j++])
-
-  return data
-}
+import { sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
 
 type Handler<E> = (event: E) => void;
 
