@@ -4,6 +4,7 @@ import HC_exportData from 'highcharts/modules/export-data';
 import HC_noData from 'highcharts/modules/no-data-to-display'
 import SolidGauge from 'highcharts/modules/solid-gauge';
 import HC_More from 'highcharts/highcharts-more';
+import HC_sankey from 'highcharts/modules/sankey';
 import * as Highcharts from 'highcharts/highstock';
 import { AppModule } from './app/app.module';
 
@@ -15,6 +16,7 @@ HC_More(Highcharts);
 HC_exporting(Highcharts);
 HC_exportData(Highcharts);
 HC_noData(Highcharts);
+HC_sankey(Highcharts);
 SolidGauge(Highcharts);
 
 Highcharts.setOptions({

@@ -2,8 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from '@app/services/data.service';
 import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry } from '@app/types/time-series-data.model';
-import * as Highcharts from 'highcharts';
-import HC_sankey from 'highcharts/modules/sankey';
+import * as Highcharts from 'highcharts/highstock';
 
 @Component({
     selector: 'app-energy-flow-diagram',
@@ -111,7 +110,6 @@ export class EnergyFlowDiagramComponent {
     }
 
     constructor() {
-        HC_sankey(Highcharts);
     }
 
     ngOnInit(): void {
