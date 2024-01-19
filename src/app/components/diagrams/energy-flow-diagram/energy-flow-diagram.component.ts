@@ -1,18 +1,23 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
-import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry } from '@app/types/time-series-data.model';
+import { HighchartsDiagramMinimal, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { Dataset, DatasetRegistry } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts/highstock';
+import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
 @Component({
     selector: 'app-energy-flow-diagram',
     templateUrl: './energy-flow-diagram.component.html',
     styleUrls: ['./energy-flow-diagram.component.scss']
 })
-export class EnergyFlowDiagramComponent {
+export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
     Highcharts: typeof Highcharts = Highcharts; // required
     dataService: DataService = inject(DataService)
+    chartService: ChartService = inject(ChartService)
+
     readonly id = "EnergyFlow." + Math.random().toString(36).substring(7);
+
     updateFlag = false
     chart: Highcharts.Chart|undefined
 
@@ -20,15 +25,17 @@ export class EnergyFlowDiagramComponent {
         this.chart = chart;
     }
 
-    registries: DatasetRegistry[] = [{
-        id: this.id,
-        endpointKey: TimeSeriesEndpointKey.TS_RAW,
-    },
-    {
-        id: this.id,
-        endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION,
-    }
-]
+    registries: DatasetRegistry[] = [
+        {
+            id: this.id,
+            endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION,
+        },
+        {
+            id: this.id,
+            endpointKey: TimeSeriesEndpointKey.TS_RAW,
+        },
+    ]
+    subscriptions: Subscription[] = [];
 
     chartProperties: Highcharts.Options = {
         title: {
@@ -116,11 +123,21 @@ export class EnergyFlowDiagramComponent {
         this.registries.forEach((registry) => {
             this.dataService.registerDataset(registry)
         })
+
+        const s = combineLatest([this.registries.map((registry) => this.dataService.getDataset(registry.id))])
+        .subscribe((datasets: BehaviorSubject<Dataset>[]) => {
+            const nodes = []
+            const edges = []
+        })
+
+        this.subscriptions.push(s)
     }
 
     ngOnDestroy(): void {
         this.registries.forEach((registry) => {
             this.dataService.unregisterDataset(registry)
         })
+
+        this.subscriptions.forEach((subscription) => subscription.unsubscribe())
     }
 }

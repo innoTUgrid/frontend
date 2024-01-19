@@ -24,12 +24,15 @@ export interface DataSubscription {
     onSeriesUpdate?: () => void
 }
 
-export interface HighchartsDiagram extends DataSubscription {
+export interface HighchartsDiagramMinimal extends DataSubscription {
     chart: Highcharts.Chart|undefined
     chartProperties: Highcharts.Options
+    updateFlag: boolean
+}
+
+export interface HighchartsDiagram extends HighchartsDiagramMinimal {
     xAxis: Highcharts.XAxisOptions[]
     dataGrouping: Highcharts.DataGroupingOptionsObject
-    updateFlag: boolean
     seriesType: SeriesTypes
 }
 
