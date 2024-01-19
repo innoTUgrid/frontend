@@ -1,13 +1,14 @@
 export enum KPIEndpointKey {
-    SELF_CONSUMPTION = "self_consumption",
-    AUTARKY = "autarky",
-    COST_SAVINGS = "cost_savings",
-    CO2_SAVINGS = "co2_savings",
+    SELF_CONSUMPTION = "kpi/self_consumption",
+    AUTARKY = "kpi/autarky",
+    COST_SAVINGS = "kpi/cost_savings",
+    CO2_SAVINGS = "kpi/co2_savings",
 }
 
 export enum TimeSeriesEndpointKey {
-    ENERGY_CONSUMPTION = "consumption",
-    SCOPE_2_EMISSIONS = "scope_two_emissions",
+    ENERGY_CONSUMPTION = "kpi/consumption",
+    SCOPE_2_EMISSIONS = "kpi/scope_two_emissions",
+    TS_RAW = 'ts'
 }
 
 export enum ArtificialDatasetKey {

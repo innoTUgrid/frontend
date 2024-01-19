@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { DataService } from '@app/services/data.service';
+import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { DatasetRegistry } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts';
 import HC_sankey from 'highcharts/modules/sankey';
 
@@ -9,12 +12,24 @@ import HC_sankey from 'highcharts/modules/sankey';
 })
 export class EnergyFlowDiagramComponent {
     Highcharts: typeof Highcharts = Highcharts; // required
+    dataService: DataService = inject(DataService)
+    readonly id = "EnergyFlow." + Math.random().toString(36).substring(7);
     updateFlag = false
     chart: Highcharts.Chart|undefined
 
     chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
         this.chart = chart;
     }
+
+    registries: DatasetRegistry[] = [{
+        id: this.id,
+        endpointKey: TimeSeriesEndpointKey.TS_RAW,
+    },
+    {
+        id: this.id,
+        endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION,
+    }
+]
 
     chartProperties: Highcharts.Options = {
         title: {
@@ -99,4 +114,15 @@ export class EnergyFlowDiagramComponent {
         HC_sankey(Highcharts);
     }
 
+    ngOnInit(): void {
+        this.registries.forEach((registry) => {
+            this.dataService.registerDataset(registry)
+        })
+    }
+
+    ngOnDestroy(): void {
+        this.registries.forEach((registry) => {
+            this.dataService.unregisterDataset(registry)
+        })
+    }
 }

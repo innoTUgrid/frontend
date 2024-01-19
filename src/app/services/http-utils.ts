@@ -1,17 +1,23 @@
 import { HttpClient } from "@angular/common/http";
-import { DatasetKey } from "@app/types/kpi.model";
-import { KPIResult, Series, TimeInterval, TimeSeriesResult } from "@app/types/time-series-data.model";
+import { DatasetKey, TimeSeriesEndpointKey } from "@app/types/kpi.model";
+import { KPIResult, MetaInfo, MetaValues, Series, TSRawResult, TimeInterval, TimeSeriesResult } from "@app/types/time-series-data.model";
 import { environment } from "@env/environment";
-import { Observable, forkJoin, map } from "rxjs";
+import { BehaviorSubject, Observable, forkJoin, map } from "rxjs";
 import { toSeriesId } from "./data-utils";
 import moment from "moment";
+import { time } from "highcharts";
 
-export function getURL(endpointKey: DatasetKey): string {
-    return `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
+export function getURL(endpoint: string): string {
+    let url = `${environment.apiUrl}`
+    if (!url.endsWith('/')) url += '/'
+    url += 'v1/'
+    if (endpoint) url += endpoint
+    if (!url.endsWith("/")) url += '/'
+    return url;
 }
 
 export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInterval: TimeInterval): Observable<Series[]> {
-    const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
+    const url = getURL(endpointKey);
     const call = http.get<KPIResult>(url, {
         params: {
             from: timeInterval.start.toISOString(),
@@ -41,14 +47,13 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
     return call
 }
 
-export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, timeIntervals: TimeInterval[], energyTypesToName: Map<string, string>): Observable<Series[]> {
-    const url = getURL(endpointKey);
-
-    const calls: Observable<TimeSeriesResult[]>[] = []
+export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, timeIntervals: TimeInterval[]): Observable<ReturnType>[] {
+    const url = getURL(endpointKey)
+    const calls: Observable<ReturnType>[] = []
     for (const timeInterval of timeIntervals) {
-        http.get<TimeSeriesResult[]>(url, {})
+        http.get<ReturnType>(url, {})
         calls.push(
-            http.get<TimeSeriesResult[]>(url, {
+            http.get<ReturnType>(url, {
                 params: {
                     from: timeInterval.start.toISOString(),
                     to: timeInterval.end.toISOString(),
@@ -57,6 +62,12 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
             })
         )
     }
+    return calls
+}
+
+export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, timeIntervals: TimeInterval[]): Observable<Series[]> {
+    const calls: Observable<TimeSeriesResult[]>[] = createCalls<TimeSeriesResult[]>(http, endpointKey, timeIntervals)
+
     const join = forkJoin(calls).pipe(
         map((timeSeriesResults: TimeSeriesResult[][]) => {
             const seriesMap: Map<string, Series> = new Map();
@@ -71,15 +82,13 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
                     const currentSeries = seriesMap.get(seriesKey)
                     if (!currentSeries) {
                         data = []
-                        let name = energyTypesToName.get(carrierName + (entry.local ? '-local' : ''))
-                        if (!name) name = carrierName
                         seriesMap.set(seriesKey, {
                             id: seriesKey,
-                            name: name,
+                            name: carrierName,
                             type: carrierName,
                             data: data,
                             unit: entry.unit,
-                            consumption: (endpointKey === 'consumption') ? true : false,
+                            consumption: (endpointKey === TimeSeriesEndpointKey.ENERGY_CONSUMPTION) ? true : false,
                             local: entry.local,
                             timeUnit: timeInterval.stepUnit
                         })
@@ -96,8 +105,78 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
             }
             const seriesArray = Array.from(seriesMap.values())
             return seriesArray
-            //   this.insertNewData(localKey, seriesArray, timeIntervals);
         })
     );
     return join;
+}
+
+export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
+    const url = getURL('meta/')
+
+    const call = http.get<MetaValues>(url).pipe(
+        map(({values}: MetaValues) => {
+            return values
+        })
+    )
+
+    return call
+}
+
+export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals: TimeInterval[]): Observable<Series[]> {
+    const endpointKey = TimeSeriesEndpointKey.TS_RAW
+    const allCalls: Observable<TSRawResult>[][] = identifiers.map((id: string) => {
+        return createCalls<TSRawResult>(http, endpointKey + '/' + id, timeIntervals)
+    })
+
+    const answer = forkJoin(
+        allCalls.map((callsPerIdentifier: Observable<TSRawResult>[]) => {
+            return forkJoin(callsPerIdentifier)
+        })
+    ).pipe(
+        map((results: TSRawResult[][]) => {
+            const allSeries: Series[] = []
+            for (const resultsPerIdentifier of results) {
+                const seriesMap: Map<string, Series> = new Map();
+                
+                for (const [index, result] of resultsPerIdentifier.entries()) {
+                    const meta = result.meta
+                    const local = true
+                    const type = (meta.carrier) ? meta.carrier : ''
+                    const timeInterval = timeIntervals[index]
+                    const seriesKey = toSeriesId(endpointKey, meta.identifier, local, timeInterval.stepUnit)
+
+                    const currentSeries = seriesMap.get(seriesKey)
+                    let data: number[][] = []
+                    if (currentSeries) {
+                        data = currentSeries.data
+                    } else {
+                        seriesMap.set(seriesKey, {
+                            id: seriesKey,
+                            name: meta.identifier,
+                            type: type,
+                            data: data,
+                            unit: meta.unit,
+                            consumption: meta.consumption,
+                            local: local,
+                            timeUnit: timeInterval.stepUnit
+                        })
+                    }
+
+                    for (const dataPoint of result.datapoints) {
+                        data.push([
+                            moment(dataPoint.timestamp).valueOf(),
+                            dataPoint.value,
+                        ])
+                    }
+                }
+
+                const seriesArray = Array.from(seriesMap.values())
+                allSeries.push(...seriesArray)
+            }
+            
+            return allSeries
+        })
+    )
+
+    return answer
 }
