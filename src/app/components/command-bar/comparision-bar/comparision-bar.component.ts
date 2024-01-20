@@ -1,4 +1,6 @@
 import { Component, Input, inject } from '@angular/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { FormControl } from '@angular/forms';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { DataService } from '@app/services/data.service';
@@ -6,10 +8,29 @@ import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import moment, { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'YYYY',
+  },
+  display: {
+    dateInput: 'YYYY',
+
+  },
+};
+
 @Component({
   selector: 'app-comparision-bar',
   templateUrl: './comparision-bar.component.html',
-  styleUrls: ['./comparision-bar.component.scss']
+  styleUrls: ['./comparision-bar.component.scss'],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
 export class ComparisionBarComponent {
   dataService: DataService = inject(DataService);
@@ -22,15 +43,15 @@ export class ComparisionBarComponent {
   isDatepickerOpen = false;
 
   chosenYearHandler(normalizedYear: Moment, datepicker: MatDatepicker<Moment>, year: string) {
-    if(year == 'first'){
+    if (year == 'first') {
       const ctrlValue = this.firstYear.value;
-      if(ctrlValue) {
+      if (ctrlValue) {
         ctrlValue.year(normalizedYear.year());
         this.firstYear.setValue(ctrlValue);
       }
-    }else{
+    } else {
       const ctrlValue = this.secondYear.value;
-      if(ctrlValue) {
+      if (ctrlValue) {
         ctrlValue.year(normalizedYear.year());
         this.secondYear.setValue(ctrlValue);
       }
@@ -42,7 +63,7 @@ export class ComparisionBarComponent {
     this.isDatepickerOpen = true;
   }
 
-  toTimeInterval(year:Moment) {
+  toTimeInterval(year: Moment) {
     const newIntervals = {
       start: moment(year.startOf('year')),
       end: moment(year.endOf('year')),
