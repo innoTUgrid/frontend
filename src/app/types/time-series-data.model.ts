@@ -68,6 +68,8 @@ export type MetaInfo = {
   identifier: string,
   unit: string,
   carrier: string,
+  min_timestamp: string,
+  max_timestamp: string
 }
 
 export type MetaValues = {
