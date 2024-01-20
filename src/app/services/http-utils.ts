@@ -47,8 +47,9 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
     return call
 }
 
-export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, timeIntervals: TimeInterval[]): Observable<ReturnType>[] {
-    const url = getURL(endpointKey)
+export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, timeIntervals: TimeInterval[], endsWithSlash: boolean = true): Observable<ReturnType>[] {
+    let url = getURL(endpointKey)
+    if (!endsWithSlash) url = url.slice(0, -1)
     const calls: Observable<ReturnType>[] = []
     for (const timeInterval of timeIntervals) {
         http.get<ReturnType>(url, {})
@@ -125,7 +126,7 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
 export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals: TimeInterval[]): Observable<Series[]> {
     const endpointKey = TimeSeriesEndpointKey.TS_RAW
     const allCalls: Observable<TSRawResult>[][] = identifiers.map((id: string) => {
-        return createCalls<TSRawResult>(http, endpointKey + '/' + id, timeIntervals)
+        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals, false)
     })
 
     const answer = forkJoin(
@@ -164,8 +165,8 @@ export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals
 
                     for (const dataPoint of result.datapoints) {
                         data.push([
-                            moment(dataPoint.timestamp).valueOf(),
-                            dataPoint.value,
+                            moment(dataPoint.bucket).valueOf(),
+                            dataPoint.mean_value,
                         ])
                     }
                 }

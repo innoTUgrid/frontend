@@ -78,11 +78,8 @@ export type MetaValues = {
 
 export type TSRawResult = {
   datapoints: {
-    id: number,
-    timestamp: string,
-    value: number,
-    created_at: string,
-    updated_at: string
+    bucket: string,
+    mean_value: number,
   }[]
 
   meta: {
