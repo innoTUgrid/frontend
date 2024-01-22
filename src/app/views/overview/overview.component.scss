@@ -3,9 +3,17 @@
 .diagram-container{
     display: flex;
     gap: min(5vh, 5vw);
-    height: 47.5%;
     margin: 0 2em;
 }
+
+#top-diagrams {
+  height: 50%;
+}
+
+.kpi-container {
+  height: 25%;
+}
+
 
 .title {
   height: 30px;
@@ -24,7 +32,7 @@
 .item{
   flex: 1 1 auto;
   height: 100%;
-  min-height: 250px;
+  min-height: 200px;
 }
 
 .top-item{
@@ -35,8 +43,12 @@
   width: 25%;
 }
 
-@media (max-height: 700px) {
+@media (max-height: 950px) {
   .diagram-container {
+    height: 100%;
+  }
+
+  #top-diagrams {
     height: 100%;
   }
 

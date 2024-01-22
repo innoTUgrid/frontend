@@ -1,0 +1,2 @@
+<app-percent-chart *ngIf="percent_chart" [title]="title" [kpiName]="kpiName"></app-percent-chart>
+<app-single-value-chart *ngIf="!percent_chart" [title]="title" [kpiName]="kpiName" [unit]="unit" [icon]="icon"></app-single-value-chart>

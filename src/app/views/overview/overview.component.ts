@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { DataService } from '@app/services/data.service';
+import { KPIEndpointKey } from '@app/types/kpi.model';
 
 
 @Component({
@@ -9,6 +10,8 @@ import { DataService } from '@app/services/data.service';
 })
 export class OverviewComponent {
   dataService: DataService = inject(DataService);
+
+  KPI = KPIEndpointKey;
 
   ngOnInit(): void {
   }
