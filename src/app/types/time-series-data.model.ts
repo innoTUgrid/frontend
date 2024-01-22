@@ -63,6 +63,36 @@ export type TimeSeriesResult = {
   unit: string;
 }
 
+export type MetaInfo = {
+  id: number,
+  identifier: string,
+  unit: string,
+  carrier: string,
+  min_timestamp: string,
+  max_timestamp: string
+}
+
+export type MetaValues = {
+  values: MetaInfo[],
+}
+
+export type TSRawResult = {
+  datapoints: {
+    bucket: string,
+    mean_value: number,
+  }[]
+
+  meta: {
+    id: number,
+    identifier: string,
+    unit: string,
+    carrier?: string,
+    consumption?: boolean,
+    aggregate?: boolean,
+    local?: boolean,
+  }
+}
+
 export enum TimeUnit {
   MILLISECONDS = 'miliseconds',
   SECONDS = 'seconds',

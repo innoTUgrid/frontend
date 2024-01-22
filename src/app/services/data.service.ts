@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
-import moment from 'moment';
+import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent, MetaInfo } from '@app/types/time-series-data.model';
 import { BehaviorSubject, Observable, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '@env/environment';
 import { sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
+import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 
 type Handler<E> = (event: E) => void;
 
@@ -46,6 +45,8 @@ export class DataService {
     [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
   ]);
 
+  readonly metaInfo: BehaviorSubject<MetaInfo[]> = new BehaviorSubject<MetaInfo[]>([]);
+
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
       this.fetchedEndpoints.clear()
@@ -64,6 +65,18 @@ export class DataService {
     this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 'Total Emissions', 'emissions-combined'))
     ).subscribe(this.getDataset(ArtificialDatasetKey.EMISSIONS_TOTAL))
+
+    fetchMetaInfo(this.http).subscribe((info: MetaInfo[]) => {
+      this.metaInfo.next(info)
+    })
+
+    this.metaInfo.subscribe((info: MetaInfo[]) => {
+      const id = TimeSeriesEndpointKey.TS_RAW
+      const registries = this.datasetConfigurations.get(id)
+      if (registries) {
+        this.fetchDataset(id, registries, this.timeInterval.getValue(), true)
+      }
+    })
   }
 
   getCurrentTimeInterval(timeInterval?: TimeInterval[]): TimeInterval {
@@ -220,8 +233,8 @@ export class DataService {
     }
   }
 
-  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
-    if (this.fetchedEndpoints.has(endpointKey) || registries.length == 0) return;
+  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
+    if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0) return;
 
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()
     if (localData) {
@@ -235,105 +248,31 @@ export class DataService {
     this.events.get(DataEvent.BeforeUpdate)?.fire({endpointKey: endpointKey, timeIntervals: timeIntervals})
 
     this.fetchedEndpoints.add(endpointKey)
-    if (timeIntervals.length > 0) {
-
+    
+    if (endpointKey === TimeSeriesEndpointKey.TS_RAW) {
+      const identifiers = this.metaInfo.getValue().map((info) => info.identifier)
+      fetchTSRaw(this.http, identifiers, timeIntervals).subscribe((data) => {
+        this.insertNewData(endpointKey, data, timeIntervals)
+      })
+    } else if (timeIntervals.length > 0) {
       if (KPIList.includes(endpointKey)) {
-        timeIntervals.forEach((interval) => this.fetchKPIData(endpointKey, interval, endpointKey))
+        timeIntervals.forEach((interval) => fetchKPIData(this.http, endpointKey, interval).subscribe((data: Series[]) => {
+          this.getDataset(endpointKey).next({
+            series: data,
+            timeIntervals: [interval]
+          })
+        }))
       } else {
-        this.fetchTimeSeriesData(endpointKey, timeIntervals, endpointKey)
+        fetchTimeSeriesData(this.http, endpointKey, timeIntervals).subscribe((data: Series[]) => {
+          for (const series of data) {
+            series.name = this.themeService.energyTypesToName.get(series.type + (series.local ? '-local' : '')) || series.id
+          }
+          this.insertNewData(endpointKey, data, timeIntervals)
+        })
       }
 
     } else {
       if (localData) this.getDataset(endpointKey).next(localData);
     }
-  }
-
-  async fetchKPIData(endpointKey: DatasetKey, timeInterval: TimeInterval, localKey: string) {
-    const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
-    this.http.get<KPIResult>(url, {
-      params: {
-        from: timeInterval.start.toISOString(),
-        to: timeInterval.end.toISOString(),
-      }
-    })
-    .subscribe((kpiValue) => {
-      const series: Series[] = [
-        {type:endpointKey, name:kpiValue.name, data:[
-          [
-            Math.round((timeInterval.start.valueOf() + timeInterval.end.valueOf())/2), 
-            kpiValue.value, 
-          ]
-        ],
-        unit:kpiValue.unit? kpiValue.unit : undefined, 
-        consumption:true,
-        id:localKey,
-        timeUnit: timeInterval.stepUnit,
-      },
-      ]
-
-      const dataset: Dataset = {
-        series: series,
-        timeIntervals: [timeInterval],
-      }
-
-      this.getDataset(localKey).next(dataset);
-    });
-  }
-
-  async fetchTimeSeriesData(endpointKey: DatasetKey, timeIntervals: TimeInterval[], localKey: string) {
-    const url = `${environment.apiUrl}/v1/kpi/${endpointKey}/`;
-
-    const calls:Observable<TimeSeriesResult[]>[] = []
-    for (const timeInterval of timeIntervals) {
-      calls.push(
-        this.http.get<TimeSeriesResult[]>(url, {
-          params: {
-            from: timeInterval.start.toISOString(),
-            to: timeInterval.end.toISOString(),
-            interval: `1${timeInterval.stepUnit}`
-          }
-        })
-      )
-    }
-    forkJoin(calls).subscribe((timeSeriesResults: TimeSeriesResult[][]) => {
-      const seriesMap: Map<string, Series> = new Map();
-
-      for (const [index, timeSeriesResult] of timeSeriesResults.entries()) {
-        const timeInterval = timeIntervals[index]
-        for (const entry of timeSeriesResult) {
-          let data: number[][];
-          const carrierName = entry.carrier_name
-          const seriesKey = toSeriesId(endpointKey, carrierName, entry.local, timeInterval.stepUnit)
-  
-          const currentSeries = seriesMap.get(seriesKey)
-          if (!currentSeries) {
-            data = []
-            let name = this.themeService.energyTypesToName.get(carrierName + (entry.local ? '-local' : ''))
-            if (!name) name = carrierName
-            seriesMap.set(seriesKey, {
-              id: seriesKey,
-              name: name,
-              type: carrierName,
-              data: data,
-              unit: entry.unit,
-              consumption: (endpointKey === 'consumption') ? true : false,
-              local: entry.local,
-              timeUnit: timeInterval.stepUnit
-            })
-          } else {
-            data = currentSeries.data;
-          }
-  
-          data.push([
-            moment(entry.bucket).valueOf(),
-            entry.value,
-          ])
-        }
-
-      }
-      const seriesArray = Array.from(seriesMap.values())
-      this.insertNewData(localKey, seriesArray, timeIntervals);
-
-    });
   }
 }
