@@ -11,7 +11,7 @@ import { MAT_DATE_LOCALE, MatCommonModule, MatOptionModule } from '@angular/mate
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { OverviewComponent } from './views/overview/overview.component';
 import { EnergyConsumptionDiagramComponent } from './components/diagrams/energy-consumption-diagram/energy-consumption-diagram.component';
-import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram/energy-mix-diagram.component';
+import { EnergyMixDiagramComponent } from './components/diagrams/energy-mix-diagram/energy-mix-diagram.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import {MatCardModule} from '@angular/material/card'; 
 import {MatButtonModule} from '@angular/material/button'; 
