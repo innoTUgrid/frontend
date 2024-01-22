@@ -119,11 +119,11 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
     }
 
     updateData(datasets: Dataset[]) {
-        console.log('datasets', datasets)
         if (datasets.length < 2) return;
         const consumption = datasets[0]
         const consumptionSeries = this.chartService.filterOtherStepUnits(consumption.series)
         const raw = datasets[1]
+        // series.consumption && !series.aggregate && series.local 
         const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption))
 
         const consumptionTotalByCarrier = consumptionSeries.map(
@@ -142,9 +142,6 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         nodes.push(...rawSeries.map(
             (series: Series) => {return {id:series.name, color: this.themeService.colorMap.get(series.type)}}
         ))
-
-        console.log(consumptionTotalByCarrier)
-        console.log(consumptionTotalByConsumer)
 
         const edges = []
         for (const [index, series] of consumptionSeries.entries()) {

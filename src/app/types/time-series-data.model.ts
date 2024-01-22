@@ -87,7 +87,9 @@ export type TSRawResult = {
     identifier: string,
     unit: string,
     carrier?: string,
-    consumption?: boolean
+    consumption?: boolean,
+    aggregate?: boolean,
+    local?: boolean,
   }
 }
 

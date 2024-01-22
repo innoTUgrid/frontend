@@ -126,7 +126,7 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
 export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals: TimeInterval[]): Observable<Series[]> {
     const endpointKey = TimeSeriesEndpointKey.TS_RAW
     const allCalls: Observable<TSRawResult>[][] = identifiers.map((id: string) => {
-        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals, false)
+        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals)
     })
 
     const answer = forkJoin(
