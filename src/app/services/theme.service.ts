@@ -56,7 +56,7 @@ export class ThemeService {
     ['natural-gas', 'Natural Gas'],
     ['other-conventionals', 'Other Conventionals'],
     ['hard-coal', 'Hard Coal'],
-    ['pump-storage', 'Pump Storage'],
+    ['pumped-storage', 'Pump Storage'],
     ['coal', 'Coal'],
     ['gas', 'Gas'],
   ])
