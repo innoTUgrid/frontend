@@ -1,0 +1,15 @@
+<mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        {{text}}
+    </ng-template>
+</mtx-popover>
+
+<button 
+    mat-icon-button 
+    aria-label="Example icon-button with a heart icon"
+    #popoverTrigger="mtxPopoverTrigger"
+    [mtxPopoverTriggerFor]="popover"
+    routerLink="/info"
+>
+    <mat-icon>info</mat-icon>
+</button>

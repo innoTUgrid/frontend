@@ -61,6 +61,7 @@ import { EmissionsByScopeComponent } from './components/diagrams/emissions-by-sc
 import { ComparisionBarComponent } from './components/command-bar/comparision-bar/comparision-bar.component';
 import { ExportButtonComponent } from './components/buttons/export-button/export-button.component';
 import { KpiChartComponent } from './components/diagrams/KPIs/kpi-chart/kpi-chart.component';
+import { InfoButtonComponent } from './components/buttons/info-button/info-button.component';
 
 
 @NgModule({
@@ -91,6 +92,7 @@ import { KpiChartComponent } from './components/diagrams/KPIs/kpi-chart/kpi-char
     ComparisionBarComponent,
     ExportButtonComponent,
     KpiChartComponent,
+    InfoButtonComponent,
   ],
   imports: [
     BrowserModule,
