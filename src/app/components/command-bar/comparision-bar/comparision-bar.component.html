@@ -3,16 +3,18 @@
         <mat-label>Baseline year</mat-label>
         <input matInput [matDatepicker]="dp" [formControl]="firstYear">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp [startView]="'multi-year'" (yearSelected)="chosenYearHandler($event, dp, 'first')"
+        <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event, dp, 'first')"
             (opened)="onDatepickerOpened()" (closed)="onDatepickerClosed()" panelClass="period-picker">
         </mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field id="comparison-year-selection">
+    <mat-icon *ngIf="showArrow" [fontIcon]="'arrow_right'"></mat-icon>
+
+    <mat-form-field  id="comparison-year-selection">
         <mat-label>Comparison year</mat-label>
         <input matInput [matDatepicker]="dp2" [formControl]="secondYear">
         <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2 [startView]="'multi-year'" (yearSelected)="chosenYearHandler($event, dp2, 'second')"
+        <mat-datepicker #dp2 startView="multi-year" (yearSelected)="chosenYearHandler($event, dp2, 'second')"
             (opened)="onDatepickerOpened()" (closed)="onDatepickerClosed()" panelClass="period-picker">
         </mat-datepicker>
     </mat-form-field>

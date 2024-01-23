@@ -37,6 +37,7 @@ export class ComparisionBarComponent {
 
   @Input()
   additionalTimeIntervals: TimeInterval[] = [];
+  @Input() showArrow = false
 
   firstYear = new FormControl(moment('2019'));
   secondYear = new FormControl(moment('2019'));
@@ -57,6 +58,14 @@ export class ComparisionBarComponent {
       }
     }
     datepicker.close();
+
+    if (this.firstYear.value && this.secondYear.value) {
+      this.dataService.timeInterval.next([
+        this.toTimeInterval(this.firstYear.value),
+        this.toTimeInterval(this.secondYear.value),
+        ...this.additionalTimeIntervals
+      ])
+    }
   }
 
   onDatepickerOpened() {
@@ -94,13 +103,6 @@ export class ComparisionBarComponent {
   onDatepickerClosed() {
     this.isDatepickerOpen = false;
 
-    if (this.firstYear.value && this.secondYear.value) {
-      this.dataService.timeInterval.next([
-        this.toTimeInterval(this.firstYear.value),
-        this.toTimeInterval(this.secondYear.value),
-        ...this.additionalTimeIntervals
-      ])
-    }
   }
 
   ngOnDestroy() {
