@@ -159,6 +159,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
             }
         },
         credits: {enabled: false},
+        exporting: {enabled: false},
         series: this.series
     }
 
