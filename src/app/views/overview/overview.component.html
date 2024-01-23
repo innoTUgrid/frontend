@@ -1,6 +1,6 @@
 <app-command-bar></app-command-bar>
 <div class="page-container">
-    <h2 class="title">Overview <app-info-button text="Das ist die Erklärung der Overview Page! Klicke den Info button für mehr infos."></app-info-button></h2>
+    <h2 class="title">Overview <app-info-button [popover]="popover"></app-info-button></h2>
     <div id="top-diagrams" class="diagram-container"> 
         <app-energy-consumption-diagram class="item top-item"></app-energy-consumption-diagram>
         <app-energy-mix-diagram class="item top-item"></app-energy-mix-diagram>
@@ -19,3 +19,9 @@
         <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_COSTS_PER_KWH"></app-kpi-chart>
     </div>
 </div>
+
+<mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example text of overview page
+    </ng-template>
+</mtx-popover>

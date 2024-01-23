@@ -5,6 +5,7 @@ import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Dataset, DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
+import { MtxPopover } from '@ng-matero/extensions/popover';
 import moment from 'moment';
 
 type TimeSeriesDataPoint = {
@@ -87,6 +88,8 @@ export class DataTableComponent {
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
   readonly id = "DataTableComponent." + Math.random().toString(36).substring(7);
+
+  @Input({required: true}) popover?: MtxPopover;
 
   _kpiName?: DatasetKey;
 

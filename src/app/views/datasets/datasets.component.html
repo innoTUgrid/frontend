@@ -2,7 +2,21 @@
     <app-command-bar></app-command-bar>
     
     <div class="dataset-container">
-        <app-data-table title="Energy Consumption" [kpiName]="TimeSeriesKey.ENERGY_CONSUMPTION"></app-data-table>        
-        <app-data-table title="Scope 2 Emissions" [kpiName]="TimeSeriesKey.SCOPE_2_EMISSIONS"></app-data-table>
+        <app-data-table title="Energy Consumption" [popover]="consumptionPopover" [kpiName]="TimeSeriesKey.ENERGY_CONSUMPTION"></app-data-table>        
+        <app-data-table title="Scope 2 Emissions" [popover]="scope2EmissionsPopover" [kpiName]="TimeSeriesKey.SCOPE_2_EMISSIONS"></app-data-table>
     </div>
 </div>
+
+
+<mtx-popover #consumptionPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the consumption
+    </ng-template>
+</mtx-popover>
+
+
+<mtx-popover #scope2EmissionsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the scope2Emissions
+    </ng-template>
+</mtx-popover>

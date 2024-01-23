@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MtxPopover } from '@ng-matero/extensions/popover';
 
 @Component({
   selector: 'app-info-button',
@@ -7,4 +8,5 @@ import { Component, Input } from '@angular/core';
 })
 export class InfoButtonComponent {
   @Input() text?: string;
+  @Input({required: true}) popover?: MtxPopover;
 }

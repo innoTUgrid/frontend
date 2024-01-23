@@ -7,6 +7,7 @@ import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
 import { ThemeService } from '@app/services/theme.service';
 import { sumAllDataTypes } from '@app/services/data-utils';
+import { MtxPopover } from '@ng-matero/extensions/popover';
 
 enum DataTypes {
   BIOGAS = 'biogas',
@@ -33,6 +34,8 @@ export class TableBasicExample {
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
   themeService: ThemeService = inject(ThemeService);
+
+  @Input({required: true}) popover?:MtxPopover;
 
   @Input() csvDelimitier: string = ';';
 

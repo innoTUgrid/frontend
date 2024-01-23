@@ -1,7 +1,13 @@
 <div class="container">
     <app-command-bar class="command-bar" [enableGranularitySelection]="false"></app-command-bar>
 
-    <h2 class="title">Energy Flow <app-info-button text="Das ist die Erklärung der Overview Page! Klicke den Info button für mehr infos."></app-info-button></h2>
+    <h2 class="title">Energy Flow <app-info-button [popover]="popover"></app-info-button></h2>
 
     <app-energy-flow-diagram class="diagram"></app-energy-flow-diagram>
 </div>
+
+<mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the energy flow page
+    </ng-template>
+</mtx-popover>

@@ -1,5 +1,11 @@
 <app-comparision-bar></app-comparision-bar>
 
 <div class="dataset-container">
-    <gri-table title="GRI Report"></gri-table>
+    <gri-table title="GRI Report" [popover]="popover"></gri-table>
 </div>
+
+<mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the reporting view
+    </ng-template>
+  </mtx-popover>
