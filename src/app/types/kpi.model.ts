@@ -2,11 +2,11 @@ export enum KPIEndpointKey {
     SELF_CONSUMPTION = "kpi/self_consumption",
     AUTARKY = "kpi/autarky",
     COST_SAVINGS = "kpi/cost_savings",
-    CO2_SAVINGS = "kpi/cost_savings",
-    TOTAL_CONSUMPTION = "kpi/cost_savings",
-    TOTAL_PRODUCTION = "kpi/cost_savings",
-    TOTAL_COSTS_PER_KWH = "kpi/cost_savings",
-    TOTAL_CO2_EMISSIONS_PER_KWH = "kpi/cost_savings",
+    CO2_SAVINGS = "kpi/co2_savings",
+    TOTAL_CONSUMPTION = "kpi/total_consumption",
+    TOTAL_PRODUCTION = "kpi/total_production",
+    TOTAL_COSTS_PER_KWH = "kpi/total_costs",
+    TOTAL_CO2_EMISSIONS_PER_KWH = "kpi/total_co2",
 }
 
 export enum TimeSeriesEndpointKey {
