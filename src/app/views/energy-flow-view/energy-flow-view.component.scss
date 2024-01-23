@@ -1,8 +1,17 @@
+@import '/src/styles.scss';
+
 .container {
     display: flex;
     flex-flow: column;
     height: 100%;
 }
+
+.title {
+    height: 30px;
+    font-size: $font-size-view-header;
+    font-weight: normal;
+    margin-left: 2em;
+  }
 
 .command-bar {
     flex: 0 1 auto;
@@ -11,5 +20,5 @@
 .diagram {
     flex: 1 1 auto;
     height: 100%;
-    padding: min(20vh, 20vw);
+    padding: min(10vh, 10vw);
 }

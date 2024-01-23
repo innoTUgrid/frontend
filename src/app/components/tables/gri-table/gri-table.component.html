@@ -1,6 +1,10 @@
 
 <div class="header">
-    <div class="header-title">{{title}}</div>  
+    <div class="header-title">
+        {{title}}
+        <app-info-button text="gri table info"></app-info-button>
+    </div>
+      
     <app-export-button color="primary" [dataLoader]="toCSVArray.bind(this)" fileName="GRI_Report.csv"></app-export-button>
 </div>
 
