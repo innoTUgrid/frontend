@@ -65,29 +65,15 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'line',
-      style: {
-        fontFamily: 'Lucida Grande, sans-serif',
-        fontSize: '1em',
-      },
     },
     title: {
       text: 'Yearly CO₂ Emissions',
-      margin: 50,
-      style: {
-        fontSize: '0.95em',
-      }
-    },
-    credits: {
-      enabled: false
     },
     xAxis: this.xAxis,
     yAxis: {
       title: {
         text: 'CO₂ Equivalents (kg)'
       }
-    },
-    exporting: {
-      enabled: true,
     },
     tooltip: {
       pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:,.0f} kg</b><br/>',

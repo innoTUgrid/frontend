@@ -20,9 +20,28 @@ HC_sankey(Highcharts);
 SolidGauge(Highcharts);
 
 Highcharts.setOptions({
+  title: {
+    style: {
+      fontSize: '1em'
+    }
+  },
   lang: {
     thousandsSep: '.',
     decimalPoint: ','
     
-  }
+  },
+  tooltip: {
+    valueDecimals: 2
+  },
+  exporting: {
+    enabled: true,
+    buttons: {
+      contextButton: {
+        menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG', 'separator', 'downloadCSV', 'downloadXLS']
+      }
+    }
+  },
+  credits: {
+    enabled: false
+  },
 })

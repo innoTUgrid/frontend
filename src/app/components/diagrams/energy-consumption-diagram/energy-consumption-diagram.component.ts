@@ -65,12 +65,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     },
     title: {
       text: 'Consumed Energy by Source',
-      style: {
-        fontSize: '1em',
-      }
-    },
-    credits: {
-      enabled: false
     },
     xAxis: this.xAxis,
     yAxis: {
@@ -82,9 +76,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     tooltip: {
       valueSuffix: ' kWh',
       valueDecimals: 2,
-    },
-    exporting: {
-      enabled: true,
     },
     plotOptions: {
       column: {

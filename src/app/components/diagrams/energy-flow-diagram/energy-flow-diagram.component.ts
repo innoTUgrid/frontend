@@ -48,7 +48,6 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
                 valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
             }
         },
-        credits: {enabled:false},
         tooltip: {
             headerFormat: undefined,
             pointFormat:

@@ -124,15 +124,9 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     },
     title: {
       text: 'Energy Mix',
-      align: 'center',
-      style: {
-        fontSize: '1em',
-      }
     },
-    credits: {enabled: false},
     tooltip: {
       valueSuffix: ' kg',
-      valueDecimals: 2, 
     },
 
     xAxis: this.xAxis,
@@ -144,7 +138,6 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
       }
     },
     exporting: {
-      enabled: true,
       buttons: {
         toggleSeries: this.toggleSeries
       }

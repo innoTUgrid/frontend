@@ -101,9 +101,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
         color: (
           Highcharts.defaultOptions.title?.style?.color ?? '#FFFFFF'
         ),
-        style: {
-          fontSize: '1em'
-        }
       },
       dial: {
         radius: '80%',
@@ -122,19 +119,10 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
   chartProperties: Highcharts.Options = {
     chart: {
-      styledMode: false,
       type: 'gauge',
-      style: {
-        fontFamily: 'Lucida Grande, sans-serif',
-        fontSize: '1em',
-      },
     },
     title: {
       text: 'CO₂ Emissions Increase',
-      margin: 20,
-      style: {
-        fontSize: '1em',
-      }
     },
     exporting: {enabled: true},
     tooltip: {enabled: false},

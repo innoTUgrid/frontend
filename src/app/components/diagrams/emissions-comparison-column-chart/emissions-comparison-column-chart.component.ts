@@ -76,10 +76,6 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   chartProperties: Highcharts.Options = {
     chart: {
       type: this.seriesType,
-      style: {
-        fontFamily: 'Lucida Grande, sans-serif',
-        fontSize: '1em',
-      },
       events: {
         redraw: () => {
           if (this.chart) this.chartService.updateAverageLine(this.chart, false, 1)
@@ -88,23 +84,13 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     },
     title: {
       text: `Monthly CO₂ Emissions`,
-      margin: 50,
-      style: {
-        fontSize: '1em',
-      }
     },
     
-    credits: {
-      enabled: false
-    },
     xAxis: this.xAxis,
     yAxis: {
       title: {
         text: 'CO₂ Equivalents (kg)'
       }
-    },
-    exporting: {
-      enabled: true,
     },
     tooltip: {
       pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:,.0f} kg</b><br/>',

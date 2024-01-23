@@ -108,9 +108,6 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     
         title: {
             text: '',
-            style: {
-                fontSize: '1em',
-            },
             verticalAlign: 'bottom'
         },
     
@@ -158,7 +155,6 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
                 colorIndex: 0,
             }
         },
-        credits: {enabled: false},
         exporting: {enabled: false},
         series: this.series
     }

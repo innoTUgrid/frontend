@@ -29,19 +29,10 @@ export class EmissionsByScopeComponent implements OnInit {
 
   pieChartProperties: Highcharts.Options = {
     chart: {
-      styledMode: false,
       type: 'pie',
-      style: {
-        fontFamily: 'Lucida Grande, sans-serif',
-        fontSize: '1em',
-      },
     },
     title: {
       text: 'CO₂ Emissions by Scope',
-      margin: 50,
-      style: {
-        fontSize: '0.95em',
-      }
     },
     tooltip: {
       useHTML: true,
@@ -56,8 +47,6 @@ export class EmissionsByScopeComponent implements OnInit {
         `;
       },
     },
-    credits: {enabled: false},
-    exporting: {enabled: true},
     plotOptions: {
       pie: {
         allowPointSelect: true,
