@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
-import { sumAllDataTypes } from '@app/services/data-utils';
 import { DataService } from '@app/services/data.service';
 import { ArtificialDatasetKey, DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
@@ -36,10 +35,10 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   }
 
   xAxis: Highcharts.XAxisOptions[] = [{
-    id: 'first Year',
+    id: 'yearly-emissions',
     type: 'datetime',
     dateTimeLabelFormats: this.dateTimeLabelFormats,
-    tickPixelInterval: 50,
+    tickInterval: 24 * 3600 * 1000 * 365,
   }]
   dataGrouping: Highcharts.DataGroupingOptionsObject = {
     approximation: 'sum',
@@ -64,7 +63,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
 
   chartProperties: Highcharts.Options = {
     chart: {
-      type: 'line',
+      type: this.seriesType,
     },
     title: {
       text: 'Yearly CO₂ Emissions',
@@ -100,6 +99,14 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
 
   loadYearlyData(data: Series[]): Series[] {
     const filtered =  data.filter(series => series.timeUnit === TimeUnit.YEAR)
+    if (filtered.length > 0) {
+      const data = filtered[0].data
+      this.xAxis[0].min = data[0][0]
+      this.xAxis[0].max = data[data.length - 1][0]+1
+      if (this.chart) {
+        this.chart.update({xAxis: this.xAxis}, false, true)
+      }
+    }
 
     return [{
       id: 'Yearly CO₂ Emissions',
