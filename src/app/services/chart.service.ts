@@ -119,11 +119,11 @@ export class ChartService {
 
   calculateSingleValue(data: number[][], average: boolean = true): number {
     let sum = 0
-      for (const datapoint of data) {
-          sum += datapoint[1]
-      }
-      if (average && data.length > 0) sum /= data.length
-      return sum
+    for (const datapoint of data) {
+        sum += datapoint[1]
+    }
+    if (average && data.length > 0) sum /= data.length
+    return sum
   }
 
   updateSingleValue(diagram: SingleValueDiagram, average: boolean = true, data: Series[], timeIntervals: TimeInterval[]) {

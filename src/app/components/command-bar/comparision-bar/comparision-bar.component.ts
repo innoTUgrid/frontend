@@ -105,5 +105,6 @@ export class ComparisionBarComponent {
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
   }
 }

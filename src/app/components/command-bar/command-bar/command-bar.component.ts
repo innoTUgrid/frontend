@@ -123,5 +123,6 @@ export class CommandBarComponent {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = []
   }
 }

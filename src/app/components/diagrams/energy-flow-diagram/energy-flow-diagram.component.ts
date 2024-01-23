@@ -192,5 +192,6 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         })
 
         this.subscriptions.forEach((subscription) => subscription.unsubscribe())
+        this.subscriptions = []
     }
 }

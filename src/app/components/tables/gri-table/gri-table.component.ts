@@ -74,6 +74,7 @@ export class TableBasicExample {
     })
 
     this.subscriptions.forEach((subscription) => {subscription.unsubscribe()})
+    this.subscriptions = []
     this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
