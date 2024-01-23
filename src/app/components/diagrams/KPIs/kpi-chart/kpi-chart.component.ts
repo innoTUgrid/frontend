@@ -15,18 +15,30 @@ export class KpiChartComponent {
     [KPIEndpointKey.COST_SAVINGS, '€'],
     [KPIEndpointKey.AUTARKY, '%'],
     [KPIEndpointKey.SELF_CONSUMPTION, '%'],
+    [KPIEndpointKey.TOTAL_CONSUMPTION, 'kWh'],
+    [KPIEndpointKey.TOTAL_PRODUCTION, 'kWh'],
+    [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'kg'],
+    [KPIEndpointKey.TOTAL_COSTS_PER_KWH, '€']
   ])
 
   icons: Map<string, string> = new Map([
-    [KPIEndpointKey.COST_SAVINGS, 'payments'],
-    [KPIEndpointKey.CO2_SAVINGS, 'energy_savings_leaf'],
+    [KPIEndpointKey.COST_SAVINGS, 'savings'],
+    [KPIEndpointKey.CO2_SAVINGS, 'cloud'],
+    [KPIEndpointKey.TOTAL_CONSUMPTION, 'power'],
+    [KPIEndpointKey.TOTAL_PRODUCTION, 'bolt'],
+    [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'cloud'],
+    [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'payments'],
   ])
 
   titles: Map<string, string> = new Map([
-    [KPIEndpointKey.COST_SAVINGS, 'Cost Savings'],
-    [KPIEndpointKey.CO2_SAVINGS, 'CO₂ Savings'],
+    [KPIEndpointKey.COST_SAVINGS, 'COST SAVINGS'],
+    [KPIEndpointKey.CO2_SAVINGS, 'CO₂ SAVINGS'],
     [KPIEndpointKey.AUTARKY, 'AUTARKY'],
     [KPIEndpointKey.SELF_CONSUMPTION, 'SELF-CONSUMPTION'],
+    [KPIEndpointKey.TOTAL_CONSUMPTION, 'TOTAL CONSUMPTION'],
+    [KPIEndpointKey.TOTAL_PRODUCTION, 'TOTAL PRODUCTION'],
+    [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'TOTAL CO₂ EMISSIONS'],
+    [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'TOTAL COSTS']
   ])
 
   get unit(): string {
