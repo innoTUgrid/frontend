@@ -120,10 +120,11 @@ export class TableBasicExample {
     this.list = [...this.list]
   }
 
-  calculateTotal(datasetKey: DatasetKey, types?: string[]): (interval: TimeInterval) => string {
+  // the typesIncluding property says if the types in the types array should be included or excluded
+  calculateTotal(datasetKey: DatasetKey, types?: string[], typesIncluding: boolean=true): (interval: TimeInterval) => string {
     return (timeInterval: TimeInterval) => {
       const dataset = this.dataService.getDataset(datasetKey).getValue()
-      const series = dataset.series.filter((s) => types ? types.includes(s.type) : true)
+      const series = dataset.series.filter((s) => types ? types.includes(s.type) === typesIncluding : typesIncluding)
       const dataSummed = sumAllDataTypes(series, timeInterval)
       const total = this.chartService.calculateSingleValue(dataSummed, false)
       return ChartService.addThousandsSeparator(total?.toFixed(2).replace('.', ',')) ?? '-'
@@ -152,7 +153,7 @@ export class TableBasicExample {
     // GRI 302-1
     {gri_modul: "GRI 302-1 Energy consumption within the organization", description: "a. Total fuel consumption within the organization from non-renewable sources including fuel types used", unit: "-", year_first:"-", year_second:"-"}, // no data for this
     {gri_modul: "", description: "b. Total fuel consumption within the organization from renewable sources including fuel types used", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // Biogas kwh (consumption endpoint)
-    {gri_modul: "", description: "c. i. Electricity consumption", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // total consumption (consumption endpoint)
+    {gri_modul: "", description: "c. i. Electricity consumption", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS], false), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // total consumption (consumption endpoint)
     {gri_modul: "", description: "c. ii. Heating consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "c. iii. Cooling consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "c. iv. Steam consumption", unit:"-", year_first:"-", year_second:"-"}, // leer
@@ -160,7 +161,7 @@ export class TableBasicExample {
     {gri_modul: "", description: "d. ii. Heating sold", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "d. iii. Cooling sold", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "d. iv. Steam sold", unit:"-", year_first:"-", year_second:"-"}, // leer
-    {gri_modul: "", description: "e. Total energy consumption within the organization", unit:"-", year_first:"-", year_second:"-"}, // leer
+    {gri_modul: "", description: "e. Total energy consumption within the organization", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // leer
     {gri_modul: "", description: "f. Standards, methodologies, assumptions, and/or calculation tools used", unit:"-", year_first:"-", year_second:"-"}, // fulltext TODO
     {gri_modul: "", description: "g. Source of the conversion factors used", unit:"-", year_first:"-", year_second:"-"}, // leer
 
