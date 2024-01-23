@@ -1,5 +1,6 @@
 import { ArtificialDatasetKey, DatasetKey } from "@app/types/kpi.model";
-import { Dataset, Series, TimeInterval, TimeUnit } from "@app/types/time-series-data.model";
+import { Dataset, MetaInfo, Series, TimeInterval, TimeUnit } from "@app/types/time-series-data.model";
+import moment from "moment";
 
 
 export function toSeriesId(endpoint: string, type: string, local: boolean, timeUnit:TimeUnit): string {
@@ -13,6 +14,20 @@ export function filterTimeUnits(series: Series[]): Set<TimeUnit> {
   });
   return timeUnits;
 
+}
+
+export function largestTimeInterval(metaInfo: MetaInfo[]): TimeInterval {
+    let min = Number.POSITIVE_INFINITY
+    let max = Number.NEGATIVE_INFINITY
+
+    for (const meta of metaInfo) {
+        const min_timestamp = moment(meta.min_timestamp)
+        const max_timestamp = moment(meta.max_timestamp)
+        if (min_timestamp.isBefore(min)) min = min_timestamp.valueOf()
+        if (max_timestamp.isAfter(max)) max = max_timestamp.valueOf()
+    }
+
+    return {start: moment(min), end: moment(max), step: 1, stepUnit: TimeUnit.HOUR} as TimeInterval
 }
 
 export function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
