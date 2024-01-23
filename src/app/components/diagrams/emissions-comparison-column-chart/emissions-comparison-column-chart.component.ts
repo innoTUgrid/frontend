@@ -24,7 +24,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
 
   id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
-  kpiName = ArtificialDatasetKey.EMISSIONS_TOTAL;
+  kpiName = ArtificialDatasetKey.TOTAL_EMISSIONS;
 
   registry: DatasetRegistry = {
     id: this.id,

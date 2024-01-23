@@ -48,7 +48,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   }
   seriesType: SeriesTypes = 'line'
 
-  endpointKey: DatasetKey = ArtificialDatasetKey.EMISSIONS_TOTAL;
+  endpointKey: DatasetKey = ArtificialDatasetKey.TOTAL_EMISSIONS;
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.endpointKey,

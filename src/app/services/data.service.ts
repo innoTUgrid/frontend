@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent, MetaInfo } from '@app/types/time-series-data.model';
-import { BehaviorSubject, Observable, forkJoin, map, timeInterval } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
-import { sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
+import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
 import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 
 type Handler<E> = (event: E) => void;
@@ -34,8 +34,9 @@ export class DataService {
 
   private datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
   private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
-    [ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
-    [ArtificialDatasetKey.EMISSIONS_TOTAL, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS]],
+    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
+    [ArtificialDatasetKey.TOTAL_EMISSIONS, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
+    [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
   ])
 
   readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
@@ -60,11 +61,16 @@ export class DataService {
 
     this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.ENERGY_CONSUMPTION_TOTAL))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION))
 
-    this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS).pipe(
-      map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 'Total Emissions', 'emissions-combined'))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.EMISSIONS_TOTAL))
+    combineLatest([this.getDataset(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS), this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)])
+    .pipe(
+      map((datasets) => mergeDatasets(datasets))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED))
+
+    this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED).pipe(
+      map((dataset: Dataset) => toDatasetTotal(dataset, ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, 'Total Emissions', 'emissions-combined'))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_EMISSIONS))
 
     fetchMetaInfo(this.http).subscribe((info: MetaInfo[]) => {
       this.metaInfo.next(info)

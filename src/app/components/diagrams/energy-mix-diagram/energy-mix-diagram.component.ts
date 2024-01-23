@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 
 import * as Highcharts from 'highcharts/highstock';
-import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesEndpointKey } from 'src/app/types/kpi.model';
+import { HighchartsDiagram, DatasetKey, SeriesTypes, TimeSeriesEndpointKey, ArtificialDatasetKey } from 'src/app/types/kpi.model';
 import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
@@ -24,7 +24,8 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   seriesType: SeriesTypes = 'area';
 
   readonly id = "EnergyMixDiagramComponent." + Math.random().toString(36).substring(7);
-  _kpiName: DatasetKey = TimeSeriesEndpointKey.SCOPE_2_EMISSIONS;
+  kpis: DatasetKey[] = [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, TimeSeriesEndpointKey.ENERGY_CONSUMPTION]
+  _kpiName: DatasetKey = this.kpis[0];
 
   get kpiName(): DatasetKey {
     return this._kpiName;
@@ -55,17 +56,17 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
 
   registries: DatasetRegistry[] = [
     {
-      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS),
-      endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, 
+      id:this.getRegistryId(this.id, this.kpis[0]),
+      endpointKey: this.kpis[0], 
     },
     {
-      id:this.getRegistryId(this.id, TimeSeriesEndpointKey.ENERGY_CONSUMPTION),
-      endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 
+      id:this.getRegistryId(this.id, this.kpis[1]),
+      endpointKey: this.kpis[1], 
     }
   ]
 
   ngOnInit(): void {
-    if (this._kpiName) this.changeSeriesType(this._kpiName)
+    if (this._kpiName) this.changeSeriesType(0)
 
     this.registries.forEach(registry => {this.dataService.registerDataset(registry)})
     this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
@@ -111,10 +112,9 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   }
 
   toggleSeries: Highcharts.ExportingButtonsOptionsObject = {
-    // change button text between consumption end emissions when it is clicked
     onclick: () => {
-      if (this.kpiName == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS) this.changeSeriesType(TimeSeriesEndpointKey.ENERGY_CONSUMPTION);
-      else this.changeSeriesType(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS);
+      const index = this.kpis.indexOf(this.kpiName)
+      this.changeSeriesType((index+1) % 2)
     }
   }
 
@@ -144,9 +144,10 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
     },
   };
 
-  changeSeriesType(kpi: DatasetKey) {
-    this.toggleSeries.text = kpi == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS ? 'Show Consumption' : 'Show Emissions';
-    if (this.yAxis.title) this.yAxis.title.text = kpi == TimeSeriesEndpointKey.SCOPE_2_EMISSIONS ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
+  changeSeriesType(index: number) {
+    const kpi = this.kpis[index]
+    this.toggleSeries.text = index === 0 ? 'Show Consumption' : 'Show Emissions';
+    if (this.yAxis.title) this.yAxis.title.text = index === 0 ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
     this.updateFlag = true;
     this.kpiName = kpi;
   }

@@ -27,7 +27,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
   id = "GaugeSeriesCO2Comparision." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
-  datasetKey = ArtificialDatasetKey.EMISSIONS_TOTAL;
+  datasetKey = ArtificialDatasetKey.TOTAL_EMISSIONS;
 
   registry: DatasetRegistry = {
     id: this.id,
