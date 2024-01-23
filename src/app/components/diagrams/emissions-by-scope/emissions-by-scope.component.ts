@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
+import { Dataset, DatasetRegistry } from '@app/types/time-series-data.model';
+import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 
 @Component({
   selector: 'app-emissions-by-scope',
@@ -11,16 +13,43 @@ import { Subscription } from 'rxjs';
 export class EmissionsByScopeComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
   dataService: DataService = inject(DataService);
+  id = "EmissionsByScope." + Math.random().toString(36).substring(7);
 
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
 
-  subscriptions: Subscription[] = [];
-  scope1 = 25647;
-  scope2 = 12550
-  scope3 = 36370
+  registries: DatasetRegistry[] = [
+    { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_1_EMISSIONS },
+    { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS }
+  ]
 
-  
+  subscriptions: Subscription[] = [];
+
+  data = [
+    {
+      name: 'Scope 1',
+      y: 20,
+      colorIndex: 'var(--highcharts-color-4)',
+      color: 'var(--highcharts-color-4)',
+      trend: '↑',
+    },
+    {
+      name: 'Scope 2',
+      y: 40,
+      colorIndex: 'var(--highcharts-color-0)',
+      color: 'var(--highcharts-color-0)',
+      trend: '↓', 
+    },
+  ]
+
+  series: Highcharts.SeriesOptionsType[] = [
+    {
+      name: 'Emissions',
+      colorByPoint: true,
+      data: this.data,
+      type: 'pie',
+    } as any,
+  ]
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     if (!chart.series) chart.showLoading()
@@ -85,46 +114,23 @@ export class EmissionsByScopeComponent implements OnInit {
       },
     },
     
-    series: [
-      {
-        name: 'Emissions',
-        colorByPoint: true,
-        data: [
-          {
-            name: 'Scope 1',
-            y: this.scope1,
-            colorIndex: 'var(--highcharts-color-4)',
-            color: 'var(--highcharts-color-4)',
-            trend: '↑',
-          },
-          {
-            name: 'Scope 2',
-            y: this.scope2,
-            colorIndex: 'var(--highcharts-color-0)',
-            color: 'var(--highcharts-color-0)',
-            trend: '↓', 
-          },
-          {
-            name: 'Scope 3',
-            y: this.scope3,
-            colorIndex: 'var(--highcharts-color-12)',
-            color: 'var(--highcharts-color-12)',
-            trend: '↑', 
-          },
-        ] as any,
-        type: 'pie',
-      },
-    ] as any,
+    series: this.series,
   };
   
 
   constructor() {
   }
 
+
+
   ngOnInit() {
+    for (const [index, registry] of this.registries.entries()) {
+      this.dataService.registerDataset(registry)
+    }
   }
 
   ngOnDestroy() {
+    this.registries.forEach((registry) => this.dataService.unregisterDataset(registry))
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
   }
