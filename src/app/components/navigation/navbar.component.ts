@@ -13,10 +13,11 @@ export class NavbarComponent {
 
   public menuItems: MenuItem[] = [
     { name: 'Overview', icon: 'gallery_thumbnail', route: '/overview' },
-    { name: 'CO₂ Emissions', icon: 'compare_arrows', route: '/comparison' },
+    { name: 'CO₂ Emissions', icon: 'cloud', route: '/comparison' },
+    { name: 'Energy Flow', icon: 'timeline', route: '/energyflow' },
     { name: 'Reporting', icon: 'assignment', route: '/reporting' },
     { name: 'Datasets', icon: 'dataset', route: '/datasets' },
-    { name: 'Energy Flow', icon: 'timeline', route: '/energyflow' },
+    
   ];
 
   public menuItemsOrg: MenuItem[] = [
