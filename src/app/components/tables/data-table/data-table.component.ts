@@ -117,7 +117,6 @@ export class DataTableComponent {
       { header: 'Name', field: 'name', showExpand: true },
       { header: 'Type', field: 'type' },
       { header: 'Unit', field: 'unit' },
-      { header: 'Consumption', field: 'consumption', type: 'boolean'},
       { header: 'Local', field: 'local', type: 'boolean'},
     ];
 
