@@ -1,6 +1,11 @@
 <mat-card class="kpi-card">
     <mat-card-header class="kpi-header">
-        <mat-icon inline [fontIcon]="icon"></mat-icon>
+        <span 
+            [ngClass]="{'material-symbols-outlined': outlined, 'material-icons': !outlined}" 
+            class="kpi-icon"
+        >
+            {{icon}}
+        </span>
     </mat-card-header>
     <mat-card-content class="kpi-content">
         <span>{{valueFormatted}} {{unit}}</span>

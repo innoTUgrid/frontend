@@ -30,6 +30,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() title: string = '';
   @Input() icon: string = '';
   @Input() unit: string = '';
+  @Input() outlined: boolean = true;
   
   _kpiName?: DatasetKey;
   readonly id = "SingleValueChartComponent." + Math.random().toString(36).substring(7);
