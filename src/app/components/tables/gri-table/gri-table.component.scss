@@ -1,6 +1,4 @@
-.dataset-container{
-  margin: min(2vw,2vh);
-}
+@import '/src/styles.scss';
 
 .custom-background-color {
   background-color: #ECFCFF; 
@@ -11,14 +9,7 @@
   justify-content: space-between;
   align-items: space-between;
   width: 100%;
-  margin-bottom: 1rem;
-}
-
-.header-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  flex-grow: 1; 
-  width: 100%;
+  margin-top: 2em;
 }
 
 .header-actions {
@@ -26,4 +17,9 @@
   align-items: center;
   justify-content: flex-end;
   flex-grow: 1;
+  margin-right: 2em;
+}
+
+.table {
+  margin: 2em;
 }

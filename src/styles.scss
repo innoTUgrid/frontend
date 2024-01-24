@@ -112,3 +112,12 @@ $hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions compariso
 // that you are using.
 @include mat.all-component-themes($frontend-theme);
 @include mtx.all-component-themes($frontend-theme);
+
+
+// this is the style of the page header
+.title {
+  height: 30px;
+  font-size: $font-size-view-header;
+  font-weight: normal;
+  margin-left: 2em;
+}

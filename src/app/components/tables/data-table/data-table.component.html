@@ -1,22 +1,24 @@
 <div>
     <div class="header">
-        <div class="header-title">
+        <div id="table-header-title" class="title">
             {{title}}
             <app-info-button [popover]="popover"></app-info-button>
         </div>  
-        <app-export-button color="primary" [dataLoader]="toCSVArray.bind(this)" [fileName]="this.title + '.csv'"></app-export-button>
+        <app-export-button class="header-actions" color="primary" [dataLoader]="toCSVArray.bind(this)" [fileName]="this.title + '.csv'"></app-export-button>
     </div>
 
-    <mtx-grid 
-        [data]="data" 
-        [columns]="columns" 
-        [expandable]="true" 
-        [expansionTemplate]="expansionTpl"
-        [pageOnFront]="false"
-        [showPaginator]="false"
-        (expansionChange)="onExpansionChange($event)"
-    >
-    </mtx-grid>
+    <div class="table">
+        <mtx-grid 
+            [data]="data" 
+            [columns]="columns" 
+            [expandable]="true" 
+            [expansionTemplate]="expansionTpl"
+            [pageOnFront]="false"
+            [showPaginator]="false"
+            (expansionChange)="onExpansionChange($event)"
+        >
+        </mtx-grid>
+    </div>
 </div>
 
 <ng-template #expansionTpl let-row>

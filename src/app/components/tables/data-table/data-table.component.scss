@@ -1,22 +1,21 @@
+@import '/src/styles.scss';
+
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: space-between;
-    width: 100%;
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: space-between;
+  width: 100%;
+  margin-top: 2em;
+}
   
-  .header-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    flex-grow: 1; 
-    width: 100%;
-  }
-  
-  .header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-grow: 1;
-  }
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+  margin-right: 2em;
+}
+
+.table {
+  margin: 2em;
+}

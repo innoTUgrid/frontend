@@ -1,20 +1,22 @@
 
 <div class="header">
-    <div class="header-title">
+    <div class="title">
         {{title}}
         <app-info-button [popover]="popover"></app-info-button>
     </div>
       
-    <app-export-button color="primary" [dataLoader]="toCSVArray.bind(this)" fileName="GRI_Report.csv"></app-export-button>
+    <app-export-button class="header-actions" color="primary" [dataLoader]="toCSVArray.bind(this)" fileName="GRI_Report.csv"></app-export-button>
 </div>
 
-<mtx-grid 
-    [data]="list"
-    [columns]="columns"
-    [showPaginator]="false"
-    [pageSize]="list.length"
-    [showColumnMenuButton]="false"
-    [loading]="loading"
->
-</mtx-grid>
+<div class="table">
+    <mtx-grid 
+        [data]="list"
+        [columns]="columns"
+        [showPaginator]="false"
+        [pageSize]="list.length"
+        [showColumnMenuButton]="false"
+        [loading]="loading"
+    >
+    </mtx-grid>
+</div>
 
