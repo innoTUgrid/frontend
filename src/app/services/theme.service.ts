@@ -30,6 +30,7 @@ export class ThemeService {
     ['solar', this.solarColor],
     ['brown-coal', this.brownCoalColor],
     ['natural-gas', this.naturalGasColor],
+    ['gas', this.naturalGasColor],
     ['other-conventionals', this.otherConventionalColor],
     ['hard-coal', this.hardCoalColor],
     ['coal', this.brownCoalColor],
