@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
@@ -29,6 +29,8 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   subscriptions: Subscription[] = [];
   datasetKey = ArtificialDatasetKey.TOTAL_EMISSIONS;
 
+  @Input() timeIntervalIndices: number[] = [0, 1];
+
   registry: DatasetRegistry = {
     id: this.id,
     endpointKey: this.datasetKey,
@@ -45,13 +47,15 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   }
 
   get percentageChange(): number | undefined {
-    if (this.value.length < 2) {
+    const i1 = this.timeIntervalIndices[0]
+    const i2 = this.timeIntervalIndices[1]
+    if (Math.max(i1,i2) >= this.value.length) {
       return undefined
     }
-    if (this.value[0] === this.value[1]) return 0
-    if (this.value[0] === 0) return Number.POSITIVE_INFINITY
-    const diff = this.value[1] - this.value[0]
-    return diff/this.value[0] * 100
+    if (this.value[i1] === this.value[i2]) return 0
+    if (this.value[i1] === 0) return Number.POSITIVE_INFINITY
+    const diff = this.value[i2] - this.value[i1]
+    return diff/this.value[i1] * 100
   }
 
   constructor() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
@@ -21,6 +21,8 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
 
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
+
+  @Input() timeIntervalIndices: number[] = [0, 1];
 
   id = "EmissionsComparisonColumnChartComponent." + Math.random().toString(36).substring(7);
   subscriptions: Subscription[] = [];
@@ -132,12 +134,12 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   }
 
   splitYearlyData(data: Series[]): Series[] {
-    const intervals = this.dataService.getCurrentComparisionTimeIntervals()
+    const intervals = this.dataService.timeInterval.getValue().filter((interval, index) => this.timeIntervalIndices.includes(index))
     let newData = data
     
     if (intervals.length >= 2) {
       newData = []
-      for (const [index, interval] of [intervals[0], intervals[1]].entries()) {
+      for (const [index, interval] of intervals.entries()) {
         const relevantSeries: Series|undefined = data.find(series => series.timeUnit === interval.stepUnit)
         let dataSummed: number[][] = []
         if (relevantSeries) {

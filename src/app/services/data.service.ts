@@ -90,16 +90,6 @@ export class DataService {
     return this.timeInterval.getValue()[0]
   }
 
-  getCurrentComparisionTimeIntervals(timeInterval?: TimeInterval[]): TimeInterval[] {
-    if (timeInterval) return timeInterval.slice(0, 2)
-    const timeIntervals = this.timeInterval.getValue()
-    if (timeIntervals.length >= 2) {
-      return timeIntervals.slice(0, 2)
-    } else {
-      return timeIntervals
-    }
-  }
-
   getDataset(key: string): BehaviorSubject<Dataset> {
     let dataset = this.timeSeriesData.get(key)
     if (!dataset) {
