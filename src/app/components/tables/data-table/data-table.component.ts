@@ -3,7 +3,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { Dataset, DatasetRegistry, Series, TimeUnit } from '@app/types/time-series-data.model';
+import { Dataset, DatasetRegistry, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { MtxPopover } from '@ng-matero/extensions/popover';
 import moment from 'moment';
@@ -62,6 +62,12 @@ class DataTableSeries implements Series {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
     this.updateDataFiltered()
+  }
+
+  filterDataOutsideInterval(timeInterval: TimeInterval) {
+    this.data = this.data.filter((entry) => {
+      return entry[0] >= timeInterval.start.valueOf() && entry[0] <= timeInterval.end.valueOf()
+    })
   }
   
   updateDataFiltered() {
@@ -148,7 +154,11 @@ export class DataTableComponent {
   }
 
   updateData(newData: Series[]) {
-    this.data = newData.map((data) => new DataTableSeries(data))
+    this.data = newData.map((data) => {
+      const newData = new DataTableSeries(data)
+      newData.filterDataOutsideInterval(this.dataService.getCurrentTimeInterval())
+      return newData
+    })
   }
 
   subsciptions: any[] = []
@@ -156,6 +166,12 @@ export class DataTableComponent {
     if (this.kpiName) {
       this.dataService.getDataset(this.kpiName).subscribe((dataset: Dataset) => {
         this.updateData(this.chartService.filterOtherStepUnits(dataset.series))
+      })
+      this.dataService.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
+        this.data.forEach((series) => {
+          series.filterDataOutsideInterval(this.dataService.getCurrentTimeInterval())
+          series.updateDataFiltered()
+        })
       })
     }
   }
