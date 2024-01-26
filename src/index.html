@@ -13,5 +13,15 @@
 </head>
 <body class="mat-typography">
   <app-root></app-root>
+  <script>
+    window.onload = function() {
+      var element = document.createElement("script");
+      element.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+      document.body.appendChild(element);
+      var element2 = document.createElement("script");
+      element2.src = "https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js";
+      document.body.appendChild(element2);
+    };  
+  </script>
 </body>
 </html>

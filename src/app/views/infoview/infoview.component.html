@@ -1,7 +1,85 @@
-<pdf-viewer 
-    *ngIf="pdfSrc"
-    [src]="pdfSrc"
-    [render-text]="true"
-    [original-size]="false"
-    style="width: 100%; height: 100%"
-  ></pdf-viewer>
+
+<div class = "info">
+  <header>
+    <h1>Information Page [First draft]</h1>
+  </header>
+  
+  <section id="introduction">
+    <h2>Introduction</h2>
+
+    <p>The microgrid is a local electricity grid that generates local energy with solar panels and biogas but is also fed with electricity from the grid when necessary and feeds electricity into the grid when there is a local surplus. The microgrid supplies consumers such as houses and charging stations for electric vehicles.</p>
+
+    <p>The website presents visualizations depicting the energy consumption and production of the microgrid, along with details on emissions and other key metrics. This page provides the documentation.  The following offers the documentation for these visualizations, metrics and their sources.</p>
+
+    <p>[Electricity and Heating?]</p>
+
+  </section>
+
+  <section id="data-sources">
+    <h2>Data Sources</h2>
+    <p><b>Emission factors: ipcc 2014 lifecylce emissions, median https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf#page=7</b></p>
+    <p><b>Grid electricity prices: smard (und mix)</b></p>
+    <p><b>Grid energy mix: smard</b></p>
+    <p><b>Operational costs: </b></p>
+    <p>... (more?)</p>
+  </section>
+
+  
+  <section id="metrics">
+    <h2>Key metrics and their calculations</h2>
+
+    <!-- Emissions -->
+
+    <h3>Emissions</h3>
+    To calculate the emissions, the consumed energy of one source is multiplied with its emission factor. Direct emissions from local energy generation are calculated (Scope 1), as well as indirect emissions from purchased energy (Scope 2). These scopes are defined by the Greenhouse Gas Protocol. 
+
+
+    <h4>Direct emissions: Scope 1</h4>
+
+    <p>The formula calculates direct emissions (Scope 1) from local energy sources. It sums up emissions from each local energy source \(i\) by considering the energy generated from each source and multiplying it by the corresponding emission factor.</p>
+
+    <p>Formula: \(S_1 = \sum_{{LocalEnergySource}_i}({GeneratedEnergy}_i * {EmissionFactor}_i)\)</p>
+
+    <h4>Indirect emissions: Scope 2</h4>
+
+    <p>The formula calculates indirect emissions (Scope 2) from purchased electricity by summing up emissions from each external energy source \(i\). It considers the amount of purchased electricity, the share from each source, and the emission factor for each source to estimate total emissions.</p>
+
+    <p>Formula: \(S_2 =  \sum_{{ExternalEnergySource}_i}({PurchasedElectricity}  * {ShareInMix}_i *{EmissionFactor}_i)\)</p>
+
+    <!-- KPI -->
+
+    <h3>KPI metrics</h3>
+
+    <h4>Self Consumption</h4>
+    <p> The self consumption KPI indicates what portion of the electricity consumption is supplied by the energy generated within the microgrid, with a maximum value of 1 (or 100%). </p>
+    <p> Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)</p>
+
+    <h4>Autarky</h4>
+    <p>The autarky KPI is a concept closely related to self consumption. It measures the percentage to which the microgrid is self-sufficient in terms of energy production.</p>
+    <p>Formula: \(K_2 = min(\frac{{ '{' }}GeneratedEnergy{{ '}' }}{{ '{' }}Consumption{{ '}' }}, 1)\)</p>
+
+    <h4>CO₂ Savings</h4>
+    <p>The formula calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid (summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts the microgrid's own direct emissions from this value, i.e. scope 1.</p>
+    <p>Formula: \(K_3 = \sum_{{ExternalEnergySource}_i}({GeneratedEnergy}* {ShareInMix}_i * {EmissionFactor}_i) - S_1\)</p>
+
+    <h4>Cost Savings</h4>
+    <p>The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices.</p>
+    <p>Formula: \(K_4 =  GeneratedEnergy * ElectricityPrice\)</p>
+  </section>
+  
+  <section id="gri-report">
+    <h2>GRI Report</h2>
+    <p>A GRI report is a sustainability document guided by the Global Reporting Initiative standards, used by organizations to disclose their environmental, social, and governance (ESG) impacts. The GRI report of this website covers the modules 302-1 (Energy Consumption within the Organization), 305-1 (Direct Greenhouse Gas Emissions), and 305-2 (Energy Indirect Greenhouse Gas Emissions).</p>
+  </section>
+  
+  <section id="chart-descriptions">
+    <h2>Chart Descriptions</h2>
+    <h4>Page: Overview</h4>
+    <p><b>Upper left: </b> The chart shows the consumption within the microgrid. </p>
+    <h4>Page:CO₂ Emissions</h4>
+    <h4>Page: Energy flow</h4>
+    <p>TODO Provide a section-by-section breakdown of each chart on the website. Explain the purpose of each chart and the insights it provides. Detail any specific data points or trends that users should pay attention to.</p>
+  </section>
+
+  </div>
+  
