@@ -44,6 +44,7 @@ export class TableBasicExample {
 
   registries: DatasetRegistry[] = [
     {id:this.id, endpointKey: TimeSeriesEndpointKey.ENERGY_CONSUMPTION},
+    {id:this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_1_EMISSIONS},
     {id:this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS},
   ]
 
@@ -169,9 +170,9 @@ export class TableBasicExample {
     {gri_modul: "", description: "g. Source of the conversion factors used", unit:"-", year_first:"-", year_second:"-"}, // leer
 
     // GRI 305-1
-    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-"}, // total scope 1 emissions 
+    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS], false)}, // total scope 1 emissions 
     {gri_modul: "", description: "b. Gases included in the calculation", unit:"-", year_first:"-", year_second:"-"}, // fixed value 
-    {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}, // emissions of biogas
+    {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // emissions of biogas
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // leer
     {gri_modul: "", description: "e. Source of the emission factors and the global warming potential (GWP) rates used, or a reference to the GWP source", unit:"-", year_first:"-", year_second:"-"}, // source of emission factors, not yet implemented
     {gri_modul: "", description: "f. Consolidation approach for emissions; whether equity share, financial control, or operational control", unit:"-", year_first:"-", year_second:"-"}, // leer
