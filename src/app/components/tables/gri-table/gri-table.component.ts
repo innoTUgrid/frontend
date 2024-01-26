@@ -1,4 +1,4 @@
-import {Component,ViewChild, ElementRef, Input, inject} from '@angular/core';
+import {Component, Input, inject} from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
@@ -30,7 +30,6 @@ export interface Element {
 })
 
 export class TableBasicExample {
-  @ViewChild('TABLE') table!: ElementRef;
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
   themeService: ThemeService = inject(ThemeService);
