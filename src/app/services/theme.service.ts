@@ -55,7 +55,7 @@ export class ThemeService {
     ['offwind', 'Offshore Wind'],
     ['hydro', 'Hydro Power'],
     ['onwind', 'Onshore Wind'],
-    ['solar', 'Solar'],
+    ['solar', 'Solar (imported)'],
     ['solar-local', 'Solar (local)'],
     ['brown-coal', 'Brown Coal'],
     ['natural-gas', 'Natural Gas'],
