@@ -19,6 +19,8 @@ export class ThemeService {
   otherConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-9').trim();
   hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
   pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
+  importedEnergyRenewablesColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-19').trim();
+  importedEnergyConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-20').trim();
 
   colorMap = new Map<string, string>([
     ['biogas', this.biogasColor],
@@ -36,6 +38,8 @@ export class ThemeService {
     ['coal', this.brownCoalColor],
     ['pump-storage', this.pumpStorageColor],
     ['total-external', this.otherConventionalColor],
+    ['total-renewable', this.importedEnergyRenewablesColor],
+    ['total-non-renewable', this.importedEnergyConventionalColor],
   ]);
 
   unitToName = new Map([

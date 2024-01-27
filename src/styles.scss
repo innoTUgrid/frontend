@@ -76,6 +76,10 @@ $hc-red: #F94144;
 $hc-year-shadow-comparison-chart: #d1d2d9; // has to be inserted in emissions comparison chart 
 $hc-year-comparison-chart: #6494dc; // has to be inserted in emissions comparison chart 
 $hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions comparison chart 
+$hc-renewable-energy: #879a8a; // Renewable Energy #879a8a  849684
+$hc-non-renewable-energy: #908e98; // Non-Renewable Energy
+
+
 
 :root {
     --highcharts-color-0: #{$hc-biogas};
@@ -97,6 +101,8 @@ $hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions compariso
     --highcharts-color-16: #{$hc-year-shadow-comparison-chart};
     --highcharts-color-17: #{$hc-year-comparison-chart};
     --highcharts-color-18: #{$hc-mean-comparison-chart};
+    --highcharts-color-19: #{$hc-renewable-energy};
+    --highcharts-color-20: #{$hc-non-renewable-energy};
 
     // this is currently only used for the average line in column charts
     --highcharts-neutral-color-40: #ff0000; 

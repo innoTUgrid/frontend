@@ -91,24 +91,38 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
 
 
   aggregateExternalData(data: Series[]): Series[] {
-    const dataFiltered = this.chartService.filterOtherStepUnits(data)
-    const currentTimeInterval = this.dataService.getCurrentTimeInterval()
-
-    const externalEnergy = sumAllDataTypes(dataFiltered.filter(entry => !entry.local))
-    const type = 'total-external'
+    const dataFiltered = this.chartService.filterOtherStepUnits(data);
+    const currentTimeInterval = this.dataService.getCurrentTimeInterval();
+  
+    const renewableSources = ['biogas-local', 'biogas', 'biomass', 'other-renewables', 'offwind', 'hydro', 'onwind', 'solar', 'solar-local'];
+    
+    const importedEnergy = dataFiltered.filter(entry => !entry.local);
+    const renewableEnergy = importedEnergy.filter(entry => renewableSources.includes(entry.type));
+    const nonRenewableEnergy = importedEnergy.filter(entry => !renewableSources.includes(entry.type));
+  
     const newData: Series[] = [
       {
-      id: toSeriesId(this.registry.endpointKey, type, false, currentTimeInterval.stepUnit),
-      name: 'Imported Energy',
-      type: type,
-      data: externalEnergy,
-      timeUnit: this.dataService.getCurrentTimeInterval().stepUnit,
-      xAxis: 0
-    }, 
-    ...dataFiltered.filter(entry => entry.local)]
-
-    return newData
+        id: toSeriesId(this.registry.endpointKey, 'renewable', false, currentTimeInterval.stepUnit),
+        name: 'Imported Energy (renewable)',
+        type: 'total-renewable',
+        data: sumAllDataTypes(renewableEnergy),
+        timeUnit: currentTimeInterval.stepUnit,
+        xAxis: 0,
+      },
+      {
+        id: toSeriesId(this.registry.endpointKey, 'non-renewable', false, currentTimeInterval.stepUnit),
+        name: 'Imported Energy (non-renewable)',
+        type: 'total-non-renewable',
+        data: sumAllDataTypes(nonRenewableEnergy),
+        timeUnit: currentTimeInterval.stepUnit,
+        xAxis: 0,
+      },
+      ...dataFiltered.filter(entry => entry.local),
+    ];
+  
+    return newData;
   }
+  
 
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
