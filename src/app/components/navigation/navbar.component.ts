@@ -21,7 +21,6 @@ export class NavbarComponent {
   ];
 
   public menuItemsOrg: MenuItem[] = [
-    { name: 'Settings', icon: 'settings', route: '/settings' },
     { name: 'Info', icon: 'info', route: '/info' },
   ];
 
