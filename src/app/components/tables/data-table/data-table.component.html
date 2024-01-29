@@ -23,9 +23,9 @@
 
 <ng-template #expansionTpl let-row>
     <mtx-grid 
-        [data]="row.dataFiltered" 
+        [data]="row.dataPaginated" 
         [columns]="subColumns" 
-        [length]="row.data.length"
+        [length]="row.length"
         [pageSizeOptions]="row.pageSizeOptions"
         [pageOnFront]="false"
         (page)="row.nextPage($event)"
