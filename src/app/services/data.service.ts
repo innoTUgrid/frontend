@@ -261,7 +261,8 @@ export class DataService {
       } else {
         fetchTimeSeriesData(this.http, endpointKey, timeIntervals).subscribe((data: Series[]) => {
           for (const series of data) {
-            series.name = this.themeService.energyTypesToName.get(series.type + (series.local ? '-local' : '')) || series.name
+            series.name = this.themeService.getEnergyTypeColor(series.type, series.local) || series.name
+            series.color = this.themeService.colorMap.get(series.type)
           }
           this.insertNewData(endpointKey, data, timeIntervals)
         })

@@ -63,4 +63,9 @@ export class ThemeService {
     ['pumped-storage', 'Pump Storage'],
     ['gas', 'Gas'],
   ])
+
+  getEnergyTypeColor(type: string, local: boolean = false) {
+    return this.energyTypesToName.get(type + (local ? '-local' : ''))
+
+  }
 }

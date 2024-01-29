@@ -54,67 +54,6 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
           '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} kWh',
             // nodeFormat: '{point.name}: {point.sum:.2f} quads'
         },
-
-        series: [{
-            keys: ['from', 'to', 'weight'],
-            nodes: [
-                {
-                    id: 'Solar',
-                    colorIndex: 6
-                },
-                {
-                    id: 'Wind',
-                    colorIndex: 5
-                },
-                {
-                    id: 'Brown Coal',
-                    colorIndex: 7
-
-                },
-                {
-                    id: 'Biogas',
-                    colorIndex: 0
-                },
-                {
-                    id: 'Microgrid 1',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Microgrid 2',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Microgrid 3',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Total Consumption',
-                    colorIndex: 2
-                }
-
-            ],
-
-            data: [
-                { from: 'Solar', to: 'Microgrid 1', weight: 6, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 1', weight: 2, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 1', weight: 3, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 1', weight: 6, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 2', weight: 3, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 2', weight: 1, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 2', weight: 2, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 2', weight: 4, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 3', weight: 3, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 3', weight: 1, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 3', weight: 2, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 3', weight: 4, colorIndex: 0},
-                { from: 'Microgrid 1', to: 'Total Consumption', weight: 10, colorIndex: 3},
-                { from: 'Microgrid 2', to: 'Total Consumption', weight: 10, colorIndex: 3},
-                { from: 'Microgrid 3', to: 'Total Consumption', weight: 10, colorIndex: 3},
-            ],
-            type: 'sankey',
-            name: 'Energy Flow'
-        }] as Highcharts.SeriesSankeyOptions[],
-    
     }
 
     updateData(datasets: Dataset[]) {
@@ -134,27 +73,27 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         )
 
         const nodes: Highcharts.SeriesSankeyNodesOptionsObject[] = consumptionSeries.map(
-            (series: Series) => {return {id:series.name, color: this.themeService.colorMap.get(series.type)}}
+            (series: Series) => {return {id:series.name, color: series.color}}
         )
-        nodes.push({id: 'Heat', colorIndex: 3})
-        nodes.push({id: 'Electricity', colorIndex: 3})
+        nodes.push({id: 'Heat', color: this.themeService.windOffshoreColor})
+        nodes.push({id: 'Electricity', color: this.themeService.windOnshoreColor})
         nodes.push(...rawSeries.map(
-            (series: Series) => {return {id:series.name, color: this.themeService.colorMap.get(series.type)}}
+            (series: Series) => {return {id:series.name, color: series.color}}
         ))
 
-        const edges = []
+        const edges: Highcharts.SeriesSankeyPointOptionsObject[] = []
         for (const [index, series] of consumptionSeries.entries()) {
             if (series.type === DataTypes.BIOGAS) {
-                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7})
-                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3})
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3, color: series.color})
+                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7, color: series.color})
             } else {
-                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index]})
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index], color: series.color})
             }
         }
 
         for (const [index, series] of rawSeries.entries()) {
-            edges.push({from: 'Heat', to: series.name, weight: consumptionTotalByConsumer[index] * 0.7})
-            edges.push({from: 'Electricity', to: series.name, weight: consumptionTotalByConsumer[index] * 0.3})
+            edges.push({from: 'Heat', to: series.name, weight: consumptionTotalByConsumer[index] * 0.7, color: series.color})
+            edges.push({from: 'Electricity', to: series.name, weight: consumptionTotalByConsumer[index] * 0.3, color: series.color})
         }
 
         this.chartProperties.series = [{

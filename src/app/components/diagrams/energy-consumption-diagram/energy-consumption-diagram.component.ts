@@ -6,6 +6,7 @@ import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series } from '@app/types/time-series-data.model';
 import { sumAllDataTypes, toSeriesId } from '@app/services/data-utils';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
   selector: 'app-energy-consumption-diagram',
@@ -17,6 +18,7 @@ export class EnergyConsumptionDiagramComponent implements HighchartsDiagram {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
+  themeService: ThemeService = inject(ThemeService);
   kpiName: DatasetKey = TimeSeriesEndpointKey.ENERGY_CONSUMPTION;
 readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).substring(7);
 
@@ -103,6 +105,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
       type: type,
       data: externalEnergy,
       timeUnit: this.dataService.getCurrentTimeInterval().stepUnit,
+      color: this.themeService.colorMap.get(type),
       xAxis: 0
     }, 
     ...dataFiltered.filter(entry => entry.local)]
