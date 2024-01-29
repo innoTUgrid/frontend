@@ -29,11 +29,12 @@ export class ThemeService {
     ['onwind', this.windOnshoreColor],
     ['solar', this.solarColor],
     ['brown-coal', this.brownCoalColor],
+    ['lignite', this.brownCoalColor],
     ['natural-gas', this.naturalGasColor],
     ['gas', this.naturalGasColor],
     ['other-conventionals', this.otherConventionalColor],
     ['hard-coal', this.hardCoalColor],
-    ['coal', this.brownCoalColor],
+    ['coal', this.hardCoalColor],
     ['pump-storage', this.pumpStorageColor],
     ['total-external', this.otherConventionalColor],
   ]);
@@ -54,11 +55,12 @@ export class ThemeService {
     ['solar', 'Solar'],
     ['solar-local', 'Solar (local)'],
     ['brown-coal', 'Brown Coal'],
+    ['lignite', 'Brown Coal'],
     ['natural-gas', 'Natural Gas'],
     ['other-conventionals', 'Other Conventionals'],
     ['hard-coal', 'Hard Coal'],
+    ['coal', 'Hard Coal'],
     ['pumped-storage', 'Pump Storage'],
-    ['coal', 'Coal'],
     ['gas', 'Gas'],
   ])
 }
