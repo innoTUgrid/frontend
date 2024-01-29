@@ -62,6 +62,7 @@ import { ComparisionBarComponent } from './components/command-bar/comparision-ba
 import { ExportButtonComponent } from './components/buttons/export-button/export-button.component';
 import { KpiChartComponent } from './components/diagrams/KPIs/kpi-chart/kpi-chart.component';
 import { InfoButtonComponent } from './components/buttons/info-button/info-button.component';
+import { MathjaxComponent } from './components/mathjax/mathjax.component';
 
 
 @NgModule({
@@ -93,6 +94,7 @@ import { InfoButtonComponent } from './components/buttons/info-button/info-butto
     ExportButtonComponent,
     KpiChartComponent,
     InfoButtonComponent,
+    MathjaxComponent,
   ],
   imports: [
     BrowserModule,

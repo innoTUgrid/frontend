@@ -38,13 +38,13 @@
 
     <p>The formula calculates direct emissions (Scope 1) from local energy sources. It sums up emissions from each local energy source \(i\) by considering the energy generated from each source and multiplying it by the corresponding emission factor.</p>
 
-    <p>Formula: \(S_1 = \sum_{{LocalEnergySource}_i}({GeneratedEnergy}_i * {EmissionFactor}_i)\)</p>
+    <mathjax mathString="Formula: \(S_1 = \sum_{{LocalEnergySource}_i}({GeneratedEnergy}_i * {EmissionFactor}_i)\)"/>
 
     <h4>Indirect emissions: Scope 2</h4>
 
     <p>The formula calculates indirect emissions (Scope 2) from purchased electricity by summing up emissions from each external energy source \(i\). It considers the amount of purchased electricity, the share from each source, and the emission factor for each source to estimate total emissions.</p>
 
-    <p>Formula: \(S_2 =  \sum_{{ExternalEnergySource}_i}({PurchasedElectricity}  * {ShareInMix}_i *{EmissionFactor}_i)\)</p>
+    <mathjax mathString="Formula: \(S_2 =  \sum_{{ExternalEnergySource}_i}({PurchasedElectricity}  * {ShareInMix}_i *{EmissionFactor}_i)\)"/>
 
     <!-- KPI -->
 
@@ -52,19 +52,19 @@
 
     <h4>Self Consumption</h4>
     <p> The self consumption KPI indicates what portion of the electricity consumption is supplied by the energy generated within the microgrid, with a maximum value of 1 (or 100%). </p>
-    <p> Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)</p>
+    <mathjax mathString="Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)" />
 
     <h4>Autarky</h4>
     <p>The autarky KPI is a concept closely related to self consumption. It measures the percentage to which the microgrid is self-sufficient in terms of energy production.</p>
-    <p>Formula: \(K_2 = min(\frac{{ '{' }}GeneratedEnergy{{ '}' }}{{ '{' }}Consumption{{ '}' }}, 1)\)</p>
+    <mathjax mathString="Formula: \(K_2 = min(\frac{{ '{' }}GeneratedEnergy{{ '}' }}{{ '{' }}Consumption{{ '}' }}, 1)\)" />
 
     <h4>CO₂ Savings</h4>
     <p>The formula calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid (summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts the microgrid's own direct emissions from this value, i.e. scope 1.</p>
-    <p>Formula: \(K_3 = \sum_{{ExternalEnergySource}_i}({GeneratedEnergy}* {ShareInMix}_i * {EmissionFactor}_i) - S_1\)</p>
+    <mathjax mathString="Formula: \(K_3 = \sum_{{ExternalEnergySource}_i}({GeneratedEnergy}* {ShareInMix}_i * {EmissionFactor}_i) - S_1\)" />
 
     <h4>Cost Savings</h4>
     <p>The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices.</p>
-    <p>Formula: \(K_4 =  GeneratedEnergy * ElectricityPrice\)</p>
+    <mathjax mathString="Formula: \(K_4 =  GeneratedEnergy * ElectricityPrice\)" />
   </section>
   
   <section id="gri-report">
