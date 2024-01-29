@@ -20,6 +20,25 @@ export class ThemeService {
   hardCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-10').trim();
   pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
 
+  colors = [
+    this.biogasColor,
+    this.biomassColor,
+    this.otherRenewablesColor,
+    this.windOffshoreColor,
+    this.hydroPowerColor,
+    this.windOnshoreColor,
+    this.solarColor,
+    this.brownCoalColor,
+    this.naturalGasColor,
+    this.otherConventionalColor,
+    this.hardCoalColor,
+    this.pumpStorageColor,
+  ]
+
+  getColorIndex(type: string) {
+    return this.colors.indexOf(this.colorMap.get(type) || '')
+  }
+
   colorMap = new Map<string, string>([
     ['biogas', this.biogasColor],
     ['biomass', this.biomassColor],

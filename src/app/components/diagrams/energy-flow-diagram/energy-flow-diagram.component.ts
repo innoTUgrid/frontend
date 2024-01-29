@@ -73,27 +73,31 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         )
 
         const nodes: Highcharts.SeriesSankeyNodesOptionsObject[] = consumptionSeries.map(
-            (series: Series) => {return {id:series.name, color: series.color}}
+            (series: Series) => {
+                const colorIndex = this.themeService.colors.indexOf(series.color || '')
+                return {id:series.name, colorIndex: colorIndex}
+            }
         )
-        nodes.push({id: 'Heat', color: this.themeService.windOffshoreColor})
-        nodes.push({id: 'Electricity', color: this.themeService.windOnshoreColor})
+        nodes.push({id: 'Heat', colorIndex: 3})
+        nodes.push({id: 'Electricity', colorIndex: 3})
         nodes.push(...rawSeries.map(
-            (series: Series) => {return {id:series.name, color: series.color}}
+            (series: Series) => {return {id:series.name}}
         ))
 
         const edges: Highcharts.SeriesSankeyPointOptionsObject[] = []
         for (const [index, series] of consumptionSeries.entries()) {
+            const colorIndex = this.themeService.colors.indexOf(series.color || '')
             if (series.type === DataTypes.BIOGAS) {
-                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3, color: series.color})
-                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7, color: series.color})
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3, colorIndex: colorIndex})
+                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7, colorIndex: colorIndex})
             } else {
-                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index], color: series.color})
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index], colorIndex: colorIndex})
             }
         }
 
         for (const [index, series] of rawSeries.entries()) {
-            edges.push({from: 'Heat', to: series.name, weight: consumptionTotalByConsumer[index] * 0.7, color: series.color})
-            edges.push({from: 'Electricity', to: series.name, weight: consumptionTotalByConsumer[index] * 0.3, color: series.color})
+            edges.push({from: 'Heat', to: series.name, weight: consumptionTotalByConsumer[index] * 0.7})
+            edges.push({from: 'Electricity', to: series.name, weight: consumptionTotalByConsumer[index] * 0.3})
         }
 
         this.chartProperties.series = [{
