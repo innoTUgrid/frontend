@@ -2,16 +2,12 @@ import {Component, Input, inject} from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { DataEvents, DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
+import { DataEvents, DataTypes, DatasetRegistry, TimeInterval } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Subscription, combineLatest } from 'rxjs';
 import { ThemeService } from '@app/services/theme.service';
 import { sumAllDataTypes } from '@app/services/data-utils';
 import { MtxPopover } from '@ng-matero/extensions/popover';
-
-enum DataTypes {
-  BIOGAS = 'biogas',
-}
 
 export interface Element {
   gri_modul: string;

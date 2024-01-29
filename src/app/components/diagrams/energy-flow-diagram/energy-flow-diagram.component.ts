@@ -3,7 +3,7 @@ import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { ThemeService } from '@app/services/theme.service';
 import { HighchartsDiagramMinimal, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { Dataset, DatasetRegistry, Series } from '@app/types/time-series-data.model';
+import { DataTypes, Dataset, DatasetRegistry, Series } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts/highstock';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
@@ -123,7 +123,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         const consumptionSeries = this.chartService.filterOtherStepUnits(consumption.series)
         const raw = datasets[1]
         // series.consumption && !series.aggregate && series.local 
-        const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption))
+        const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption && series.name.includes('trafo')))
 
         const consumptionTotalByCarrier = consumptionSeries.map(
             (series: Series) => this.chartService.calculateSingleValue(series.data, false)
@@ -144,8 +144,12 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
 
         const edges = []
         for (const [index, series] of consumptionSeries.entries()) {
-            edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7})
-            edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3})
+            if (series.type === DataTypes.BIOGAS) {
+                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7})
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3})
+            } else {
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index]})
+            }
         }
 
         for (const [index, series] of rawSeries.entries()) {
