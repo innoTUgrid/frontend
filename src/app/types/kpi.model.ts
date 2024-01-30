@@ -19,7 +19,7 @@ export enum TimeSeriesEndpointKey {
 export enum ArtificialDatasetKey {
     TOTAL_ENERGY_CONSUMPTION = TimeSeriesEndpointKey.ENERGY_CONSUMPTION + "_total",
     TOTAL_EMISSIONS = "emissions_total", // no types
-    ALL_SCOPE_EMISIONS_COMBINED = "all_emissions",
+    ALL_SCOPE_EMISIONS_COMBINED = "all_scope_emissions_combined",
 }
 
 export type EndpointKey = KPIEndpointKey | TimeSeriesEndpointKey
