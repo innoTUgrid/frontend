@@ -77,7 +77,6 @@ export class CommandBarComponent {
     this.timeInterval.start = start;
     this.timeInterval.end = today;
     this.applyFilters();
-    this.dataService.updateTimeInterval(this.timeInterval);
   }
 
   isSingleDatepickerDisabled(): boolean {
