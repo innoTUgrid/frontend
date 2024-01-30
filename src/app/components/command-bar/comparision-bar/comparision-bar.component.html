@@ -3,7 +3,7 @@
         <mat-label>Baseline year</mat-label>
         <input matInput [matDatepicker]="dp" [formControl]="firstYear">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event, dp, 'first')"
+        <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event, 'first', dp)"
             (opened)="onDatepickerOpened()" (closed)="onDatepickerClosed()" panelClass="period-picker">
         </mat-datepicker>
     </mat-form-field>
@@ -14,7 +14,7 @@
         <mat-label>Comparison year</mat-label>
         <input matInput [matDatepicker]="dp2" [formControl]="secondYear">
         <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2 startView="multi-year" (yearSelected)="chosenYearHandler($event, dp2, 'second')"
+        <mat-datepicker #dp2 startView="multi-year" (yearSelected)="chosenYearHandler($event, 'second', dp2)"
             (opened)="onDatepickerOpened()" (closed)="onDatepickerClosed()" panelClass="period-picker">
         </mat-datepicker>
     </mat-form-field>

@@ -39,11 +39,11 @@ export class ComparisionBarComponent {
   additionalTimeIntervals: TimeInterval[] = [];
   @Input() showArrow = false
 
-  firstYear = new FormControl(moment('2019'));
-  secondYear = new FormControl(moment('2019'));
+  firstYear = new FormControl(moment(moment().year().toString()));
+  secondYear = new FormControl(moment(moment().year().toString()));
   isDatepickerOpen = false;
 
-  chosenYearHandler(normalizedYear: Moment, datepicker: MatDatepicker<Moment>, year: string) {
+  chosenYearHandler(normalizedYear: Moment, year: string, datepicker?: MatDatepicker<Moment>) {
     if (year == 'first') {
       const ctrlValue = this.firstYear.value;
       if (ctrlValue) {
@@ -57,7 +57,7 @@ export class ComparisionBarComponent {
         this.secondYear.setValue(ctrlValue);
       }
     }
-    datepicker.close();
+    if (datepicker) datepicker.close();
 
     if (this.firstYear.value && this.secondYear.value) {
       this.dataService.timeInterval.next([
@@ -97,6 +97,15 @@ export class ComparisionBarComponent {
     this.subscriptions.push(this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
       if (timeIntervals.length > 0) this.firstYear.setValue(timeIntervals[0].start)
       if (timeIntervals.length > 1) this.secondYear.setValue(timeIntervals[1].start)
+    }))
+
+    this.subscriptions.push(this.dataService.metaInfo.subscribe((metaInfo) => {
+      if (metaInfo && metaInfo.length > 0) {
+        const maxTimeInterval = this.dataService.getMaximumDatasetTimeInterval()
+
+        this.chosenYearHandler(maxTimeInterval.start, 'first', undefined)
+        this.chosenYearHandler(maxTimeInterval.end, 'second', undefined)
+      }
     }))
   }
 

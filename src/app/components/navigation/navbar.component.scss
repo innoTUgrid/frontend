@@ -51,3 +51,11 @@
     font-weight: bold;
   }
 
+
+::ng-deep .mtx-loader-main {
+    z-index: 10001 !important;
+}
+
+::ng-deep .mtx-loader-backdrop {
+    z-index: 10000 !important;
+}

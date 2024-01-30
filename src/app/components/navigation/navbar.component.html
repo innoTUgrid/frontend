@@ -27,6 +27,8 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
+      <mtx-loader [loading]="loading" type="spinner" color="primary" [hasBackdrop]="true">
         <router-outlet></router-outlet>
+      </mtx-loader>
     </mat-sidenav-content>
-  </mat-sidenav-container>
+</mat-sidenav-container>

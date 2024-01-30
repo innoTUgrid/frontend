@@ -32,17 +32,15 @@ export class ChartService {
 
     const allSeries = []
     for (const [index, series] of data.entries()) {
-      const color = (series.color) ? series.color : this.themeService.colorMap.get(series.type)
-
       const newSeries: Highcharts.SeriesOptionsType = {
           name: series.name,
           id: series.id, 
           data:series.data,
           type: diagram.seriesType,
-          color: color,
+          color: series.color,
           animation: true,
           marker:{
-            lineColor: color,
+            lineColor: series.color,
           },
           xAxis: (series.xAxis) ? series.xAxis : 0,
           pointPlacement: (series.pointPlacement) ? series.pointPlacement : undefined,
