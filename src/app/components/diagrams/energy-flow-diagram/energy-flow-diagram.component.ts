@@ -3,7 +3,7 @@ import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { ThemeService } from '@app/services/theme.service';
 import { HighchartsDiagramMinimal, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { Dataset, DatasetRegistry, Series } from '@app/types/time-series-data.model';
+import { DataTypes, Dataset, DatasetRegistry, Series } from '@app/types/time-series-data.model';
 import * as Highcharts from 'highcharts/highstock';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 
@@ -54,67 +54,6 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
           '{point.fromNode.name} \u2192 {point.toNode.name}: {point.weight:.2f} kWh',
             // nodeFormat: '{point.name}: {point.sum:.2f} quads'
         },
-
-        series: [{
-            keys: ['from', 'to', 'weight'],
-            nodes: [
-                {
-                    id: 'Solar',
-                    colorIndex: 6
-                },
-                {
-                    id: 'Wind',
-                    colorIndex: 5
-                },
-                {
-                    id: 'Brown Coal',
-                    colorIndex: 7
-
-                },
-                {
-                    id: 'Biogas',
-                    colorIndex: 0
-                },
-                {
-                    id: 'Microgrid 1',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Microgrid 2',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Microgrid 3',
-                    colorIndex: 3
-                },
-                {
-                    id: 'Total Consumption',
-                    colorIndex: 2
-                }
-
-            ],
-
-            data: [
-                { from: 'Solar', to: 'Microgrid 1', weight: 6, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 1', weight: 2, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 1', weight: 3, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 1', weight: 6, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 2', weight: 3, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 2', weight: 1, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 2', weight: 2, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 2', weight: 4, colorIndex: 0},
-                { from: 'Solar', to: 'Microgrid 3', weight: 3, colorIndex: 6},
-                { from: 'Wind', to: 'Microgrid 3', weight: 1, colorIndex: 5},
-                { from: 'Brown Coal', to: 'Microgrid 3', weight: 2, colorIndex: 7},
-                { from: 'Biogas', to: 'Microgrid 3', weight: 4, colorIndex: 0},
-                { from: 'Microgrid 1', to: 'Total Consumption', weight: 10, colorIndex: 3},
-                { from: 'Microgrid 2', to: 'Total Consumption', weight: 10, colorIndex: 3},
-                { from: 'Microgrid 3', to: 'Total Consumption', weight: 10, colorIndex: 3},
-            ],
-            type: 'sankey',
-            name: 'Energy Flow'
-        }] as Highcharts.SeriesSankeyOptions[],
-    
     }
 
     updateData(datasets: Dataset[]) {
@@ -123,7 +62,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         const consumptionSeries = this.chartService.filterOtherStepUnits(consumption.series)
         const raw = datasets[1]
         // series.consumption && !series.aggregate && series.local 
-        const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption))
+        const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption && series.name.includes('trafo')))
 
         const consumptionTotalByCarrier = consumptionSeries.map(
             (series: Series) => this.chartService.calculateSingleValue(series.data, false)
@@ -134,18 +73,26 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         )
 
         const nodes: Highcharts.SeriesSankeyNodesOptionsObject[] = consumptionSeries.map(
-            (series: Series) => {return {id:series.name, color: this.themeService.colorMap.get(series.type)}}
+            (series: Series) => {
+                const colorIndex = this.themeService.colors.indexOf(series.color || '')
+                return {id:series.name, colorIndex: colorIndex}
+            }
         )
         nodes.push({id: 'Heat', colorIndex: 3})
         nodes.push({id: 'Electricity', colorIndex: 3})
         nodes.push(...rawSeries.map(
-            (series: Series) => {return {id:series.name, color: this.themeService.colorMap.get(series.type)}}
+            (series: Series) => {return {id:series.name}}
         ))
 
-        const edges = []
+        const edges: Highcharts.SeriesSankeyPointOptionsObject[] = []
         for (const [index, series] of consumptionSeries.entries()) {
-            edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7})
-            edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3})
+            const colorIndex = this.themeService.colors.indexOf(series.color || '')
+            if (series.type === DataTypes.BIOGAS) {
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index] * 0.3, colorIndex: colorIndex})
+                edges.push({from: series.name, to: 'Heat', weight: consumptionTotalByCarrier[index] * 0.7, colorIndex: colorIndex})
+            } else {
+                edges.push({from: series.name, to: 'Electricity', weight: consumptionTotalByCarrier[index], colorIndex: colorIndex})
+            }
         }
 
         for (const [index, series] of rawSeries.entries()) {

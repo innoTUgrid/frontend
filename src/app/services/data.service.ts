@@ -6,6 +6,7 @@ import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
 import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
+import moment from 'moment';
 
 type Handler<E> = (event: E) => void;
 
@@ -46,7 +47,7 @@ export class DataService {
     [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
   ]);
 
-  readonly metaInfo: BehaviorSubject<MetaInfo[]> = new BehaviorSubject<MetaInfo[]>([]);
+  readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
@@ -76,11 +77,11 @@ export class DataService {
       this.metaInfo.next(info)
     })
 
-    this.metaInfo.subscribe((info: MetaInfo[]) => {
+    this.metaInfo.subscribe((info: MetaInfo[]|undefined) => {
       const id = TimeSeriesEndpointKey.TS_RAW
       const registries = this.datasetConfigurations.get(id)
       if (registries) {
-        this.fetchDataset(id, registries, this.timeInterval.getValue(), true)
+        this.fetchDatasets()
       }
     })
   }
@@ -88,6 +89,19 @@ export class DataService {
   getCurrentTimeInterval(timeInterval?: TimeInterval[]): TimeInterval {
     if (timeInterval) return timeInterval[0]
     return this.timeInterval.getValue()[0]
+  }
+
+  getMaximumDatasetTimeInterval(): TimeInterval {
+    let min = Number.POSITIVE_INFINITY
+    let max = Number.NEGATIVE_INFINITY
+
+    const metaInfo = this.metaInfo.getValue() || []
+    metaInfo.forEach((info) => {
+      min = Math.min(moment(info.min_timestamp).valueOf(), min)
+      max = Math.max(moment(info.max_timestamp).valueOf(), max)
+    })
+
+    return {start: moment(min), end: moment(max), step: 1, stepUnit: TimeUnit.DAY}
   }
 
   getDataset(key: string): BehaviorSubject<Dataset> {
@@ -121,7 +135,7 @@ export class DataService {
     const newRegistries = [...registries.filter((r) => r.id !== registry.id), registry]
     this.datasetConfigurations.set(registry.endpointKey, newRegistries)
 
-    this.fetchDataset(registry.endpointKey, newRegistries)
+    if (this.metaInfo.getValue()) this.fetchDataset(registry.endpointKey, newRegistries)
 
     return registry
   }
@@ -230,7 +244,7 @@ export class DataService {
   }
 
   async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
-    if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0) return;
+    if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0 || timeIntervals.length === 0) return;
 
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()
     if (localData) {
@@ -246,7 +260,8 @@ export class DataService {
     this.fetchedEndpoints.add(endpointKey)
     
     if (endpointKey === TimeSeriesEndpointKey.TS_RAW) {
-      const identifiers = this.metaInfo.getValue().map((info) => info.identifier)
+      const metaInfo = this.metaInfo.getValue() || []
+      const identifiers = metaInfo.map((info) => info.identifier)
       fetchTSRaw(this.http, identifiers, timeIntervals).subscribe((data) => {
         this.insertNewData(endpointKey, data, timeIntervals)
       })
@@ -261,7 +276,8 @@ export class DataService {
       } else {
         fetchTimeSeriesData(this.http, endpointKey, timeIntervals).subscribe((data: Series[]) => {
           for (const series of data) {
-            series.name = this.themeService.energyTypesToName.get(series.type + (series.local ? '-local' : '')) || series.id
+            series.name = this.themeService.getEnergyTypeColor(series.type, series.local) || series.name
+            series.color = this.themeService.colorMap.get(series.type)
           }
           this.insertNewData(endpointKey, data, timeIntervals)
         })

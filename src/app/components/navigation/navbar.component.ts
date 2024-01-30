@@ -1,6 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { DataService } from '@app/services/data.service';
 import { MenuItem } from 'src/app/types/menu-item.model';
 
 @Component({
@@ -10,6 +11,9 @@ import { MenuItem } from 'src/app/types/menu-item.model';
 })
 export class NavbarComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
+
+  dataService: DataService = inject(DataService)
+  loading: boolean = false
 
   public menuItems: MenuItem[] = [
     { name: 'Overview', icon: 'gallery_thumbnail', route: '/overview' },
@@ -29,6 +33,16 @@ export class NavbarComponent {
   }
 
   constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.dataService.metaInfo.subscribe((metaInfo) => {
+      if (metaInfo) {
+        this.loading = false
+      } else {
+        this.loading = true
+      }
+    })
+  }
 }
 
 

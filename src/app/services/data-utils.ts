@@ -34,6 +34,12 @@ export function timeIntervalEquals(a: TimeInterval, b: TimeInterval): boolean {
     return a.start.isSame(b.start) && a.end.isSame(b.end) && a.stepUnit === b.stepUnit
 }
   
+export function timeIntervalValid(interval: Partial<TimeInterval>): boolean {
+    return interval.start !== undefined && interval.end !== undefined && interval.step !== undefined && interval.stepUnit !== undefined
+        && interval.start.isValid() && interval.end.isValid() && interval.step > 0 && Object.values(TimeUnit).includes(interval.stepUnit)
+        && interval.start.isSameOrBefore(interval.end)
+}
+
 export function timeIntervalIncludes(larger: TimeInterval, smaller: TimeInterval): boolean {
     return larger.start.isSameOrBefore(smaller.start) && larger.end.isSameOrAfter(smaller.end) && larger.stepUnit === smaller.stepUnit
 }

@@ -46,6 +46,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  import {MatNativeDateModule} from '@angular/material/core';
  import { MatSelectModule } from '@angular/material/select';
 import { MtxGridModule } from '@ng-matero/extensions/grid';
+import { MtxLoaderModule } from '@ng-matero/extensions/loader';
+
 
 import { FormsModule } from '@angular/forms';
 import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
@@ -62,6 +64,7 @@ import { ComparisionBarComponent } from './components/command-bar/comparision-ba
 import { ExportButtonComponent } from './components/buttons/export-button/export-button.component';
 import { KpiChartComponent } from './components/diagrams/KPIs/kpi-chart/kpi-chart.component';
 import { InfoButtonComponent } from './components/buttons/info-button/info-button.component';
+import { MathjaxComponent } from './components/mathjax/mathjax.component';
 
 
 @NgModule({
@@ -93,6 +96,7 @@ import { InfoButtonComponent } from './components/buttons/info-button/info-butto
     ExportButtonComponent,
     KpiChartComponent,
     InfoButtonComponent,
+    MathjaxComponent,
   ],
   imports: [
     BrowserModule,
@@ -127,7 +131,8 @@ import { InfoButtonComponent } from './components/buttons/info-button/info-butto
     ReactiveFormsModule,
     MatDatepickerModule,
     MatMomentDateModule,
-    MtxGridModule
+    MtxGridModule,
+    MtxLoaderModule
   ],
   providers: [
      {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},

@@ -7,11 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InfoviewComponent implements OnInit {
 
-    pdfSrc = "assets/infoview.pdf";
-
     constructor() { }
 
     ngOnInit(): void {
-        // Initialization logic goes here
     }
 }

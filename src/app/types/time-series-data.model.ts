@@ -2,6 +2,10 @@ import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { DatasetKey, EndpointKey } from './kpi.model';
 
+export enum DataTypes {
+  BIOGAS = 'biogas',
+}
+
 // integrate a property that describes for what time range a single data point is representative
 export type Series = {
   id:string,

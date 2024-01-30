@@ -17,7 +17,6 @@ class DataTableSeries implements Series {
   id:string
   name: string
   type: string
-  data: number[][]
   timeUnit: TimeUnit;
   unit?: string | undefined
   consumption?: boolean | undefined
@@ -27,15 +26,18 @@ class DataTableSeries implements Series {
   pageSize: number = 10
   pageSizeOptions: number[] = [5, 10, 25]
   expanded: boolean = false
+  
+  data: number[][]
+  dataFiltered: number[][] // by time Interval
+  dataPaginated: TimeSeriesDataPoint[] = [] // due to efficiency reasons
 
   updateExpansion(value: boolean) {
     this.expanded = value
     if (value) {
-      this.updateDataFiltered()
+      this.updateDataPaginated()
     }
   }
 
-  dataFiltered: TimeSeriesDataPoint[] = []
   
   constructor(data: Series) {
     this.name = data.name
@@ -46,6 +48,7 @@ class DataTableSeries implements Series {
     this.local = data.local
     this.id = data.id
     this.timeUnit = data.timeUnit
+    this.dataFiltered = data.data
   }
 
   toCSVArray() {
@@ -58,20 +61,24 @@ class DataTableSeries implements Series {
     })
   }
 
+  get length() {
+    return this.dataFiltered.length
+  }
+
   nextPage(e: PageEvent) {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
-    this.updateDataFiltered()
+    this.updateDataPaginated()
   }
 
   filterDataOutsideInterval(timeInterval: TimeInterval) {
-    this.data = this.data.filter((entry) => {
+    this.dataFiltered = this.data.filter((entry) => {
       return entry[0] >= timeInterval.start.valueOf() && entry[0] <= timeInterval.end.valueOf()
     })
   }
   
-  updateDataFiltered() {
-    this.dataFiltered = this.data.
+  updateDataPaginated() {
+    this.dataPaginated = this.dataFiltered.
     slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize).
     map((entry) => {
       return {
@@ -170,7 +177,7 @@ export class DataTableComponent {
       this.dataService.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
         this.data.forEach((series) => {
           series.filterDataOutsideInterval(this.dataService.getCurrentTimeInterval())
-          series.updateDataFiltered()
+          series.updateDataPaginated()
         })
       })
     }
