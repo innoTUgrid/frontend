@@ -87,7 +87,7 @@ export class ThemeService {
     ['gas', 'Gas'],
   ])
 
-  getEnergyTypeColor(type: string, local: boolean = false) {
+  getEnergyTypeName(type: string, local: boolean = false) {
     return this.energyTypesToName.get(type + (local ? '-local' : ''))
 
   }

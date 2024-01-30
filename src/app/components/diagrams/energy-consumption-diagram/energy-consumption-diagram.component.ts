@@ -102,26 +102,34 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     const renewableEnergy = importedEnergy.filter(entry => renewableSources.includes(entry.type));
     const nonRenewableEnergy = importedEnergy.filter(entry => !renewableSources.includes(entry.type));
   
-    const newData: Series[] = [
-      {
-        id: toSeriesId(this.registry.endpointKey, 'renewable', false, currentTimeInterval.stepUnit),
+    const renewableType = 'total-renewable';
+    const nonRenewableType = 'total-non-renewable';
+
+    const newData: Series[] = []
+    if (renewableEnergy.length > 0) {
+      newData.push({
+        id: toSeriesId(this.registry.endpointKey, renewableType, false, currentTimeInterval.stepUnit),
         name: 'Imported Energy (renewable)',
-        type: 'total-renewable',
+        type: renewableType,
         data: sumAllDataTypes(renewableEnergy),
         timeUnit: currentTimeInterval.stepUnit,
+        color: this.themeService.colorMap.get(renewableType),
         xAxis: 0,
-      },
-      {
-        id: toSeriesId(this.registry.endpointKey, 'non-renewable', false, currentTimeInterval.stepUnit),
+      })
+    } 
+    if (nonRenewableEnergy.length > 0) {
+      newData.push({
+        id: toSeriesId(this.registry.endpointKey, nonRenewableType, false, currentTimeInterval.stepUnit),
         name: 'Imported Energy (non-renewable)',
-        type: 'total-non-renewable',
+        type: nonRenewableType,
         data: sumAllDataTypes(nonRenewableEnergy),
         timeUnit: currentTimeInterval.stepUnit,
+        color: this.themeService.colorMap.get(nonRenewableType),
         xAxis: 0,
-      },
-      ...dataFiltered.filter(entry => entry.local),
-    ];
-  
+      })
+    }
+
+    newData.push(...dataFiltered.filter(entry => entry.local))
     return newData;
   }
   
