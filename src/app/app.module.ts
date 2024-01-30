@@ -46,6 +46,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
  import {MatNativeDateModule} from '@angular/material/core';
  import { MatSelectModule } from '@angular/material/select';
 import { MtxGridModule } from '@ng-matero/extensions/grid';
+import { MtxLoaderModule } from '@ng-matero/extensions/loader';
+
 
 import { FormsModule } from '@angular/forms';
 import { ComparisonViewComponent } from './views/comparison-view/comparison-view.component';
@@ -129,7 +131,8 @@ import { MathjaxComponent } from './components/mathjax/mathjax.component';
     ReactiveFormsModule,
     MatDatepickerModule,
     MatMomentDateModule,
-    MtxGridModule
+    MtxGridModule,
+    MtxLoaderModule
   ],
   providers: [
      {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},

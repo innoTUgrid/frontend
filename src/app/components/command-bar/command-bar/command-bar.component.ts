@@ -5,6 +5,7 @@ import {Granularity} from 'src/app/types/granularity.model'
 import { TimeInterval, TimeUnit } from 'src/app/types/time-series-data.model';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { DataService } from '@app/services/data.service';
+import { timeIntervalValid } from '@app/services/data-utils';
 
 @Component({
   selector: 'app-command-bar',
@@ -24,7 +25,7 @@ export class CommandBarComponent {
 
   recentPeriods: {[k: string]: number} = { 'today': 0, 'last 7 days': 7, 'last 31 days': 31, 'last year': 365};
   recentPeriodNames: string[] = Object.entries(this.recentPeriods).sort((a, b) => a[1] - b[1]).map(([key, value]) => key);
-  recentPeriodToDisplay = '';
+  recentPeriodToDisplay = 'today';
   granularityType: 'select' | 'button' = 'button';
 
   @Input() enableGranularitySelection: boolean = true;
@@ -60,20 +61,19 @@ export class CommandBarComponent {
 
   resetFilters(){
     this.selectedGranularity = '';
-
-    // currently set as initial date in KPI service
-    let timeInterval: TimeInterval = {
-      start: moment("2019-01-01T00:00:00.000Z"),
-      end: moment("2019-02-01T00:00:00.000Z"),
-      step: 1,
-      stepUnit: TimeUnit.DAY
-    }
-    this.dataService.updateTimeInterval(timeInterval)
+    this.timeInterval = this.dataService.getMaximumDatasetTimeInterval()
+    this.applyFilters()
   }
 
   handleRecentPeriodInput() {
     let today = moment().endOf('day');
     let start = moment().startOf('day').subtract(this.recentPeriods[this.recentPeriodToDisplay], 'days');
+    this.timeInterval = {
+      start: start,
+      end: today,
+      step: (this.timeInterval && this.timeInterval.step) ? this.timeInterval.step : 1,
+      stepUnit: (this.timeInterval && this.timeInterval.stepUnit) ? this.timeInterval.stepUnit : TimeUnit.DAY
+    }
     this.timeInterval.start = start;
     this.timeInterval.end = today;
     this.applyFilters();
@@ -94,13 +94,16 @@ export class CommandBarComponent {
     const currentRoute = this.activatedRoute.snapshot.url;
     this.selectedView = currentRoute[currentRoute.length - 1].path;
 
-    if (this.dataService.timeInterval.getValue().length === 0) this.resetFilters();
+    this.handleRecentPeriodInput()
+    const s0 = this.dataService.metaInfo.subscribe((metaInfo) => {
+      if (metaInfo && metaInfo.length > 0) this.resetFilters();
+    })
 
-    const s0 = this.observer.observe(['(max-width: 1600px)']).subscribe((res) => {
+    const s1 = this.observer.observe(['(max-width: 1600px)']).subscribe((res) => {
       this.granularityType = res.matches ? 'select' : 'button';
     });
 
-    const s1 = this.activatedRoute.queryParams.subscribe(params => {
+    const s2 = this.activatedRoute.queryParams.subscribe(params => {
       const timeInterval: Partial<TimeInterval> = {
         start: params['start'] ? moment(params['start']) : undefined,
         end: params['start'] ? moment(params['end']) : undefined,
@@ -108,16 +111,18 @@ export class CommandBarComponent {
         stepUnit: params['stepunit'] as TimeUnit
       };
 
-      this.dataService.updateTimeInterval(timeInterval);
+      if (timeIntervalValid(timeInterval)) {
+        this.dataService.updateTimeInterval(timeInterval);
+      }
     });
 
-    const s2 = this.dataService.timeInterval.subscribe(timeInterval => {
+    const s3 = this.dataService.timeInterval.subscribe(timeInterval => {
       if (timeInterval[0] != this.timeInterval) {
         this.timeInterval = timeInterval[0];
         this.selectedGranularity = (timeInterval[0].stepUnit == 'month' && timeInterval[0].step == 3) ? Granularity.QUARTER : timeInterval[0].stepUnit;
       }
     });
-    this.subscriptions.push(s0, s1, s2);
+    this.subscriptions.push(s0, s1, s2, s3);
   }
 
   ngOnDestroy(): void {
