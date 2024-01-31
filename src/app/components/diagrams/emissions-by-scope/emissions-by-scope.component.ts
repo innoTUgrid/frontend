@@ -4,6 +4,8 @@ import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
 import { Dataset, DatasetRegistry } from '@app/types/time-series-data.model';
 import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { sumAllDataTypes, toDatasetTotal } from '@app/services/data-utils';
+import { ChartService } from '@app/services/chart.service';
 
 @Component({
   selector: 'app-emissions-by-scope',
@@ -13,10 +15,13 @@ import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 export class EmissionsByScopeComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
   dataService: DataService = inject(DataService);
+  chartService: ChartService = inject(ChartService);
   id = "EmissionsByScope." + Math.random().toString(36).substring(7);
 
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
+
+  timeIntervalIndex: number = 0
 
   registries: DatasetRegistry[] = [
     { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_1_EMISSIONS },
@@ -25,31 +30,36 @@ export class EmissionsByScopeComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  data = [
-    {
-      name: 'Scope 1',
-      y: 20,
-      colorIndex: 'var(--highcharts-color-4)',
-      color: 'var(--highcharts-color-4)',
-      trend: '↑',
-    },
-    {
-      name: 'Scope 2',
-      y: 40,
-      colorIndex: 'var(--highcharts-color-0)',
-      color: 'var(--highcharts-color-0)',
-      trend: '↓', 
-    },
-  ]
+  value: number[] = [0, 0]
 
-  series: Highcharts.SeriesOptionsType[] = [
-    {
-      name: 'Emissions',
-      colorByPoint: true,
-      data: this.data,
-      type: 'pie',
-    } as any,
-  ]
+
+  get series(): Highcharts.SeriesOptionsType[] {
+    if (this.value.length < 2) return []
+    return [
+      {
+        id: 'emissions-by-scope',
+        name: 'Emissions',
+        colorByPoint: true,
+        data: [
+          {
+            name: 'Scope 1',
+            y: this.value[0],
+            colorIndex: 'var(--highcharts-color-4)',
+            color: 'var(--highcharts-color-4)',
+            trend: '↑',
+          },
+          {
+            name: 'Scope 2',
+            y: this.value[1],
+            colorIndex: 'var(--highcharts-color-0)',
+            color: 'var(--highcharts-color-0)',
+            trend: '↓', 
+          },
+        ],
+        type: 'pie',
+      } as any,
+    ]
+  } 
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     if (!chart.series) chart.showLoading()
@@ -121,12 +131,36 @@ export class EmissionsByScopeComponent implements OnInit {
   constructor() {
   }
 
+  updateData(registryIndex: number) {
+    const registry = this.registries[registryIndex]
+    const dataset = this.dataService.getDataset(registry.endpointKey).getValue()
+    const timeIntervals = this.dataService.timeInterval.getValue()
+    const data = sumAllDataTypes(dataset.series, timeIntervals[this.timeIntervalIndex])
+
+    const newValue = this.chartService.calculateSingleValue(data, false)
+    this.value[registryIndex] = newValue
+
+    if (this.chart) {
+      this.chart.update({
+        series: this.series,
+      }, true, true, true)
+    } else {
+      this.updateFlag = true
+    }
+  }
 
 
   ngOnInit() {
     for (const [index, registry] of this.registries.entries()) {
       this.dataService.registerDataset(registry)
+
+      this.subscriptions.push(
+        this.dataService.getDataset(registry.endpointKey).subscribe((dataset: Dataset) => {
+          this.updateData(index)
+        })
+      )
     }
+
   }
 
   ngOnDestroy() {
