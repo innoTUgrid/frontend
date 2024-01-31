@@ -7,6 +7,10 @@ import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { sumAllDataTypes, toDatasetTotal } from '@app/services/data-utils';
 import { ChartService } from '@app/services/chart.service';
 
+
+const upwardTrendIcon = '<span style="color: var(--highcharts-color-15)">↑</span>'
+const downwardTrendIcon = '<span style="color: var(--highcharts-color-0)">↓</span>'
+
 @Component({
   selector: 'app-emissions-by-scope',
   templateUrl: './emissions-by-scope.component.html',
@@ -21,8 +25,20 @@ export class EmissionsByScopeComponent implements OnInit {
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
 
-  timeIntervalIndex: number = 0
+  _timeIntervalIndex: number = 0
 
+
+  get timeIntervalIndex(): number {
+    return this._timeIntervalIndex
+  }
+
+  set timeIntervalIndex(value: number) {
+    this._timeIntervalIndex = value
+    this.updateButtonText()
+    this.updateData([0,1])
+  }
+ 
+  
   registries: DatasetRegistry[] = [
     { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_1_EMISSIONS },
     { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS }
@@ -30,10 +46,12 @@ export class EmissionsByScopeComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
+
+  upwardTrend: boolean[] = [false, false]
   value: number[] = [0, 0]
 
-
   get series(): Highcharts.SeriesOptionsType[] {
+
     if (this.value.length < 2) return []
     return [
       {
@@ -46,14 +64,14 @@ export class EmissionsByScopeComponent implements OnInit {
             y: this.value[0],
             colorIndex: 'var(--highcharts-color-4)',
             color: 'var(--highcharts-color-4)',
-            trend: '↑',
+            trend: (this.upwardTrend[0]) ? upwardTrendIcon : downwardTrendIcon,
           },
           {
             name: 'Scope 2',
             y: this.value[1],
             colorIndex: 'var(--highcharts-color-0)',
             color: 'var(--highcharts-color-0)',
-            trend: '↓', 
+            trend: (this.upwardTrend[1]) ? upwardTrendIcon : downwardTrendIcon, 
           },
         ],
         type: 'pie',
@@ -64,6 +82,23 @@ export class EmissionsByScopeComponent implements OnInit {
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     if (!chart.series) chart.showLoading()
     this.chart = chart;
+  }
+
+  toggleInterval: Highcharts.ExportingButtonsOptionsObject = {
+    onclick: () => {
+      this.timeIntervalIndex = (this.timeIntervalIndex + 1) % 2
+    }
+  }
+
+  updateButtonText() {
+    this.toggleInterval.text = (this.timeIntervalIndex === 0) ? 'Show BaselineYear' : 'Show Comparision Year'
+    this.chart?.update({
+      exporting: {
+        buttons: {
+          toggleInterval: this.toggleInterval,
+        }
+      }
+    }, false, true, true)
   }
 
   pieChartProperties: Highcharts.Options = {
@@ -109,7 +144,7 @@ export class EmissionsByScopeComponent implements OnInit {
       labelFormatter: function () {
         const point = this as Highcharts.Point & { trend: string }; 
         
-        const trend = point.trend === '↑' ? '↑' : '↓';
+        const trend = point.trend;
         const color = point.color || 'black'; 
 
         const formattedY = (point.y ?? 0).toLocaleString('de-DE');
@@ -125,20 +160,34 @@ export class EmissionsByScopeComponent implements OnInit {
     },
     
     series: this.series,
+
+    exporting: {
+      buttons: {
+        toggleInterval: this.toggleInterval,
+      }
+    }
   };
   
 
   constructor() {
   }
 
-  updateData(registryIndex: number) {
-    const registry = this.registries[registryIndex]
-    const dataset = this.dataService.getDataset(registry.endpointKey).getValue()
-    const timeIntervals = this.dataService.timeInterval.getValue()
-    const data = sumAllDataTypes(dataset.series, timeIntervals[this.timeIntervalIndex])
+  updateData(registryIndices: number|number[]) {
+    if (!Array.isArray(registryIndices)) {
+      registryIndices = [registryIndices]
+    }
 
-    const newValue = this.chartService.calculateSingleValue(data, false)
-    this.value[registryIndex] = newValue
+    for (const registryIndex of registryIndices) {
+      const registry = this.registries[registryIndex]
+      const dataset = this.dataService.getDataset(registry.endpointKey).getValue()
+      const timeIntervals = this.dataService.timeInterval.getValue()
+      const data = sumAllDataTypes(dataset.series, timeIntervals[this.timeIntervalIndex])
+      const diff = data[data.length - 1][1] - data[0][1]
+      this.upwardTrend[registryIndex] = (diff > 0) ? true : false
+  
+      const newValue = this.chartService.calculateSingleValue(data, false)
+      this.value[registryIndex] = newValue
+    }
 
     if (this.chart) {
       this.chart.update({
@@ -149,8 +198,8 @@ export class EmissionsByScopeComponent implements OnInit {
     }
   }
 
-
   ngOnInit() {
+    this.updateButtonText()
     for (const [index, registry] of this.registries.entries()) {
       this.dataService.registerDataset(registry)
 
