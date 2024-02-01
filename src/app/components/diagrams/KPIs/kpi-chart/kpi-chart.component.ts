@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DatasetKey, KPIEndpointKey } from '@app/types/kpi.model';
+import { MtxPopover } from '@ng-matero/extensions/popover';
 
 @Component({
   selector: 'app-kpi-chart',
@@ -9,6 +10,8 @@ import { DatasetKey, KPIEndpointKey } from '@app/types/kpi.model';
 export class KpiChartComponent {
 
   @Input() kpiName?: KPIEndpointKey;
+
+  @Input() popover?: MtxPopover;
 
   units: Map<string, string> = new Map([
     [KPIEndpointKey.CO2_SAVINGS, 'kg'],

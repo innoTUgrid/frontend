@@ -3,6 +3,7 @@ import { Component, Input, inject } from '@angular/core';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { DatasetRegistry } from '@app/types/time-series-data.model';
+import { MtxPopover } from '@ng-matero/extensions/popover';
 import { Subscription } from 'rxjs';
 import { DatasetKey, KPIEndpointKey, SingleValueDiagram } from 'src/app/types/kpi.model';
 
@@ -15,6 +16,9 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
   _value: number = 0;
+
+  @Input() popover?: MtxPopover;
+
   @Input() set value (value: number) {
     this._value = value;
   }

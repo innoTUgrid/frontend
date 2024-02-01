@@ -1,17 +1,21 @@
-<mat-card class="kpi-card">
-    <mat-card-header class="kpi-header">
-        <span 
-            [ngClass]="{'material-symbols-outlined': outlined, 'material-icons': !outlined}" 
-            class="kpi-icon"
-        >
-            {{icon}}
-        </span>
-    </mat-card-header>
-    <mat-card-content class="kpi-content">
-        <span>{{valueFormatted}} {{unit}}</span>
-    </mat-card-content>
-        
-    <mat-card-footer class="kpi-footer">
-        <mat-card-title>{{title}}</mat-card-title>
-    </mat-card-footer>
-</mat-card>
+<div class="kpi-container">
+    <mat-card class="kpi-card">
+        <mat-card-header class="kpi-header">
+            <span 
+                [ngClass]="{'material-symbols-outlined': outlined, 'material-icons': !outlined}" 
+                class="kpi-icon"
+            >
+                {{icon}}
+            </span>
+        </mat-card-header>
+        <mat-card-content class="kpi-content">
+            <span>{{valueFormatted}} {{unit}}</span>
+        </mat-card-content>
+            
+        <mat-card-footer class="kpi-footer">
+            <mat-card-title>{{title}}</mat-card-title>
+        </mat-card-footer>
+    </mat-card>
+
+    <app-info-button *ngIf="popover" [popover]="popover"></app-info-button>
+</div>

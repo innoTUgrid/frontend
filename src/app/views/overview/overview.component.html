@@ -9,8 +9,8 @@
     <div class="diagram-container kpi-container">
         <app-kpi-chart class="item bottom-item" [kpiName]="KPI.SELF_CONSUMPTION"></app-kpi-chart>
         <app-kpi-chart class="item bottom-item" [kpiName]="KPI.AUTARKY"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS"></app-kpi-chart>
+        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS" [popover]="co2savingsPopover"></app-kpi-chart>
+        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS" [popover]="costSavingsPopover"></app-kpi-chart>
     </div>
     <div class="diagram-container kpi-container">
         <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_CONSUMPTION"></app-kpi-chart>
@@ -26,5 +26,17 @@
         <b>Energy Mix and Consumption [upper right]: </b> test <br>
         <b>KPI's [lower part]: </b>
         <p> Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)</p>
+    </ng-template>
+</mtx-popover>
+
+<mtx-popover #co2savingsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the co2 savings
+    </ng-template>
+</mtx-popover>
+
+<mtx-popover #costSavingsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the cost savings
     </ng-template>
 </mtx-popover>
