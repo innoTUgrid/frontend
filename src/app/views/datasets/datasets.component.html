@@ -3,6 +3,7 @@
     
     <div>
         <app-data-table title="Energy Consumption" [popover]="consumptionPopover" [kpiName]="TimeSeriesKey.ENERGY_CONSUMPTION"></app-data-table>        
+        <app-data-table title="Scope 1 Emissions" [popover]="scope1EmissionsPopover" [kpiName]="TimeSeriesKey.SCOPE_1_EMISSIONS"></app-data-table>
         <app-data-table title="Scope 2 Emissions" [popover]="scope2EmissionsPopover" [kpiName]="TimeSeriesKey.SCOPE_2_EMISSIONS"></app-data-table>
     </div>
 </div>
@@ -14,6 +15,11 @@
     </ng-template>
 </mtx-popover>
 
+<mtx-popover #scope1EmissionsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the scope1Emissions
+    </ng-template>
+</mtx-popover>
 
 <mtx-popover #scope2EmissionsPopover="mtxPopover">
     <ng-template mtxPopoverContent>
