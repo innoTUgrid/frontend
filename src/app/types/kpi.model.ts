@@ -26,11 +26,7 @@ export type EndpointKey = KPIEndpointKey | TimeSeriesEndpointKey
 export type DatasetKey = EndpointKey | ArtificialDatasetKey
 export const KPIList: string[] = Object.values(KPIEndpointKey)
 
-export interface DataSubscription {
-    onSeriesUpdate?: () => void
-}
-
-export interface HighchartsDiagramMinimal extends DataSubscription {
+export interface HighchartsDiagramMinimal {
     chart: Highcharts.Chart|undefined
     chartProperties: Highcharts.Options
     updateFlag: boolean
@@ -42,7 +38,7 @@ export interface HighchartsDiagram extends HighchartsDiagramMinimal {
     seriesType: SeriesTypes
 }
 
-export interface SingleValueDiagram extends DataSubscription {
+export interface SingleValueDiagram {
     value: number | number[]
 }
 

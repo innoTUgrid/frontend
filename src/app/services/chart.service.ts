@@ -24,7 +24,7 @@ export class ChartService {
 
   constructor() { }
 
-  updateSeries(diagram: HighchartsDiagram, datasetKey: string, dataset?: Dataset) {
+  updateSeries(diagram: HighchartsDiagram, dataset?: Dataset, onSeriesUpdate: () => void = () => {}) {
     if (!dataset) {
       return
     }
@@ -61,8 +61,9 @@ export class ChartService {
       diagram.chartProperties.series = allSeries
       diagram.updateFlag = true
     }
-    if (diagram.onSeriesUpdate) {
-      diagram.onSeriesUpdate()
+
+    if (onSeriesUpdate) {
+      onSeriesUpdate()
     }
   }
 
@@ -75,15 +76,16 @@ export class ChartService {
     diagram: HighchartsDiagram, 
     datasetKey: string, 
     beforeProcessData: (dataset: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
+    onSeriesUpdate?: () => void,
   ): Subscription {
     if (diagram.chart) {
       diagram.chart.update({series: []}, false, true)
     }
     const s = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
       const updatedSeries = beforeProcessData(dataset.series)
-      this.updateSeries(diagram, datasetKey, {...dataset,
+      this.updateSeries(diagram, {...dataset,
         series: updatedSeries,
-      })
+      }, onSeriesUpdate)
     });
     return s
   }
@@ -147,13 +149,16 @@ export class ChartService {
     return [s1]
   }
 
-  updateAverageLine(chart: Highcharts.Chart, stacked:boolean, seriesIndex: number = 0) {
+  updateAverageLine(chart: Highcharts.Chart, stacked:boolean, seriesIndex: number = 0, unit: string = '') {
     const series = chart.series[seriesIndex] as any
+    if (!series) {
+      console.error(`chart has no series with index ${seriesIndex}, when trying to add average line`)
+      return
+    }
+
     const groupedData = series.groupedData
     
     const plotLineId = 'average ' + seriesIndex.toString()
-    chart.yAxis[0].removePlotLine(plotLineId)
-
     if (groupedData) {
       let sum = 0
       for (const group of groupedData) {
@@ -164,14 +169,41 @@ export class ChartService {
         }
       }
       sum /= groupedData.length
-
-      const plotLines: Highcharts.YAxisPlotLinesOptions = {
+      
+      const averageLine: Highcharts.SeriesLineOptions = {
+        type: 'line',
+        name: 'Average',
         id: plotLineId,
-        width: 2,
-        value: sum,
+        data: [
+          {
+            x: groupedData[0].x,
+            y: sum,
+          },
+          {
+            x: groupedData[groupedData.length - 1].x,
+            y: sum,
+            dataLabels: {
+              enabled: true,
+              formatter: function() {
+                return `Average: ${sum.toFixed(2)} ${unit}`
+              }
+            }
+          }
+        ],
+        color: 'var(--highcharts-neutral-color-40)',
         zIndex: 5,
+        marker: {
+          enabled: false
+        },
+        enableMouseTracking: false,
+        dataGrouping: {
+          enabled: false
+        },
+        tooltip: {
+          pointFormat: 'Average: <b>{point.y:,.0f}</b><br/>',
+        },
       }
-      chart.yAxis[0].addPlotLine(plotLines)
+      chart.addSeries(averageLine, true, true)
     }
   }
 

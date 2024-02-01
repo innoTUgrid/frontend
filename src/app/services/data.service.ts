@@ -237,13 +237,13 @@ export class DataService {
     BehaviorSubject.next(newData)
   }
 
-  async fetchDatasets() {
+  fetchDatasets() {
     for (const [id, registries] of this.datasetConfigurations) {
       this.fetchDataset(id, registries)
     }
   }
 
-  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
+  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
     if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0 || timeIntervals.length === 0) return;
 
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()
