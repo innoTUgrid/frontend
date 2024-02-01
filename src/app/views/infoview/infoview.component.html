@@ -1,7 +1,6 @@
-
-<div class = "info">
+<div class = "center-div">
   <header>
-    <h1>Information Page [First draft]</h1>
+    <h1>Information Page</h1>
   </header>
   
   <section id="introduction">
@@ -9,19 +8,28 @@
 
     <p>The microgrid is a local electricity grid that generates local energy with solar panels and biogas but is also fed with electricity from the grid when necessary and feeds electricity into the grid when there is a local surplus. The microgrid supplies consumers such as houses and charging stations for electric vehicles.</p>
 
-    <p>The website presents visualizations depicting the energy consumption and production of the microgrid, along with details on emissions and other key metrics. This page provides the documentation.  The following offers the documentation for these visualizations, metrics and their sources.</p>
-
-    <p>[Electricity and Heating?]</p>
-
+    <p>The website presents visualizations depicting the energy consumption and production of the microgrid, along with details on emissions and other key metrics. This page provides the documentation for these metrics and their sources.</p>
   </section>
 
   <section id="data-sources">
     <h2>Data Sources</h2>
-    <p><b>Emission factors: ipcc 2014 lifecylce emissions, median https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf#page=7</b></p>
-    <p><b>Grid electricity prices: smard (und mix)</b></p>
-    <p><b>Grid energy mix: smard</b></p>
-    <p><b>Operational costs: </b></p>
-    <p>... (more?)</p>
+
+    <p><b>Emission factors:</b> For calculating CO₂ emissions, we used the emission factors provided by the Intergovernmental Panel on Climate Change (IPCC) from 2014. These factors represent lifecycle emissions for each energy source and are presented as minimum, median, and maximum values. For our calculations, the median values were used. The emission factors can be viewed in Datasets. Reference: 
+    <a href="https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf#page=7">IPCC - Technology-specific Cost and Performance Parameters</a></p>
+    
+    <p class = "comment">Emission factors in Datasets hinzufügen und die Seite Datasets verlinken</p>
+
+    <p><b>Grid energy mix:</b> </p>
+    <p class = "comment"> 50Hertz Daten, aber kommen die auch direkt von 50 Hertz? Chantal fragen</p>
+
+    <p><b>Local consumed and  generated energy:</b> Sensor data for local consumption and generated energy is provided by inno2grid.</p>
+
+    <p><b>Grid electricity prices: </b> For calculating cost savings the electricity prices from SMARD by the Bundesnetzagentur are used.</p> 
+
+    <p><b>Heating energy consumption:</b> Due to unavailable data, we are assuming for all calculations that locally produced biogas energy is utilized only for electricity generation and not for heating. </p> 
+    <p class = "comment">ggf. Änderung falls der flow chart heating anzeigt</p>
+
+    <p class = "comment">Gibt es weitere Datenquellen die wir Nutzen?</p>
   </section>
 
   
@@ -65,21 +73,18 @@
     <h4>Cost Savings</h4>
     <p>The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices.</p>
     <mathjax mathString="Formula: \(K_4 =  GeneratedEnergy * ElectricityPrice\)" />
+
+    <p class = "comment"> Auch die anderen KPI's näher beschreiben obwohl die eigentlich für sich sprechen?</p>
+
   </section>
   
   <section id="gri-report">
     <h2>GRI Report</h2>
     <p>A GRI report is a sustainability document guided by the Global Reporting Initiative standards, used by organizations to disclose their environmental, social, and governance (ESG) impacts. The GRI report of this website covers the modules 302-1 (Energy Consumption within the Organization), 305-1 (Direct Greenhouse Gas Emissions), and 305-2 (Energy Indirect Greenhouse Gas Emissions).</p>
   </section>
+
   
-  <section id="chart-descriptions">
-    <h2>Chart Descriptions</h2>
-    <h4>Page: Overview</h4>
-    <p><b>Upper left: </b> The chart shows the consumption within the microgrid. </p>
-    <h4>Page:CO₂ Emissions</h4>
-    <h4>Page: Energy flow</h4>
-    <p>TODO Provide a section-by-section breakdown of each chart on the website. Explain the purpose of each chart and the insights it provides. Detail any specific data points or trends that users should pay attention to.</p>
-  </section>
+  <p class = "comment"> Was noch?</p>
 
   </div>
   
