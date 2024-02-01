@@ -177,11 +177,13 @@ export class EmissionsByScopeComponent implements OnInit {
       registryIndices = [registryIndices]
     }
 
+    const timeIntervals = this.dataService.timeInterval.getValue()
     for (const registryIndex of registryIndices) {
       const registry = this.registries[registryIndex]
       const dataset = this.dataService.getDataset(registry.endpointKey).getValue()
-      const timeIntervals = this.dataService.timeInterval.getValue()
       const data = sumAllDataTypes(dataset.series, timeIntervals[this.timeIntervalIndex])
+
+      if (data.length === 0) continue
       const diff = data[data.length - 1][1] - data[0][1]
       this.upwardTrend[registryIndex] = (diff > 0) ? true : false
   
