@@ -1,11 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { DatasetKey, TimeSeriesEndpointKey } from "@app/types/kpi.model";
-import { KPIResult, MetaInfo, MetaValues, Series, TSRawResult, TimeInterval, TimeSeriesResult } from "@app/types/time-series-data.model";
+import { Series, TimeInterval } from "@app/types/time-series-data.model";
 import { environment } from "@env/environment";
 import { BehaviorSubject, Observable, forkJoin, map } from "rxjs";
 import { toSeriesId } from "./data-utils";
 import moment from "moment";
 import { time } from "highcharts";
+import { KPIResult, MetaInfo, MetaValues, TSRawResult, TimeSeriesResult } from "@app/types/api-result.model";
 
 export function getURL(endpoint: string): string {
     let url = `${environment.apiUrl}`

@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent, MetaInfo } from '@app/types/time-series-data.model';
+import { DatasetRegistry, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
 import { BehaviorSubject, Observable, combineLatest, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
 import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 import moment from 'moment';
+import { MetaInfo } from '@app/types/api-result.model';
 
 type Handler<E> = (event: E) => void;
 
