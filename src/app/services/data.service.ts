@@ -32,7 +32,12 @@ export class DataService {
   http: HttpClient = inject(HttpClient);
   themeService: ThemeService = inject(ThemeService);
 
+  // this is the data that is fetched from the server
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
+  readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
+  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
+
+  readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
 
   private datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
   private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
@@ -42,14 +47,9 @@ export class DataService {
     [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
   ])
 
-  readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
-  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
-
   private readonly events: Map<DataEvent, EventDispatcher<any>> = new Map<DataEvent, EventDispatcher<any>>([
     [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
   ]);
-
-  readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
