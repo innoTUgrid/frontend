@@ -5,9 +5,9 @@ import { BehaviorSubject, Observable, combineLatest, forkJoin, map, timeInterval
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
-import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
+import { fetchEmissionFactors, fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 import moment from 'moment';
-import { MetaInfo } from '@app/types/api-result.model';
+import { EmissionFactorsResult, MetaInfo } from '@app/types/api-result.model';
 
 type Handler<E> = (event: E) => void;
 
@@ -35,6 +35,7 @@ export class DataService {
   // this is the data that is fetched from the server
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
   readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
+  readonly emissionFactors: BehaviorSubject<EmissionFactorsResult[]> = new BehaviorSubject<EmissionFactorsResult[]>([]);
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
 
   readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
@@ -87,6 +88,7 @@ export class DataService {
     fetchMetaInfo(this.http).subscribe((info: MetaInfo[]) => {
       this.metaInfo.next(info)
     })
+    fetchEmissionFactors(this.http).subscribe((factors: EmissionFactorsResult[]) => this.emissionFactors.next(factors))
 
     this.metaInfo.subscribe((info: MetaInfo[]|undefined) => {
       const id = TimeSeriesEndpointKey.TS_RAW

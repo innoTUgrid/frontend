@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, forkJoin, map } from "rxjs";
 import { toSeriesId } from "./data-utils";
 import moment from "moment";
 import { time } from "highcharts";
-import { KPIResult, MetaInfo, MetaValues, TSRawResult, TimeSeriesResult } from "@app/types/api-result.model";
+import { EmissionFactorsResult, KPIResult, MetaInfo, MetaValues, TSRawResult, TimeSeriesResult } from "@app/types/api-result.model";
 
 export function getURL(endpoint: string): string {
     let url = `${environment.apiUrl}`
@@ -120,6 +120,14 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
             return values
         })
     )
+
+    return call
+}
+
+export function fetchEmissionFactors(http: HttpClient): Observable<EmissionFactorsResult[]> {
+    const url = getURL('emission_factors/')
+
+    const call = http.get<EmissionFactorsResult[]>(url)
 
     return call
 }
