@@ -44,4 +44,12 @@ export type KPIResult = {
       local?: boolean,
     }
   }
-  
+
+  export type EmissionFactorsResult = {
+    id: number,
+    carrier: string,
+    factor: number,
+    unit: string,
+    source: string,
+    source_url: string,
+  }
