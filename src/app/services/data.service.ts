@@ -35,7 +35,7 @@ export class DataService {
 
   private datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
   private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
-    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
+    [ArtificialDatasetKey.TOTAL_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
     [ArtificialDatasetKey.TOTAL_EMISSIONS, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
     [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
   ])
@@ -62,7 +62,7 @@ export class DataService {
 
     this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_CONSUMPTION))
 
     combineLatest([this.getDataset(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS), this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)])
     .pipe(

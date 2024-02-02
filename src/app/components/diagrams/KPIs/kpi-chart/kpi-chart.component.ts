@@ -19,7 +19,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.AUTARKY, ['%']],
     [KPIEndpointKey.SELF_CONSUMPTION, ['%']],
     [KPIEndpointKey.TOTAL_CONSUMPTION, ['kWh', 'mWh']],
-    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, ['kWh', 'mWh']],
+    [ArtificialDatasetKey.TOTAL_CONSUMPTION, ['kWh', 'mWh']],
     [KPIEndpointKey.TOTAL_PRODUCTION, ['kWh', 'mWh']],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, ['kg']],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, ['€']]
@@ -29,7 +29,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.COST_SAVINGS, 'savings'],
     [KPIEndpointKey.CO2_SAVINGS, 'cloud'],
     [KPIEndpointKey.TOTAL_CONSUMPTION, 'power'],
-    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, 'power'],
+    [ArtificialDatasetKey.TOTAL_CONSUMPTION, 'power'],
     [KPIEndpointKey.TOTAL_PRODUCTION, 'bolt'],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'cloud'],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'payments'],
@@ -41,7 +41,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.AUTARKY, 'AUTARKY'],
     [KPIEndpointKey.SELF_CONSUMPTION, 'SELF-CONSUMPTION'],
     [KPIEndpointKey.TOTAL_CONSUMPTION, 'TOTAL CONSUMPTION'],
-    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, 'TOTAL CONSUMPTION'],
+    [ArtificialDatasetKey.TOTAL_CONSUMPTION, 'TOTAL CONSUMPTION'],
     [KPIEndpointKey.TOTAL_PRODUCTION, 'TOTAL PRODUCTION'],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'TOTAL CO₂ EMISSIONS'],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'TOTAL COSTS']
