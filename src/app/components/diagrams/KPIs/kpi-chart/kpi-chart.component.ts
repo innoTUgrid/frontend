@@ -23,6 +23,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.TOTAL_PRODUCTION, ['kWh', 'mWh']],
     [ArtificialDatasetKey.TOTAL_PRODUCTION, ['kWh', 'mWh']],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, ['kg']],
+    [ArtificialDatasetKey.TOTAL_EMISSIONS, ['kg']],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, ['€']]
   ])
 
@@ -34,6 +35,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.TOTAL_PRODUCTION, 'bolt'],
     [ArtificialDatasetKey.TOTAL_PRODUCTION, 'bolt'],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'cloud'],
+    [ArtificialDatasetKey.TOTAL_EMISSIONS, 'cloud'],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'payments'],
   ])
 
@@ -47,6 +49,7 @@ export class KpiChartComponent {
     [KPIEndpointKey.TOTAL_PRODUCTION, 'TOTAL PRODUCTION'],
     [ArtificialDatasetKey.TOTAL_PRODUCTION, 'TOTAL PRODUCTION'],
     [KPIEndpointKey.TOTAL_CO2_EMISSIONS_PER_KWH, 'TOTAL CO₂ EMISSIONS'],
+    [ArtificialDatasetKey.TOTAL_EMISSIONS, 'TOTAL CO₂ EMISSIONS'],
     [KPIEndpointKey.TOTAL_COSTS_PER_KWH, 'TOTAL COSTS']
   ])
 
