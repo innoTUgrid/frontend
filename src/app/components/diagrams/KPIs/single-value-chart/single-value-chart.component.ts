@@ -23,18 +23,36 @@ export class SingleValueChartComponent implements SingleValueDiagram {
     this._value = value;
   }
   get value(): number {
-    return this._value;
+    const factor = Math.pow(1000, this.unitIndex);
+    return this._value / factor;
   }
 
   get valueFormatted(): string {
     // only 2 digits after comma
-    return this.value.toFixed(2);
+    return ChartService.addThousandsSeparator(this.value.toFixed(2).replace('.', ','));
   }
 
   @Input() title: string = '';
   @Input() icon: string = '';
-  @Input() unit: string = '';
+  @Input() units: string[] = [];
   @Input() outlined: boolean = true;
+
+  get unit(): string {
+    if (this.units.length === 0) return '';
+    return this.units[this.unitIndex];
+  }
+
+  get unitIndex(): number {
+    let i
+    let value = this._value
+    for (i = 0; i < this.units.length; i++) {
+      value /= 1000
+      if (value < 1) {
+        return i
+      }
+    }
+    return i-1
+  }
   
   _kpiName?: DatasetKey;
   readonly id = "SingleValueChartComponent." + Math.random().toString(36).substring(7);

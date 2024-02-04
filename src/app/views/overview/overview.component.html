@@ -7,16 +7,24 @@
     </div>
     <h2 class="title">KPIs</h2>
     <div class="diagram-container kpi-container">
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.SELF_CONSUMPTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.AUTARKY"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS" [popover]="co2savingsPopover"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS" [popover]="costSavingsPopover"></app-kpi-chart>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.SELF_CONSUMPTION"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.AUTARKY"></app-kpi-chart>
+        </div>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS" [popover]="co2savingsPopover"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS" [popover]="costSavingsPopover"></app-kpi-chart>
+        </div>
     </div>
     <div class="diagram-container kpi-container">
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_CONSUMPTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_PRODUCTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_CO2_EMISSIONS_PER_KWH"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_COSTS_PER_KWH"></app-kpi-chart>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_CONSUMPTION"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_PRODUCTION"></app-kpi-chart>
+        </div>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_EMISSIONS"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_COSTS_PER_KWH"></app-kpi-chart>
+        </div>
     </div>
 </div>
 

@@ -80,7 +80,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
       type: this.seriesType,
       events: {
         redraw: () => {
-          if (this.chart) this.chartService.updateAverageLine(this.chart, false, 1)
+          if (this.chart) this.chart.hideLoading()
         }
       }
     },
@@ -163,13 +163,19 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
     return newData.reverse()
   }
 
+  updateAverageLine() {
+    if (this.chart) this.chartService.updateAverageLine(this.chart, false, 1, 'kg')
+  }
+
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this)))
+    this.subscriptions.push(
+      this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
+    )
     this.subscriptions.push(this.chartService.subscribeInterval(this))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (this.chart) this.chart.showLoading()
+      if (event.endpointKey as string === this.kpiName && this.chart) this.chart.showLoading()
     }, this.id)
   }
 

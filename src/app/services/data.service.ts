@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
-import { DatasetRegistry, KPIResult, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeSeriesResult, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent, MetaInfo } from '@app/types/time-series-data.model';
+import { DatasetRegistry, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
 import { BehaviorSubject, Observable, combineLatest, forkJoin, map, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
-import { fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
+import { fetchEmissionFactors, fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 import moment from 'moment';
+import { EmissionFactorsResult, MetaInfo } from '@app/types/api-result.model';
 
 type Handler<E> = (event: E) => void;
 
@@ -31,23 +32,25 @@ export class DataService {
   http: HttpClient = inject(HttpClient);
   themeService: ThemeService = inject(ThemeService);
 
+  // this is the data that is fetched from the server
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
+  readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
+  readonly emissionFactors: BehaviorSubject<EmissionFactorsResult[]> = new BehaviorSubject<EmissionFactorsResult[]>([]);
+  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
+
+  readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
 
   private datasetConfigurations: Map<DatasetKey, DatasetRegistry[]> = new Map<DatasetKey, DatasetRegistry[]>();
   private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
-    [ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
+    [ArtificialDatasetKey.TOTAL_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
+    [ArtificialDatasetKey.TOTAL_PRODUCTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
     [ArtificialDatasetKey.TOTAL_EMISSIONS, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
     [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
   ])
 
-  readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
-  readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
-
   private readonly events: Map<DataEvent, EventDispatcher<any>> = new Map<DataEvent, EventDispatcher<any>>([
     [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
   ]);
-
-  readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
 
   constructor() {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
@@ -62,7 +65,16 @@ export class DataService {
 
     this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_ENERGY_CONSUMPTION))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_CONSUMPTION))
+
+    this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
+      map((dataset) => {
+        return toDatasetTotal({
+          series: dataset.series.filter((series) => series.local),
+          timeIntervals: dataset.timeIntervals
+        }, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Production', 'consumption-combined')
+      })
+    ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_PRODUCTION))
 
     combineLatest([this.getDataset(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS), this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)])
     .pipe(
@@ -73,9 +85,15 @@ export class DataService {
       map((dataset: Dataset) => toDatasetTotal(dataset, ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, 'Total Emissions', 'emissions-combined'))
     ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_EMISSIONS))
 
-    fetchMetaInfo(this.http).subscribe((info: MetaInfo[]) => {
-      this.metaInfo.next(info)
-    })
+    fetchMetaInfo(this.http).subscribe(
+      {
+        next: (info: MetaInfo[]) => {this.metaInfo.next(info)},
+        error: (error) => {
+          this.metaInfo.next([])
+        },
+      }
+    )
+    fetchEmissionFactors(this.http).subscribe((factors: EmissionFactorsResult[]) => this.emissionFactors.next(factors))
 
     this.metaInfo.subscribe((info: MetaInfo[]|undefined) => {
       const id = TimeSeriesEndpointKey.TS_RAW
@@ -237,13 +255,13 @@ export class DataService {
     BehaviorSubject.next(newData)
   }
 
-  async fetchDatasets() {
+  fetchDatasets() {
     for (const [id, registries] of this.datasetConfigurations) {
       this.fetchDataset(id, registries)
     }
   }
 
-  async fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
+  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
     if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0 || timeIntervals.length === 0) return;
 
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()

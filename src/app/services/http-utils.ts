@@ -1,11 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { DatasetKey, TimeSeriesEndpointKey } from "@app/types/kpi.model";
-import { KPIResult, MetaInfo, MetaValues, Series, TSRawResult, TimeInterval, TimeSeriesResult } from "@app/types/time-series-data.model";
+import { Series, TimeInterval } from "@app/types/time-series-data.model";
 import { environment } from "@env/environment";
 import { BehaviorSubject, Observable, forkJoin, map } from "rxjs";
 import { toSeriesId } from "./data-utils";
 import moment from "moment";
 import { time } from "highcharts";
+import { EmissionFactorsResult, KPIResult, MetaInfo, MetaValues, TSRawResult, TimeSeriesResult } from "@app/types/api-result.model";
 
 export function getURL(endpoint: string): string {
     let url = `${environment.apiUrl}`
@@ -119,6 +120,14 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
             return values
         })
     )
+
+    return call
+}
+
+export function fetchEmissionFactors(http: HttpClient): Observable<EmissionFactorsResult[]> {
+    const url = getURL('emission_factors/')
+
+    const call = http.get<EmissionFactorsResult[]>(url)
 
     return call
 }
