@@ -7,8 +7,6 @@ import { saveAs } from "file-saver";
   styleUrls: ['./export-button.component.scss']
 })
 export class ExportButtonComponent {
-
-  @Input() color: string = 'primary';
   @Input() dataLoader: () => string[][] = () => [];
   @Input() csvDelimitier: string = ';';
   @Input() fileName: string = 'export.csv';
