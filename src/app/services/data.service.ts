@@ -85,9 +85,14 @@ export class DataService {
       map((dataset: Dataset) => toDatasetTotal(dataset, ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, 'Total Emissions', 'emissions-combined'))
     ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_EMISSIONS))
 
-    fetchMetaInfo(this.http).subscribe((info: MetaInfo[]) => {
-      this.metaInfo.next(info)
-    })
+    fetchMetaInfo(this.http).subscribe(
+      {
+        next: (info: MetaInfo[]) => {this.metaInfo.next(info)},
+        error: (error) => {
+          this.metaInfo.next([])
+        },
+      }
+    )
     fetchEmissionFactors(this.http).subscribe((factors: EmissionFactorsResult[]) => this.emissionFactors.next(factors))
 
     this.metaInfo.subscribe((info: MetaInfo[]|undefined) => {
