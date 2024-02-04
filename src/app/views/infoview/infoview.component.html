@@ -17,19 +17,16 @@
     <p><b>Emission factors:</b> For calculating CO₂ emissions, we used the emission factors provided by the Intergovernmental Panel on Climate Change (IPCC) from 2014. These factors represent lifecycle emissions for each energy source and are presented as minimum, median, and maximum values. For our calculations, the median values were used. The emission factors can be viewed in Datasets. Reference: 
     <a href="https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf#page=7">IPCC - Technology-specific Cost and Performance Parameters</a></p>
     
-    <p class = "comment">Emission factors in Datasets hinzufügen und die Seite Datasets verlinken</p>
+    <p class = "comment">[Emission factors will be added here]</p>
 
-    <p><b>Grid energy mix:</b> </p>
-    <p class = "comment"> 50Hertz Daten, aber kommen die auch direkt von 50 Hertz? Chantal fragen</p>
+    <p><b>Grid energy mix:</b> <span class = "comment"> [Data from 50Hertz, check data source]</span></p>
 
     <p><b>Local consumed and  generated energy:</b> Sensor data for local consumption and generated energy is provided by inno2grid.</p>
 
     <p><b>Grid electricity prices: </b> For calculating cost savings the electricity prices from SMARD by the Bundesnetzagentur are used.</p> 
 
     <p><b>Heating energy consumption:</b> Due to unavailable data, we are assuming for all calculations that locally produced biogas energy is utilized only for electricity generation and not for heating. </p> 
-    <p class = "comment">ggf. Änderung falls der flow chart heating anzeigt</p>
-
-    <p class = "comment">Gibt es weitere Datenquellen die wir Nutzen?</p>
+    <p class = "comment">[Updates depending on the flow chart]</p>
   </section>
 
   
@@ -67,14 +64,13 @@
     <mathjax mathString="Formula: \(K_2 = min(\frac{{ '{' }}GeneratedEnergy{{ '}' }}{{ '{' }}Consumption{{ '}' }}, 1)\)" />
 
     <h4>CO₂ Savings</h4>
-    <p>The formula calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid (summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts the microgrid's own direct emissions from this value, i.e. scope 1.</p>
+    <p>The formula calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid (i.e. summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts from this value the microgrid's own direct emissions caused by its energy generation, i.e Scope 1 emissions.</p>
     <mathjax mathString="Formula: \(K_3 = \sum_{{ExternalEnergySource}_i}({GeneratedEnergy}* {ShareInMix}_i * {EmissionFactor}_i) - S_1\)" />
 
     <h4>Cost Savings</h4>
     <p>The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices.</p>
     <mathjax mathString="Formula: \(K_4 =  GeneratedEnergy * ElectricityPrice\)" />
 
-    <p class = "comment"> Auch die anderen KPI's näher beschreiben obwohl die eigentlich für sich sprechen?</p>
 
   </section>
   
@@ -82,9 +78,6 @@
     <h2>GRI Report</h2>
     <p>A GRI report is a sustainability document guided by the Global Reporting Initiative standards, used by organizations to disclose their environmental, social, and governance (ESG) impacts. The GRI report of this website covers the modules 302-1 (Energy Consumption within the Organization), 305-1 (Direct Greenhouse Gas Emissions), and 305-2 (Energy Indirect Greenhouse Gas Emissions).</p>
   </section>
-
-  
-  <p class = "comment"> Was noch?</p>
 
   </div>
   
