@@ -13,7 +13,7 @@ export class ThemeService {
   windOffshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-3').trim();
   hydroPowerColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-4').trim();
   windOnshoreColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-5').trim();
-  solarColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
+  solarColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-12').trim();
   brownCoalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-7').trim();
   naturalGasColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-8').trim();
   otherConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-9').trim();
@@ -21,6 +21,8 @@ export class ThemeService {
   pumpStorageColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-11').trim();
   importedEnergyRenewablesColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-19').trim();
   importedEnergyConventionalColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-20').trim();
+  solarColorLocal = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
+  biogasColorLocal = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-21').trim();
 
   colors = [
     this.biogasColor,
@@ -35,6 +37,8 @@ export class ThemeService {
     this.otherConventionalColor,
     this.hardCoalColor,
     this.pumpStorageColor,
+    this.solarColorLocal,
+    this.biogasColorLocal,
   ]
 
   getColorIndex(type: string) {
@@ -60,6 +64,8 @@ export class ThemeService {
     ['total-external', this.otherConventionalColor],
     ['total-renewable', this.importedEnergyRenewablesColor],
     ['total-non-renewable', this.importedEnergyConventionalColor],
+    ['solar-local', this.solarColorLocal],
+    ['biogas-local', this.biogasColorLocal],
   ]);
 
   unitToName = new Map([
@@ -87,8 +93,11 @@ export class ThemeService {
     ['gas', 'Gas'],
   ])
 
-  getEnergyTypeName(type: string, local: boolean = false) {
-    return this.energyTypesToName.get(type + (local ? '-local' : ''))
+  getEnergyTypeName(type: string) {
+    return this.energyTypesToName.get(type)
+  }
 
+  getEnergyType(type: string, local: boolean = false){
+    return type + (local ? '-local' : '')
   }
 }
