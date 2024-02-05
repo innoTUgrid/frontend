@@ -2,6 +2,7 @@ import { Component, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { DataService } from '@app/services/data.service';
+import { Subscription } from 'rxjs';
 import { MenuItem } from 'src/app/types/menu-item.model';
 
 @Component({
@@ -32,16 +33,34 @@ export class NavbarComponent {
     return this.router.url == routeName
   }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
+
+  subscriptions: Subscription[] = []
 
   ngOnInit() {
-    this.dataService.metaInfo.subscribe((metaInfo) => {
+    const s0 = this.dataService.metaInfo.subscribe((metaInfo) => {
       if (metaInfo) {
         this.loading = false
       } else {
         this.loading = true
       }
     })
+
+    // on route change set loading to false if current route is on info page
+    const s1 = this.router.events.subscribe((event) => {
+      if (this.router.url == '/info') {
+        this.loading = false
+      } else if (this.dataService.metaInfo.getValue() === undefined) {
+        this.loading = true
+      }
+    })
+
+    this.subscriptions.push(s0, s1)
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((s) => s.unsubscribe())
   }
 }
 

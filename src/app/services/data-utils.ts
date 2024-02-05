@@ -1,5 +1,6 @@
+import { MetaInfo } from "@app/types/api-result.model";
 import { ArtificialDatasetKey, DatasetKey } from "@app/types/kpi.model";
-import { Dataset, MetaInfo, Series, TimeInterval, TimeUnit } from "@app/types/time-series-data.model";
+import { Dataset, Series, TimeInterval, TimeUnit } from "@app/types/time-series-data.model";
 import moment from "moment";
 
 

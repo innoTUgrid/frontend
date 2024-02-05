@@ -17,20 +17,17 @@ export enum TimeSeriesEndpointKey {
 }
 
 export enum ArtificialDatasetKey {
-    TOTAL_ENERGY_CONSUMPTION = TimeSeriesEndpointKey.ENERGY_CONSUMPTION + "_total",
-    TOTAL_EMISSIONS = "emissions_total", // no types
-    ALL_SCOPE_EMISIONS_COMBINED = "all_scope_emissions_combined",
+    TOTAL_CONSUMPTION = TimeSeriesEndpointKey.ENERGY_CONSUMPTION + "_total_artificial",
+    TOTAL_PRODUCTION = "production_total_artificial",
+    TOTAL_EMISSIONS = "emissions_total_artificial", // no types
+    ALL_SCOPE_EMISIONS_COMBINED = "all_scope_emissions_combined_artificial",
 }
 
 export type EndpointKey = KPIEndpointKey | TimeSeriesEndpointKey
 export type DatasetKey = EndpointKey | ArtificialDatasetKey
 export const KPIList: string[] = Object.values(KPIEndpointKey)
 
-export interface DataSubscription {
-    onSeriesUpdate?: () => void
-}
-
-export interface HighchartsDiagramMinimal extends DataSubscription {
+export interface HighchartsDiagramMinimal {
     chart: Highcharts.Chart|undefined
     chartProperties: Highcharts.Options
     updateFlag: boolean
@@ -42,7 +39,7 @@ export interface HighchartsDiagram extends HighchartsDiagramMinimal {
     seriesType: SeriesTypes
 }
 
-export interface SingleValueDiagram extends DataSubscription {
+export interface SingleValueDiagram {
     value: number | number[]
 }
 

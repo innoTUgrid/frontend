@@ -61,7 +61,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
       type: 'column',
       events: {
         redraw: () => {
-          if (this.chart) this.chartService.updateAverageLine(this.chart, true)
+          if (this.chart) this.chart.hideLoading()
         }
       }
     },
@@ -133,11 +133,16 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     return newData;
   }
   
+  updateAverageLine() {
+    if (this.chart) this.chartService.updateAverageLine(this.chart, true, 0, 'kWh')
+  }
 
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.subscriptions.push(this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this)))
+    this.subscriptions.push(
+      this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this), this.updateAverageLine.bind(this))
+    )
     this.subscriptions.push(this.chartService.subscribeInterval(this))
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
       if (event.endpointKey === this.kpiName && this.chart) this.chart.showLoading()

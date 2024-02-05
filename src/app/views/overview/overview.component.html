@@ -7,16 +7,24 @@
     </div>
     <h2 class="title">KPIs</h2>
     <div class="diagram-container kpi-container">
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.SELF_CONSUMPTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.AUTARKY"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS"></app-kpi-chart>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.SELF_CONSUMPTION"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.AUTARKY"></app-kpi-chart>
+        </div>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.CO2_SAVINGS" [popover]="co2savingsPopover"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.COST_SAVINGS" [popover]="costSavingsPopover"></app-kpi-chart>
+        </div>
     </div>
     <div class="diagram-container kpi-container">
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_CONSUMPTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_PRODUCTION"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_CO2_EMISSIONS_PER_KWH"></app-kpi-chart>
-        <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_COSTS_PER_KWH"></app-kpi-chart>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_CONSUMPTION"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_PRODUCTION"></app-kpi-chart>
+        </div>
+        <div class="sub-kpi-container">
+            <app-kpi-chart class="item bottom-item" [kpiName]="Artificial.TOTAL_EMISSIONS"></app-kpi-chart>
+            <app-kpi-chart class="item bottom-item" [kpiName]="KPI.TOTAL_COSTS_PER_KWH"></app-kpi-chart>
+        </div>
     </div>
 </div>
 
@@ -25,6 +33,18 @@
         <b>Consumed Energy by Source [upper left]: </b> test <br>
         <b>Energy Mix and Consumption [upper right]: </b> test <br>
         <b>KPI's [lower part]: </b>
-        <p> Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)</p>
+        <mathjax mathString="Formula: \( K_1 = min(\frac{{ '{' }}Consumption{{ '}' }}{{ '{' }}GeneratedEnergy{{ '}' }}, 1)\)"></mathjax>
+    </ng-template>
+</mtx-popover>
+
+<mtx-popover #co2savingsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the co2 savings
+    </ng-template>
+</mtx-popover>
+
+<mtx-popover #costSavingsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        Example explanation of the cost savings
     </ng-template>
 </mtx-popover>

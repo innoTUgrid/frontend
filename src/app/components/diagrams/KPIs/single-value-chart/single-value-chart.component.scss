@@ -4,9 +4,18 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    width: 100%;
     box-shadow: none;
 }
+
+.kpi-container {
+    display: flex;
+    align-items: top;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+    width: 100%;
+}
+
 .kpi-header {
     font-size: 300%;
 }
@@ -30,4 +39,8 @@
 
 .kpi-icon {
     font-size: 1em;
+}
+
+.spacer {
+    width: 48px;
 }
