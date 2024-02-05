@@ -126,7 +126,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
       type: 'gauge',
     },
     title: {
-      text: 'CO₂ Emissions Increase',
+      text: 'CO₂ Emissions Change in Comparison to Baseline Year',
     },
     exporting: {enabled: true},
     tooltip: {enabled: false},
