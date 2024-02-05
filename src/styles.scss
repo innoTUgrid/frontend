@@ -11,27 +11,77 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-//colors
-$fill-color-1: #D7FAEE;
-$fill-color-2: #DDEFFC;
-$fill-color-3: #D9DCFF;
-$fill-color-4: #FEF4C7;
-$accent-color: #F47659; //example: bullet points
-$background-color: #FAFAFC; //from mock-up #FAFAFC
-$icon-color: #575757;
-$text-color: #2C2E33;
-$white-background: #FFFFFF;
+// Zeemobase palette
+$subtle-black: #141414;
+$dark-gray: #404040;
+$middle-gray: #7D7D7D;
+$light-gray: #D6D6D6;
+$soft-white: #F1F1F1;
+
+$scientific-blue: #4977FC;
+$scientific-blue-tone: #6E92F8;
+$scientific-blue-soft: #A0C3F8;
+$scientific-blue-delicate: #D4DFF6;
+
+$energy-green:  #43CDA0;
+$energy-green-tone: #6BE8C0;
+$energy-green-soft: #9DE6CE;
+$energy-green-delicate: #C3EFE1;
+
+$power-red:  #D0145A;
+$power-red-tone: #E4597A;
+$power-red-soft:  #EF7E9C;
+$power-red-delicate: #F6B1C0;
+
+$background-color: $soft-white;
+$icon-color: $subtle-black;
+$text-color: $subtle-black;
 
 //font styles
-@import url('https://fonts.googleapis.com/css2?family=Lucida+Grande&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Avenir:wght@400;700&display=swap');
 
-$custom-font-family: 'Lucida Grande', sans-serif;
+$custom-font-family: 'Avenir', sans-serif;
 $font-size-default: 16px;
 $font-size-view-header: 1.5625em;
 $font-size-chart-header: 1.125em;
 $font-size-chart-legend: 0.625em;
-$font-size-navigation: 0.875em;
-$font-size-button: 0.6875em;
+$font-size-navigation: 0.95em;
+$font-size-button: 0.95em;
+
+* {
+  &:not(i):not(span):not(.mat-icon):not([mat-icon]) {
+    font-family: $custom-font-family;
+  }
+}
+
+#reset-filter-button {
+  font-size: $font-size-button;
+  background-color: $power-red;
+  color: $soft-white;
+}
+
+#export-button {
+  font-size: $font-size-button;
+  background-color: $scientific-blue;
+  color: $soft-white;
+}
+
+#info-menu-button {
+  font-size: $font-size-button;
+  background-color: $energy-green;
+  color: $soft-white;
+}
+
+#info-button {
+  color: $power-red;
+}
+
+#kpi-icon {
+  background-color: $scientific-blue-tone; 
+  color: $soft-white; 
+  padding: 0.1em; 
+  border-radius: 50%;
+}
 
 
 
@@ -55,46 +105,50 @@ $frontend-theme: mat.define-light-theme((
 ));
 
 //colors for highcharts. Pallette: https://coolors.co/palette/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
-$hc-biogas: #90BE6D; 
-$hc-biomas: #425f2c;
-$hc-other-renewables: #43AA8B; // other renewables
-$hc-wind-offshore: #4D908E; // wind off shore
-$hc-hydro-power: #277DA1; // hydro power
-$hc-wind-onshore: #577590; // wind onshore
-$hc-solar: #F9C74F; // solar
+$hc-biogas: #7FBF69; // Light green for biogas
+$hc-biogas-local: #709157; // Olive for biogas local
+$hc-biomass: #526B38; // Dark green for biomass
+$hc-other-renewables: #5BCCB8; // Turquoise for other renewables
+$hc-wind-offshore: #58A08B; // Teal for offshore wind
+$hc-hydro-power: #3497B2; // Medium blue for hydro power
+$hc-wind-onshore: #4C6F87; // Slate blue for onshore wind
+$hc-solar-local: #FFD966; // Light yellow for solar
 
-$hc-brown-coal: #db7c26; // braunkohle
-$hc-natural-gas: #bfbdc1; // natural gas
-$hc-other-conventionals: #908e98; // other conventials
-$hc-hard-coal: #000000; // hard coal
-$hc-pump-storage: #3f3179; // pump storage
+$hc-brown-coal: #A95E32; // Sienna for brown coal
+$hc-natural-gas: #C4C2C8; // Silver for natural gas
+$hc-other-conventionals: #797B82; // Gray for other conventionals
+$hc-hard-coal: #333333; // Black for hard coal
+$hc-pump-storage: #634D94; // Royal purple for pump storage
 
-$hc-orange-light: #F8961E;
-$hc-orange-medium: #F9844A;
-$hc-orange-dark: #F3722C;
-$hc-red: #F94144;
-$hc-year-shadow-comparison-chart: #d1d2d9; // has to be inserted in emissions comparison chart 
-$hc-year-comparison-chart: #6494dc; // has to be inserted in emissions comparison chart 
-$hc-mean-comparison-chart: #4b6a98; // has to be inserted in emissions comparison chart 
-$hc-renewable-energy: #397d43; // Renewable Energy
-$hc-non-renewable-energy: #908e98; // Non-Renewable Energy
+$hc-solar-imported: #FFB36E; // Peach for solar imported
+$hc-orange-medium: #FF9C66; // Apricot for medium orange
+$hc-orange-dark: #FF8365; // Coral for dark orange
+$hc-red: #FF6473; // Salmon red
+
+$hc-year-shadow-comparison-chart: #C9CAD1; // Silver for shadow comparison chart
+$hc-year-comparison-chart: #8CAEDC; // Sky blue for year comparison chart
+$hc-mean-comparison-chart: #5D7BA2; // Steel blue for mean comparison chart
+
+$hc-renewable-energy: #50844a; // Olive green for renewable energy
+$hc-non-renewable-energy: #797C88; // Slate gray for non-renewable energy
+
 
 
 
 :root {
     --highcharts-color-0: #{$hc-biogas};
-    --highcharts-color-1: #{$hc-biomas};
+    --highcharts-color-1: #{$hc-biomass};
     --highcharts-color-2: #{$hc-other-renewables};
     --highcharts-color-3: #{$hc-wind-offshore};
     --highcharts-color-4: #{$hc-hydro-power};
     --highcharts-color-5: #{$hc-wind-onshore};
-    --highcharts-color-6: #{$hc-solar};
+    --highcharts-color-6: #{$hc-solar-local};
     --highcharts-color-7: #{$hc-brown-coal};
     --highcharts-color-8: #{$hc-natural-gas};
     --highcharts-color-9: #{$hc-other-conventionals};
     --highcharts-color-10: #{$hc-hard-coal};
     --highcharts-color-11: #{$hc-pump-storage};
-    --highcharts-color-12: #{$hc-orange-light};
+    --highcharts-color-12: #{$hc-solar-imported};
     --highcharts-color-13:#{$hc-orange-medium};
     --highcharts-color-14: #{$hc-orange-dark};
     --highcharts-color-15: #{$hc-red};
@@ -103,9 +157,10 @@ $hc-non-renewable-energy: #908e98; // Non-Renewable Energy
     --highcharts-color-18: #{$hc-mean-comparison-chart};
     --highcharts-color-19: #{$hc-renewable-energy};
     --highcharts-color-20: #{$hc-non-renewable-energy};
+    --highcharts-color-21: #{$hc-biogas-local};
 
     // this is currently only used for the average line in column charts
-    --highcharts-neutral-color-40: #ff0000; 
+    --highcharts-neutral-color-40: #{$power-red}; 
     // --highcharts-neutral-color-100: #ff0000;
 }
 

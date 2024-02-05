@@ -7,7 +7,7 @@
 }
 
 .mat-sidenav-container {
-    background-color: $white-background;
+    background-color: white;
     
 }
 
@@ -42,13 +42,13 @@
     width: 100%;
 
     span{
-        color: $text-color;
-        opacity: 0.7;
+        color: $power-red;
     }
 }
 
 .selected-menu-item {
     font-weight: bold;
+    font-size: medium;
   }
 
 
