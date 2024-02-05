@@ -44,7 +44,7 @@ export class ComparisionBarComponent {
   isDatepickerOpen = false;
 
   chosenYearHandler(normalizedYear: Moment, year: string, datepicker?: MatDatepicker<Moment>) {
-    if (year == 'first') {
+    if (year === 'first') {
       const ctrlValue = this.firstYear.value;
       if (ctrlValue) {
         ctrlValue.year(normalizedYear.year());
@@ -57,16 +57,27 @@ export class ComparisionBarComponent {
         this.secondYear.setValue(ctrlValue);
       }
     }
+  
+    const firstYearValue = this.firstYear.value?.year() || 0;
+    const secondYearValue = this.secondYear.value?.year() || 0;
+  
+    if (firstYearValue > secondYearValue) {
+      const temp = this.firstYear.value;
+      this.firstYear.setValue(this.secondYear.value);
+      this.secondYear.setValue(temp);
+    }
+  
     if (datepicker) datepicker.close();
-
+  
     if (this.firstYear.value && this.secondYear.value) {
       this.dataService.timeInterval.next([
         this.toTimeInterval(this.firstYear.value),
         this.toTimeInterval(this.secondYear.value),
-        ...this.additionalTimeIntervals
-      ])
+        ...this.additionalTimeIntervals,
+      ]);
     }
   }
+  
 
   onDatepickerOpened() {
     this.isDatepickerOpen = true;
