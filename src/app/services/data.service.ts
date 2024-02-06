@@ -261,8 +261,8 @@ export class DataService {
     }
   }
 
-  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue(), force: boolean = false) {
-    if ((this.fetchedEndpoints.has(endpointKey) && !force) || registries.length == 0 || timeIntervals.length === 0) return;
+  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
+    if ((this.fetchedEndpoints.has(endpointKey)) || registries.length == 0 || timeIntervals.length === 0) return;
 
     const localData = this.timeSeriesData.get(endpointKey)?.getValue()
     if (localData) {

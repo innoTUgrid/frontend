@@ -202,15 +202,20 @@ export class EmissionsByScopeComponent implements OnInit {
 
   ngOnInit() {
     this.updateButtonText()
-    for (const [index, registry] of this.registries.entries()) {
-      this.dataService.registerDataset(registry)
 
-      this.subscriptions.push(
-        this.dataService.getDataset(registry.endpointKey).subscribe((dataset: Dataset) => {
-          this.updateData(index)
-        })
-      )
-    }
+    this.dataService.metaInfo.subscribe((metaInfo) => {
+      if (metaInfo && this.subscriptions.length === 0) {
+        for (const [index, registry] of this.registries.entries()) {
+          this.dataService.registerDataset(registry)
+    
+          this.subscriptions.push(
+            this.dataService.getDataset(registry.endpointKey).subscribe((dataset: Dataset) => {
+              this.updateData(index)
+            })
+          )
+        }
+      }
+    })
 
   }
 

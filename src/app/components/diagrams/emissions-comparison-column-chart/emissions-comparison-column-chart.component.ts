@@ -170,10 +170,14 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.subscriptions.push(
-      this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
-    )
-    this.subscriptions.push(this.chartService.subscribeInterval(this))
+    this.dataService.metaInfo.subscribe((metaInfo) => {
+      if (metaInfo && this.subscriptions.length === 0) {
+        const s0 = this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
+        const s1 = this.chartService.subscribeInterval(this)
+        this.subscriptions.push(s0, s1)
+      }
+    })
+
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
       if (event.endpointKey as string === this.kpiName && this.chart) this.chart.showLoading()
     }, this.id)
