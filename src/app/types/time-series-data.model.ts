@@ -4,6 +4,7 @@ import { DatasetKey, EndpointKey } from './kpi.model';
 
 export enum DataTypes {
   BIOGAS = 'biogas',
+  BIOMASS = 'biomass',
 }
 
 // integrate a property that describes for what time range a single data point is representative

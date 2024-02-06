@@ -48,9 +48,8 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
     return call
 }
 
-export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, timeIntervals: TimeInterval[], endsWithSlash: boolean = true): Observable<ReturnType>[] {
+export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, timeIntervals: TimeInterval[], timeUnit?: string): Observable<ReturnType>[] {
     let url = getURL(endpointKey)
-    if (!endsWithSlash) url = url.slice(0, -1)
     const calls: Observable<ReturnType>[] = []
     for (const timeInterval of timeIntervals) {
         http.get<ReturnType>(url, {})
@@ -59,7 +58,7 @@ export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, t
                 params: {
                     from: timeInterval.start.toISOString(),
                     to: timeInterval.end.toISOString(),
-                    interval: `1${timeInterval.stepUnit}`
+                    interval: (timeUnit) ? timeUnit : `1${timeInterval.stepUnit}`
                 }
             })
         )
@@ -135,7 +134,7 @@ export function fetchEmissionFactors(http: HttpClient): Observable<EmissionFacto
 export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals: TimeInterval[]): Observable<Series[]> {
     const endpointKey = TimeSeriesEndpointKey.TS_RAW
     const allCalls: Observable<TSRawResult>[][] = identifiers.map((id: string) => {
-        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals)
+        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals, '1hour')
     })
 
     const answer = forkJoin(
