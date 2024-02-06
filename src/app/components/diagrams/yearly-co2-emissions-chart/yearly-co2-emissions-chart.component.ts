@@ -114,6 +114,7 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
       type: 'emissions',
       data: (filtered.length > 0) ? filtered[0].data : [],
       timeUnit: TimeUnit.YEAR,
+      sourceDataset: this.endpointKey,
       color: this.lineColor,
     }]
   }

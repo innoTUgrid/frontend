@@ -150,6 +150,7 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
           name: interval.start.format('YYYY'),
           data: dataSummed,
           timeUnit: interval.stepUnit,
+          sourceDataset: this.kpiName,
           type: interval.start.format('YYYY'),
           xAxis: index,
           color: (index == 0) ? this.laterYearColor : this.earlierYearColor,
@@ -170,16 +171,12 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.dataService.metaInfo.subscribe((metaInfo) => {
-      if (metaInfo && this.subscriptions.length === 0) {
-        const s0 = this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
-        const s1 = this.chartService.subscribeInterval(this)
-        this.subscriptions.push(s0, s1)
-      }
-    })
+    const s0 = this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
+    const s1 = this.chartService.subscribeInterval(this)
+    this.subscriptions.push(s0, s1)
 
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (event.endpointKey as string === this.kpiName && this.chart) this.chart.showLoading()
+      if (this.chart) this.chart.showLoading()
     }, this.id)
   }
 

@@ -141,6 +141,7 @@ export function toDatasetTotal(dataset: Dataset, datasetKey: DatasetKey, name: s
             unit: unit,
             consumption: consumption,
             local: local,
+            sourceDataset: datasetKey
         })
     }
 

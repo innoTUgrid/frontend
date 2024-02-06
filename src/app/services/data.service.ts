@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
-import { BehaviorSubject, Observable, combineLatest, forkJoin, map, timeInterval } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin, map, of, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
 import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
@@ -44,8 +44,12 @@ export class DataService {
   private artificialDatasetToEndpoints: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
     [ArtificialDatasetKey.TOTAL_CONSUMPTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
     [ArtificialDatasetKey.TOTAL_PRODUCTION, [TimeSeriesEndpointKey.ENERGY_CONSUMPTION]],
-    [ArtificialDatasetKey.TOTAL_EMISSIONS, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
-    [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_2_EMISSIONS, TimeSeriesEndpointKey.SCOPE_1_EMISSIONS]],
+    [ArtificialDatasetKey.TOTAL_EMISSIONS, [TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED]],
+    [ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED, [TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED]],
+  ])
+
+  private combinedDatasets: Map<DatasetKey, EndpointKey[]> = new Map<DatasetKey, EndpointKey[]>([
+    [TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED, [TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS]]
   ])
 
   private readonly events: Map<DataEvent, EventDispatcher<any>> = new Map<DataEvent, EventDispatcher<any>>([
@@ -76,13 +80,13 @@ export class DataService {
       })
     ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_PRODUCTION))
 
-    combineLatest([this.getDataset(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS), this.getDataset(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)])
+    this.getDataset(TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED)
     .pipe(
-      map((datasets) => mergeDatasets(datasets))
-    ).subscribe(this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED))
+      map((datasets) => mergeDatasets([datasets]))
+    ).subscribe(this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED))
 
-    this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED).pipe(
-      map((dataset: Dataset) => toDatasetTotal(dataset, ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, 'Total Emissions', 'emissions-combined'))
+    this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED).pipe(
+      map((dataset: Dataset) => toDatasetTotal(dataset, ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED, 'Total Emissions', 'emissions-combined'))
     ).subscribe(this.getDataset(ArtificialDatasetKey.TOTAL_EMISSIONS))
 
     fetchMetaInfo(this.http).subscribe(
@@ -143,6 +147,7 @@ export class DataService {
       }
       return registry;
     }
+
 
     let registries = this.datasetConfigurations.get(registry.endpointKey)
     if (!registries) {
@@ -261,10 +266,10 @@ export class DataService {
     }
   }
 
-  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()) {
-    if ((this.fetchedEndpoints.has(endpointKey)) || registries.length == 0 || timeIntervals.length === 0) return;
+  fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()): Observable<Series[]>[] {
+    const localData = this.getDataset(endpointKey).getValue()
+    if ((this.fetchedEndpoints.has(endpointKey)) || registries.length == 0 || timeIntervals.length === 0) return [];
 
-    const localData = this.timeSeriesData.get(endpointKey)?.getValue()
     if (localData) {
       // filter out time intervals that are already loaded
       timeIntervals = timeIntervals.filter((interval) => !localData.timeIntervals.some((localInterval) => timeIntervalIncludes(interval, localInterval)))
@@ -277,33 +282,88 @@ export class DataService {
 
     this.fetchedEndpoints.add(endpointKey)
     
+    const observables: Observable<Series[]>[] = []
     if (endpointKey === TimeSeriesEndpointKey.TS_RAW) {
       const metaInfo = this.metaInfo.getValue() || []
       const identifiers = metaInfo.map((info) => info.identifier)
-      fetchTSRaw(this.http, identifiers, timeIntervals).subscribe((data) => {
+      const o = fetchTSRaw(this.http, identifiers, timeIntervals)
+      o.subscribe((data) => {
         this.insertNewData(endpointKey, data, timeIntervals)
       })
+      observables.push(o)
+    } else if (this.combinedDatasets.has(endpointKey)) {
+
+      observables.push(...this.fetchCombinedDataset(endpointKey, registries, timeIntervals))
+
     } else if (timeIntervals.length > 0) {
       if (KPIList.includes(endpointKey)) {
-        timeIntervals.forEach((interval) => fetchKPIData(this.http, endpointKey, interval).subscribe((data: Series[]) => {
-          this.getDataset(endpointKey).next({
-            series: data,
-            timeIntervals: [interval]
+        timeIntervals.forEach((interval) => {
+          const o = fetchKPIData(this.http, endpointKey, interval)
+          o.subscribe((data: Series[]) => {
+            this.getDataset(endpointKey).next({
+              series: data,
+              timeIntervals: [interval]
+            })
           })
-        }))
+          observables.push(o)
+        }
+        )
       } else {
-        fetchTimeSeriesData(this.http, endpointKey, timeIntervals).subscribe((data: Series[]) => {
-          for (const series of data) {
-            series.type = this.themeService.getEnergyType(series.type, series.local) || series.type
-            series.name = this.themeService.getEnergyTypeName(series.type) || series.name
-            series.color = this.themeService.colorMap.get(series.type)
-          }
+        console.log('fetching', endpointKey)
+        const o = fetchTimeSeriesData(this.http, endpointKey, timeIntervals).pipe(
+          map((data) => {
+            for (const series of data) {
+              series.type = this.themeService.getEnergyType(series.type, series.local) || series.type
+              series.name = this.themeService.getEnergyTypeName(series.type) || series.name
+              series.color = this.themeService.colorMap.get(series.type)
+            }
+            return data
+          })
+        )
+        o.subscribe((data: Series[]) => {
           this.insertNewData(endpointKey, data, timeIntervals)
         })
+        observables.push(o)
       }
 
     } else {
-      if (localData) this.getDataset(endpointKey).next(localData);
+      this.getDataset(endpointKey).next(localData);
     }
+    return observables
+  }
+
+  fetchCombinedDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()): Observable<Series[]>[] {
+    const combinedDatasets = this.combinedDatasets.get(endpointKey)
+    if (!combinedDatasets) return []
+
+    const combinedObservables = combinedDatasets.map((datasetkey) => {
+
+      const fetchedObservables = this.fetchDataset(datasetkey, registries)
+      if (fetchedObservables.length === 0) {
+        fetchedObservables.push(
+          of(this.getDataset(datasetkey).getValue().series)
+        )
+      }
+      return fetchedObservables
+
+    }).flat()
+
+    const o = forkJoin(
+      combinedObservables
+    ).pipe(
+      map((data: Series[][]) => {
+      const newData: Series[] = []
+      for (const [i, seriesArray] of data.entries()) {
+        newData.push(...seriesArray.map(
+          (series: Series) => { return {...series, sourceDataset: combinedDatasets[i]} }
+        ))
+      }
+      return newData
+      })
+    )
+    o.subscribe((data: Series[]) => {
+      this.insertNewData(endpointKey, data, timeIntervals)
+    })
+    return [o]
   }
 }

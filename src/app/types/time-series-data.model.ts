@@ -14,6 +14,7 @@ export type Series = {
   type:string, 
   data:number[][]
   timeUnit: TimeUnit,
+  sourceDataset: DatasetKey, // this is the dataset that this series was created from
   unit?: string,
   consumption?: boolean,
   local?: boolean,

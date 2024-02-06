@@ -18,6 +18,7 @@ class DataTableSeries implements Series {
   name: string
   type: string
   timeUnit: TimeUnit;
+  sourceDataset: DatasetKey;
   unit?: string | undefined
   consumption?: boolean | undefined
   local?: boolean | undefined
@@ -49,6 +50,7 @@ class DataTableSeries implements Series {
     this.id = data.id
     this.timeUnit = data.timeUnit
     this.dataFiltered = data.data
+    this.sourceDataset = data.sourceDataset
   }
 
   toCSVArray() {

@@ -185,11 +185,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.dataService.metaInfo.subscribe((metaInfo) => {
-      if (metaInfo && this.subscriptions.length === 0) {
-        this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey, false))
-      }
-    })
+    this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey, false))
 
     this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
       if (this.chart) this.chart.showLoading()
@@ -204,7 +200,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   }
 
   updateChart() {
-    console.log(this.percentageChange)
     if (this.chart) {
       this.chart.hideLoading()
       this.chart.update({

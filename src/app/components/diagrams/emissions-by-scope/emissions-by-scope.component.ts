@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
-import { Dataset, DatasetRegistry } from '@app/types/time-series-data.model';
+import { DataEvents, Dataset, DatasetRegistry, EndpointUpdateEvent } from '@app/types/time-series-data.model';
 import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { sumAllDataTypes, toDatasetTotal } from '@app/services/data-utils';
 import { ChartService } from '@app/services/chart.service';
@@ -35,14 +35,13 @@ export class EmissionsByScopeComponent implements OnInit {
   set timeIntervalIndex(value: number) {
     this._timeIntervalIndex = value
     this.updateButtonText()
-    this.updateData([0,1])
+    this.updateData()
   }
+
+  scopeEndpoints = [TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, TimeSeriesEndpointKey.SCOPE_2_EMISSIONS]
  
   
-  registries: DatasetRegistry[] = [
-    { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_1_EMISSIONS },
-    { id: this.id, endpointKey: TimeSeriesEndpointKey.SCOPE_2_EMISSIONS }
-  ]
+  registry: DatasetRegistry = { id: this.id, endpointKey: TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED }
 
   subscriptions: Subscription[] = [];
 
@@ -172,29 +171,26 @@ export class EmissionsByScopeComponent implements OnInit {
   constructor() {
   }
 
-  updateData(registryIndices: number|number[]) {
-    if (!Array.isArray(registryIndices)) {
-      registryIndices = [registryIndices]
-    }
-
+  updateData() {
     const timeIntervals = this.dataService.timeInterval.getValue()
-    for (const registryIndex of registryIndices) {
-      const registry = this.registries[registryIndex]
-      const dataset = this.dataService.getDataset(registry.endpointKey).getValue()
-      const data = sumAllDataTypes(dataset.series, timeIntervals[this.timeIntervalIndex])
+    const dataset = this.dataService.getDataset(this.registry.endpointKey).getValue()
+    for (const [index, scopeId] of this.scopeEndpoints.entries()) {
+      const series = dataset.series.filter(s => s.sourceDataset === scopeId)
+      const data = sumAllDataTypes(series, timeIntervals[this.timeIntervalIndex])
 
       if (data.length === 0) continue
       const diff = data[data.length - 1][1] - data[0][1]
-      this.upwardTrend[registryIndex] = (diff > 0) ? true : false
+      this.upwardTrend[index] = (diff > 0) ? true : false
   
       const newValue = this.chartService.calculateSingleValue(data, false)
-      this.value[registryIndex] = newValue
+      this.value[index] = newValue
     }
 
     if (this.chart) {
       this.chart.update({
         series: this.series,
       }, true, true, true)
+      this.chart.hideLoading()
     } else {
       this.updateFlag = true
     }
@@ -203,25 +199,22 @@ export class EmissionsByScopeComponent implements OnInit {
   ngOnInit() {
     this.updateButtonText()
 
-    this.dataService.metaInfo.subscribe((metaInfo) => {
-      if (metaInfo && this.subscriptions.length === 0) {
-        for (const [index, registry] of this.registries.entries()) {
-          this.dataService.registerDataset(registry)
-    
-          this.subscriptions.push(
-            this.dataService.getDataset(registry.endpointKey).subscribe((dataset: Dataset) => {
-              this.updateData(index)
-            })
-          )
-        }
-      }
-    })
+    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
+      if (this.chart) this.chart.showLoading()
+    }, this.id)
 
+    this.dataService.registerDataset(this.registry)
+    this.subscriptions.push(
+      this.dataService.getDataset(this.registry.endpointKey).subscribe((dataset: Dataset) => {
+        this.updateData()
+      })
+    )
   }
 
   ngOnDestroy() {
-    this.registries.forEach((registry) => this.dataService.unregisterDataset(registry))
+    this.dataService.unregisterDataset(this.registry)
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
+    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 }
