@@ -9,8 +9,8 @@ import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 })
 export class ComparisonViewComponent {
   yearlyTimeIterval: TimeInterval = {
-    start: moment('2018').startOf('year'),
-    end: moment('2020').endOf('year'),
+    start: moment.utc(0),
+    end: moment.utc().endOf('year'),
     stepUnit: TimeUnit.YEAR,
     step: 1,
   }
