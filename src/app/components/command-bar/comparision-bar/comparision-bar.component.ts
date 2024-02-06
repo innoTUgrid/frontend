@@ -39,8 +39,8 @@ export class ComparisionBarComponent {
   additionalTimeIntervals: TimeInterval[] = [];
   @Input() showArrow = false
 
-  firstYear = new FormControl(moment(moment().year().toString()));
-  secondYear = new FormControl(moment(moment().year().toString()));
+  firstYear = new FormControl(moment.utc(moment().year().toString()));
+  secondYear = new FormControl(moment.utc(moment().year().toString()));
   isDatepickerOpen = false;
 
   chosenYearHandler(normalizedYear: Moment, year: string, datepicker?: MatDatepicker<Moment>) {
@@ -85,8 +85,8 @@ export class ComparisionBarComponent {
 
   toTimeInterval(year: Moment) {
     const newIntervals = {
-      start: moment(year.startOf('year')),
-      end: moment(year.endOf('year')),
+      start: moment.utc(year.startOf('year')),
+      end: moment.utc(year.endOf('year')),
       step: 1,
       stepUnit: TimeUnit.MONTH
     }
