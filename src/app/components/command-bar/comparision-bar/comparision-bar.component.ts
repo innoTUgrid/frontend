@@ -43,7 +43,7 @@ export class ComparisionBarComponent {
   secondYear = new FormControl(moment.utc(moment().year().toString()));
   isDatepickerOpen = false;
 
-  chosenYearHandler(normalizedYear: Moment, year: string, datepicker?: MatDatepicker<Moment>) {
+  setYear(normalizedYear: Moment, year: string) {
     if (year === 'first') {
       const ctrlValue = this.firstYear.value;
       if (ctrlValue) {
@@ -57,6 +57,20 @@ export class ComparisionBarComponent {
         this.secondYear.setValue(ctrlValue);
       }
     }
+  }
+
+  updateTimeInterval() {
+    if (this.firstYear.value && this.secondYear.value) {
+      this.dataService.timeInterval.next([
+        this.toTimeInterval(this.firstYear.value),
+        this.toTimeInterval(this.secondYear.value),
+        ...this.additionalTimeIntervals,
+      ]);
+    }
+  }
+
+  chosenYearHandler(normalizedYear: Moment, year: string, datepicker?: MatDatepicker<Moment>) {
+    this.setYear(normalizedYear, year)
   
     const firstYearValue = this.firstYear.value?.year() || 0;
     const secondYearValue = this.secondYear.value?.year() || 0;
@@ -69,13 +83,7 @@ export class ComparisionBarComponent {
   
     if (datepicker) datepicker.close();
   
-    if (this.firstYear.value && this.secondYear.value) {
-      this.dataService.timeInterval.next([
-        this.toTimeInterval(this.firstYear.value),
-        this.toTimeInterval(this.secondYear.value),
-        ...this.additionalTimeIntervals,
-      ]);
-    }
+    this.updateTimeInterval()
   }
   
 
@@ -114,8 +122,9 @@ export class ComparisionBarComponent {
       if (metaInfo && metaInfo.length > 0) {
         const maxTimeInterval = this.dataService.getMaximumDatasetTimeInterval()
 
-        this.chosenYearHandler(maxTimeInterval.start, 'first', undefined)
-        this.chosenYearHandler(maxTimeInterval.end, 'second', undefined)
+        this.setYear(maxTimeInterval.start, 'first')
+        this.setYear(maxTimeInterval.end, 'second')
+        this.updateTimeInterval()
       }
     }))
   }
