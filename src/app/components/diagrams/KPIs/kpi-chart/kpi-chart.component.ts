@@ -29,7 +29,7 @@ export class KpiChartComponent {
 
   icons: Map<string, string> = new Map<string, string>([
     [KPIEndpointKey.COST_SAVINGS, 'savings'],
-    [KPIEndpointKey.CO2_SAVINGS, 'cloud'],
+    [KPIEndpointKey.CO2_SAVINGS, 'eco'],
     [KPIEndpointKey.TOTAL_CONSUMPTION, 'power'],
     [ArtificialDatasetKey.TOTAL_CONSUMPTION, 'power'],
     [KPIEndpointKey.TOTAL_PRODUCTION, 'bolt'],

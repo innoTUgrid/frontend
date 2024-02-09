@@ -84,10 +84,7 @@ $font-size-button: 0.95em;
 }
 
 #kpi-icon {
-  background-color: $scientific-blue-tone; 
-  color: $soft-white; 
-  padding: 0.1em; 
-  border-radius: 50%;
+  color: $scientific-blue-tone; 
 }
 
 
@@ -139,6 +136,8 @@ $hc-mean-comparison-chart: #5D7BA2; // Steel blue for mean comparison chart
 $hc-renewable-energy: #3CA080; // Emerald green for renewable energy
 $hc-non-renewable-energy: #797C88; // Slate gray for non-renewable energy
 
+$hc-kpi: $scientific-blue-tone; // scientific blue for kpis
+
 
 
 
@@ -165,6 +164,7 @@ $hc-non-renewable-energy: #797C88; // Slate gray for non-renewable energy
     --highcharts-color-19: #{$hc-renewable-energy};
     --highcharts-color-20: #{$hc-non-renewable-energy};
     --highcharts-color-21: #{$hc-biogas-local};
+    --highcharts-color-22: #{$hc-kpi};
 
     // this is currently only used for the average line in column charts
     --highcharts-neutral-color-40: #{$power-red}; 
