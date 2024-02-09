@@ -49,8 +49,17 @@ $font-size-button: 0.95em;
 * {
   &:not(i):not(span):not(.mat-icon):not([mat-icon]) {
     font-family: $custom-font-family;
+
+    #info-page mathjax & {
+      font-family: MathJax_Main !important;
+      font-style: italic;
+      font-size: 1em;
+    }
   }
 }
+
+
+
 
 #reset-filter-button {
   font-size: $font-size-button;
