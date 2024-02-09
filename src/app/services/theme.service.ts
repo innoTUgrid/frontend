@@ -24,6 +24,8 @@ export class ThemeService {
   solarColorLocal = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-6').trim();
   biogasColorLocal = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-21').trim();
 
+  kpiColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-22').trim();
+
   colors = [
     this.biogasColor,
     this.biomassColor,
@@ -39,6 +41,7 @@ export class ThemeService {
     this.pumpStorageColor,
     this.solarColorLocal,
     this.biogasColorLocal,
+    this.kpiColor
   ]
 
   getColorIndex(type: string) {
@@ -66,6 +69,7 @@ export class ThemeService {
     ['total-non-renewable', this.importedEnergyConventionalColor],
     ['solar-local', this.solarColorLocal],
     ['biogas-local', this.biogasColorLocal],
+    ['kpi', this.kpiColor],
   ]);
 
   unitToName = new Map([

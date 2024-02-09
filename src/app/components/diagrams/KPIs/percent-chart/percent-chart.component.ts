@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { DataService } from '@app/services/data.service';
 import { ChartService } from '@app/services/chart.service';
 import { DatasetRegistry } from '@app/types/time-series-data.model';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
     selector: 'app-percent-chart',
@@ -14,6 +15,8 @@ import { DatasetRegistry } from '@app/types/time-series-data.model';
 export class PercentChartComponent implements HighchartsDiagram, SingleValueDiagram {
     chartService: ChartService = inject(ChartService);
     dataService: DataService = inject(DataService);
+    themeService: ThemeService = inject(ThemeService);
+    color = this.themeService.kpiColor;
     _value: number = 0;
     get value(): number {
         return this._value
@@ -98,6 +101,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
             data: [{
                 y: this.value,
             }],
+            color: this.color,
         }]
     }
 
@@ -130,7 +134,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     
         plotOptions: {
             solidgauge: {
-                
+                colorByPoint: false,
                 dataLabels: {
                     enabled: true,
                     align: 'center',
@@ -152,7 +156,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
                 rounded: true,
                 radius: '112%',
                 innerRadius: '88%',
-                colorIndex: 0,
+            
             }
         },
         exporting: {enabled: false},
