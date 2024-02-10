@@ -46,20 +46,9 @@ $font-size-chart-legend: 0.625em;
 $font-size-navigation: 0.95em;
 $font-size-button: 0.95em;
 
-* {
-  &:not(i):not(span):not(.mat-icon):not([mat-icon]) {
-    font-family: $custom-font-family;
-
-    #info-page mathjax & {
-      font-family: MathJax_Main !important;
-      font-style: italic;
-      font-size: 1em;
-    }
-  }
+body {
+  font-family: $custom-font-family;
 }
-
-
-
 
 #reset-filter-button {
   font-size: $font-size-button;
@@ -165,6 +154,8 @@ $hc-kpi: $scientific-blue-tone; // scientific blue for kpis
     --highcharts-color-20: #{$hc-non-renewable-energy};
     --highcharts-color-21: #{$hc-biogas-local};
     --highcharts-color-22: #{$hc-kpi};
+
+    --highcharts-font-family: #{$custom-font-family};
 
     // this is currently only used for the average line in column charts
     --highcharts-neutral-color-40: #{$power-red}; 

@@ -20,6 +20,11 @@ HC_sankey(Highcharts);
 SolidGauge(Highcharts);
 
 Highcharts.setOptions({
+  chart:{
+    style: {
+      fontFamily: 'var(--highcharts-font-family)'
+    }
+  },
   title: {
     style: {
       fontSize: '1em'
