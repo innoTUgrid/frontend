@@ -82,7 +82,13 @@ export class DataService {
 
     this.getDataset(TimeSeriesEndpointKey.ALL_SCOPE_EMISSIONS_COMBINED)
     .pipe(
-      map((datasets) => mergeDatasets([datasets]))
+      map((datasets) => mergeDatasets([{
+          ...datasets,
+          series: datasets.series.map((series) => {
+            return {...series, id: toSeriesId(ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED, series.type, series.local || false, series.timeUnit)}
+          })
+        }])
+      )
     ).subscribe(this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED))
 
     this.getDataset(ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED).pipe(
