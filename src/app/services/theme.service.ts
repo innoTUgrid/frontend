@@ -74,7 +74,7 @@ export class ThemeService {
 
   unitToName = new Map([
     ['kwh', 'kWh'],
-    ['kgco2eq', 'kg'],
+    ['kgco2eq', 'kgCO2eq'],
   ]);
 
   energyTypesToName = new Map([

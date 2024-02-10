@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, inject } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
+import { ThemeService } from '@app/services/theme.service';
 import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { Dataset, DatasetRegistry, Series, TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
@@ -102,6 +103,7 @@ type MtxExpansionEvent = { column: MtxGridColumn ; data: DataTableSeries; index:
 export class DataTableComponent {
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
+  themeService: ThemeService = inject(ThemeService);
   readonly id = "DataTableComponent." + Math.random().toString(36).substring(7);
 
   @Input({required: true}) popover?: MtxPopover;
@@ -131,7 +133,11 @@ export class DataTableComponent {
   columns: MtxGridColumn[] = [
       { header: 'Name', field: 'name', showExpand: true },
       { header: 'Type', field: 'type' },
-      { header: 'Unit', field: 'unit' },
+      { header: 'Unit', field: 'unit', formatter: (data: DataTableSeries) => { 
+        const unitName = this.themeService.unitToName.get(data.unit || '')
+        return (unitName) ? unitName : data
+      }
+      },
       { header: 'Local', field: 'local', type: 'boolean'},
     ];
 
