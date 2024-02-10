@@ -136,7 +136,7 @@ export function fetchEmissionFactors(http: HttpClient): Observable<EmissionFacto
 export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals: TimeInterval[]): Observable<Series[]> {
     const endpointKey = TimeSeriesEndpointKey.TS_RAW
     const allCalls: Observable<TSRawResult>[][] = identifiers.map((id: string) => {
-        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals, '1hour')
+        return createCalls<TSRawResult>(http, endpointKey + '/' + id + '/resample', timeIntervals)
     })
 
     const answer = forkJoin(
