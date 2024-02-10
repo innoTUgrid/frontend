@@ -13,14 +13,17 @@ export enum TimeSeriesEndpointKey {
     ENERGY_CONSUMPTION = "kpi/consumption",
     SCOPE_1_EMISSIONS = "kpi/scope_one_emissions",
     SCOPE_2_EMISSIONS = "kpi/scope_two_emissions",
-    TS_RAW = 'ts'
+    TS_RAW = 'ts',
+
+    // combined datasets
+    ALL_SCOPE_EMISSIONS_COMBINED = "all_scope_emissions_combined",
 }
 
 export enum ArtificialDatasetKey {
     TOTAL_CONSUMPTION = TimeSeriesEndpointKey.ENERGY_CONSUMPTION + "_total_artificial",
     TOTAL_PRODUCTION = "production_total_artificial",
     TOTAL_EMISSIONS = "emissions_total_artificial", // no types
-    ALL_SCOPE_EMISIONS_COMBINED = "all_scope_emissions_combined_artificial",
+    ALL_SCOPE_EMISSIONS_MERGED = "all_scope_emissions_merged_artificial",
 }
 
 export type EndpointKey = KPIEndpointKey | TimeSeriesEndpointKey

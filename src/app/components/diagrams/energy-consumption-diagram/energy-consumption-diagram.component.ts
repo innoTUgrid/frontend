@@ -113,6 +113,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
         type: renewableType,
         data: sumAllDataTypes(renewableEnergy),
         timeUnit: currentTimeInterval.stepUnit,
+        sourceDataset: this.kpiName,
         color: this.themeService.colorMap.get(renewableType),
         xAxis: 0,
       })
@@ -124,6 +125,7 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
         type: nonRenewableType,
         data: sumAllDataTypes(nonRenewableEnergy),
         timeUnit: currentTimeInterval.stepUnit,
+        sourceDataset: this.kpiName,
         color: this.themeService.colorMap.get(nonRenewableType),
         xAxis: 0,
       })

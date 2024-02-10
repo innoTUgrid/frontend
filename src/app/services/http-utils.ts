@@ -39,6 +39,7 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
                     consumption: true,
                     id: endpointKey,
                     timeUnit: timeInterval.stepUnit,
+                    sourceDataset: endpointKey
                 },
             ]
 
@@ -91,7 +92,8 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
                             unit: entry.unit,
                             consumption: (endpointKey === TimeSeriesEndpointKey.ENERGY_CONSUMPTION) ? true : false,
                             local: entry.local,
-                            timeUnit: timeInterval.stepUnit
+                            timeUnit: timeInterval.stepUnit,
+                            sourceDataset: endpointKey
                         })
                     } else {
                         data = currentSeries.data;
@@ -167,7 +169,8 @@ export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals
                             unit: meta.unit,
                             consumption: meta.consumption,
                             local: local,
-                            timeUnit: timeInterval.stepUnit
+                            timeUnit: timeInterval.stepUnit,
+                            sourceDataset: endpointKey
                         })
                     }
 

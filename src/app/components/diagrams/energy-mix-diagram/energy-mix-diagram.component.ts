@@ -24,7 +24,7 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   seriesType: SeriesTypes = 'area';
 
   readonly id = "EnergyMixDiagramComponent." + Math.random().toString(36).substring(7);
-  kpis: DatasetKey[] = [ArtificialDatasetKey.ALL_SCOPE_EMISIONS_COMBINED, TimeSeriesEndpointKey.ENERGY_CONSUMPTION]
+  kpis: DatasetKey[] = [ArtificialDatasetKey.ALL_SCOPE_EMISSIONS_MERGED, TimeSeriesEndpointKey.ENERGY_CONSUMPTION]
   _kpiName: DatasetKey = this.kpis[0];
 
   get kpiName(): DatasetKey {
