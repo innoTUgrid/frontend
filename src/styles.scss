@@ -87,6 +87,10 @@ $frontend-accent: mat.define-palette(mat.$red-palette);
 // The warn palette is optional (defaults to red).
 $frontend-warn: mat.define-palette(mat.$red-palette);
 
+$frontend-typography: mat.define-typography-config(
+  $font-family: $custom-font-family,
+);
+
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $frontend-theme: mat.define-light-theme((
@@ -94,8 +98,16 @@ $frontend-theme: mat.define-light-theme((
     primary: $frontend-primary,
     accent: $frontend-accent,
     warn: $frontend-warn,
-  )
+  ),
+  typography: $frontend-typography
 ));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($frontend-theme);
+@include mtx.all-component-themes($frontend-theme);
+
 
 //colors for highcharts. Pallette: https://coolors.co/palette/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
 $hc-biogas: #7FBF69; // Light green for biogas
@@ -161,17 +173,6 @@ $hc-kpi: $scientific-blue-tone; // scientific blue for kpis
     --highcharts-neutral-color-40: #{$power-red}; 
     // --highcharts-neutral-color-100: #ff0000;
 }
-
-
-
-
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($frontend-theme);
-@include mtx.all-component-themes($frontend-theme);
-
 
 // this is the style of the page header
 .title {
