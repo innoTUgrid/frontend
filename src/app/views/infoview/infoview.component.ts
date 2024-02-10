@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { DataService } from '@app/services/data.service';
+import { EmissionFactorsResult } from '@app/types/api-result.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-infoview',
@@ -7,8 +10,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InfoviewComponent implements OnInit {
 
-    constructor() { }
+    dataService: DataService = inject(DataService);
+    emissionFactors: EmissionFactorsResult[] = [];
 
+    constructor() {}
+
+    get emissionFactorNames(): string {
+        return [...new Set(this.emissionFactors.map(emissionFactor => emissionFactor.source))].join(', ');
+    }
+
+    subscriptions: Subscription[] = [];
     ngOnInit(): void {
+        this.subscriptions.push(this.dataService.emissionFactors.subscribe(
+            (emissionFactors: EmissionFactorsResult[]) => {
+                console.log('emissionFactors', emissionFactors);
+                this.emissionFactors = emissionFactors;
+            }
+        ))
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+        this.subscriptions = [];
     }
 }
