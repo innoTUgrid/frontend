@@ -1,0 +1,19 @@
+<div>
+    <div class="header">
+        <div id="table-header-title" class="title">
+            {{title}}
+            <app-info-button [popover]="popover"></app-info-button>
+        </div>  
+        <app-export-button class="header-actions" color="primary" [dataLoader]="toCSVArray.bind(this)" [fileName]="this.title + '.csv'"></app-export-button>
+    </div>
+
+    <div class="table">
+        <mtx-grid 
+            [data]="data" 
+            [columns]="columns" 
+            [pageOnFront]="false"
+            [showPaginator]="true"
+        >
+        </mtx-grid>
+    </div>
+</div>
