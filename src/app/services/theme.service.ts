@@ -97,11 +97,16 @@ export class ThemeService {
     ['gas', 'Gas'],
   ])
 
-  getEnergyTypeName(type: string) {
-    return this.energyTypesToName.get(type)
+  getExtendedType(type: string, local: boolean) {
+    return type + (local ? '-local' : '')
   }
 
-  getEnergyType(type: string, local: boolean = false){
-    return type + (local ? '-local' : '')
+  getEnergyColor(type: string, local: boolean) {
+    return this.colorMap.get(this.getExtendedType(type, local))
+  }
+
+  getEnergyTypeName(type: string, local: boolean) {
+    const typeExtended = this.getExtendedType(type, local)
+    return this.energyTypesToName.get(typeExtended)
   }
 }

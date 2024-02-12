@@ -319,9 +319,9 @@ export class DataService {
         const o = fetchTimeSeriesData(this.http, endpointKey, timeIntervals).pipe(
           map((data) => {
             for (const series of data) {
-              series.type = this.themeService.getEnergyType(series.type, series.local) || series.type
-              series.name = this.themeService.getEnergyTypeName(series.type) || series.name
-              series.color = this.themeService.colorMap.get(series.type)
+              const local = series.local || false
+              series.name = this.themeService.getEnergyTypeName(series.type, local) || series.name
+              series.color = this.themeService.getEnergyColor(series.type, local)
             }
             return data
           })
