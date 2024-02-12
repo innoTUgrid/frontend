@@ -56,15 +56,20 @@ export class TableBasicExample {
     .subscribe((datasets) => {
       const timeIntervals = this.dataService.timeInterval.getValue()
       this.updateData(timeIntervals)
-      this.loading = false
     })
     const s2 = this.dataService.timeInterval.subscribe((timeIntervals) => {
       this.updateData(timeIntervals)
     })
+
+    const s3 = this.dataService.loadingDatasets.subscribe((loading) => {
+      if (this.registries.some((registry) => this.dataService.isLoading(registry.endpointKey))) {
+        this.loading = true
+      } else {
+        this.loading = false
+      }
+    })
+
     this.subscriptions.push(s1, s2)
-    this.dataService.on(DataEvents.BeforeUpdate, () => {
-      this.loading = true
-    }, this.id)
   }
 
   ngOnDestroy() {
@@ -74,7 +79,6 @@ export class TableBasicExample {
 
     this.subscriptions.forEach((subscription) => {subscription.unsubscribe()})
     this.subscriptions = []
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
   toCSVArray() {
