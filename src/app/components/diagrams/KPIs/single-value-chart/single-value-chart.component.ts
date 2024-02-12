@@ -39,6 +39,8 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() outlined: boolean = true;
   @Input() small: boolean = false;
 
+  loading: boolean = false;
+
   get unit(): string {
     if (this.units.length === 0) return '';
     return this.units[this.unitIndex];

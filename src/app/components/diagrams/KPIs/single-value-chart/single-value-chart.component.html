@@ -1,4 +1,4 @@
-<div class="kpi-container">
+<mtx-loader class="kpi-container" [loading]="loading" type="spinner" color="primary">
     <div class="spacer" *ngIf="popover"></div>
 
     <mat-card class="kpi-card">
@@ -20,4 +20,4 @@
     </mat-card>
 
     <app-info-button *ngIf="popover" [popover]="popover"></app-info-button>
-</div>
+</mtx-loader>

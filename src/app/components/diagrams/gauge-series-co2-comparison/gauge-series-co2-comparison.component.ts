@@ -18,6 +18,16 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
 
+  set loading(value: boolean) {
+    if (this.chart) {
+      if (value) {
+        this.chart.showLoading()
+      } else {
+        this.chart.hideLoading()
+      }
+    }
+  }
+
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);
 
@@ -186,10 +196,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
     this.dataService.registerDataset(this.registry)
 
     this.subscriptions.push(...this.chartService.subscribeSingleValueDiagram(this, this.datasetKey, false))
-
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (this.chart) this.chart.showLoading()
-    }, this.id)
   }
 
   ngOnDestroy() {
@@ -201,7 +207,6 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
 
   updateChart() {
     if (this.chart) {
-      this.chart.hideLoading()
       this.chart.update({
         series: this.series
       }, true, true, true)

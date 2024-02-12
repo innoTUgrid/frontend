@@ -139,6 +139,7 @@ export class ChartService {
     } else {
       diagram.value = (values.length > 0) ? values[0] : 0
     }
+    diagram.loading = false
   }
 
   subscribeSingleValueDiagram(diagram: SingleValueDiagram, datasetKey:DatasetKey, average: boolean = true) {
@@ -146,7 +147,11 @@ export class ChartService {
       this.updateSingleValue(diagram, average, dataset.series, this.dataService.timeInterval.getValue())
     });
 
-    return [s1]
+    const s2 = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
+      diagram.loading = true
+    })
+
+    return [s1, s2]
   }
 
   updateAverageLine(chart: Highcharts.Chart, stacked:boolean, seriesIndex: number = 0, unit: string = '') {

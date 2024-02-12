@@ -306,17 +306,21 @@ export class DataService {
       if (KPIList.includes(endpointKey)) {
         timeIntervals.forEach((interval) => {
           const o = fetchKPIData(this.http, endpointKey, interval)
-          o.subscribe((data: Series[]) => {
-            this.getDataset(endpointKey).next({
-              series: data,
-              timeIntervals: [interval]
-            })
+          o.subscribe({
+            next: (data: Series[]) => {
+              this.getDataset(endpointKey).next({
+                series: data,
+                timeIntervals: [interval]
+              })
+            },
+            error: (error) => {
+              this.getDataset(endpointKey).next({series: [], timeIntervals: [interval]})
+            }
           })
           observables.push(o)
         }
         )
       } else {
-        console.log('fetching', endpointKey)
         const o = fetchTimeSeriesData(this.http, endpointKey, timeIntervals).pipe(
           map((data) => {
             for (const series of data) {
