@@ -44,6 +44,7 @@ export interface HighchartsDiagram extends HighchartsDiagramMinimal {
 
 export interface SingleValueDiagram {
     value: number | number[]
+    chart? : Highcharts.Chart
     loading: boolean
 }
 

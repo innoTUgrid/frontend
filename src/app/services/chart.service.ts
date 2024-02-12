@@ -53,7 +53,6 @@ export class ChartService {
 
     diagram.chartProperties.series = allSeries
     if (diagram.chart) {
-      diagram.chart.hideLoading()
       diagram.chart.update({
         series: allSeries
       }, true, true)
@@ -72,22 +71,34 @@ export class ChartService {
     return data.filter((series) => series.timeUnit === currentTimeInterval.stepUnit)
   }
 
+  subscribeLoading(diagram: {chart:{hideLoading: () => void, showLoading: () => void} | undefined}, datasetKey: DatasetKey): Subscription {
+    return this.dataService.loadingDatasets.subscribe((loading: DatasetKey[]) => {
+      if (diagram.chart) {
+        if (loading.indexOf(datasetKey as DatasetKey) === -1 ) diagram.chart.hideLoading()
+        else diagram.chart.showLoading()
+      }
+    })
+  }
+
   subscribeSeries(
     diagram: HighchartsDiagram, 
     datasetKey: string, 
     beforeProcessData: (dataset: Series[]) => Series[] = this.filterOtherStepUnits.bind(this),
     onSeriesUpdate?: () => void,
-  ): Subscription {
+  ): Subscription[] {
     if (diagram.chart) {
       diagram.chart.update({series: []}, false, true)
     }
-    const s = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
+    const s1 = this.dataService.getDataset(datasetKey).subscribe((dataset: Dataset) => {
       const updatedSeries = beforeProcessData(dataset.series)
       this.updateSeries(diagram, {...dataset,
         series: updatedSeries,
       }, onSeriesUpdate)
     });
-    return s
+
+    const s2 = this.subscribeLoading(diagram, datasetKey as DatasetKey)
+
+    return [s1, s2]
   }
 
   updateInterval(diagram: HighchartsDiagram, timeIntervals: TimeInterval[], redraw: boolean) {
@@ -139,7 +150,6 @@ export class ChartService {
     } else {
       diagram.value = (values.length > 0) ? values[0] : 0
     }
-    diagram.loading = false
   }
 
   subscribeSingleValueDiagram(diagram: SingleValueDiagram, datasetKey:DatasetKey, average: boolean = true) {
@@ -147,9 +157,18 @@ export class ChartService {
       this.updateSingleValue(diagram, average, dataset.series, this.dataService.timeInterval.getValue())
     });
 
-    const s2 = this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
-      diagram.loading = true
-    })
+    const s2 = this.subscribeLoading({
+      chart: {
+        showLoading: () => {
+          diagram.loading = true
+          if (diagram.chart) diagram.chart.showLoading()
+        },
+        hideLoading: () => {
+          diagram.loading = false
+          if (diagram.chart) diagram.chart.hideLoading()
+        }
+      }
+    }, datasetKey as DatasetKey)
 
     return [s1, s2]
   }

@@ -27,16 +27,7 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
         this.updateChart()
     }
 
-    set loading(value: boolean) {
-        if (this.chart) {
-            if (value) {
-                this.chart.showLoading()
-            } else {
-                this.chart.hideLoading()
-            }
-        }
-    }
-
+    loading: boolean = false
     _kpiName?: DatasetKey;
   readonly id = "PercentChartComponent." + Math.random().toString(36).substring(7);
     subscriptions: Subscription[] = [];

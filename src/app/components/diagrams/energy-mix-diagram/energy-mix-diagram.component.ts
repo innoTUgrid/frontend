@@ -34,16 +34,15 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   set kpiName(value: DatasetKey) {
     this._kpiName = value;
     if (value) {
-      this.timeSeriesSubscription?.unsubscribe()
-      this.timeSeriesSubscription = this.chartService.subscribeSeries(this, this.kpiName);
+      this.timeSeriesSubscriptions.forEach(sub => sub.unsubscribe())
+      this.timeSeriesSubscriptions = this.chartService.subscribeSeries(this, this.kpiName);
     }
   }
   
-  timeSeriesSubscription?: Subscription;
+  timeSeriesSubscriptions: Subscription[] = [];
   timeIntervalSubscription?: Subscription;
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -70,23 +69,19 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
 
     this.registries.forEach(registry => {this.dataService.registerDataset(registry)})
     this.timeIntervalSubscription = this.chartService.subscribeInterval(this)
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (event.endpointKey === this.kpiName && this.chart) this.chart.showLoading()
-    }, this.id)
   }
 
 
   ngOnDestroy() {
     this.unsubscribeAll()
     this.registries.forEach(registry => {this.dataService.unregisterDataset(registry)})
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
   unsubscribeAll() {
     this.timeIntervalSubscription?.unsubscribe()
     this.timeIntervalSubscription = undefined;
-    this.timeSeriesSubscription?.unsubscribe()
-    this.timeSeriesSubscription = undefined;
+    this.timeSeriesSubscriptions.forEach(sub => sub.unsubscribe())
+    this.timeSeriesSubscriptions = [];
   }
 
   dataGrouping: Highcharts.DataGroupingOptionsObject = {

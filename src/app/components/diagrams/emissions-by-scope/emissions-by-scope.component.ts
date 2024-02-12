@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts/highstock';
 import { DataService } from '@app/services/data.service';
 import { Subscription } from 'rxjs';
 import { DataEvents, Dataset, DatasetRegistry, EndpointUpdateEvent } from '@app/types/time-series-data.model';
-import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { DatasetKey, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { sumAllDataTypes, toDatasetTotal } from '@app/services/data-utils';
 import { ChartService } from '@app/services/chart.service';
 
@@ -72,7 +72,6 @@ export class EmissionsByScopeComponent implements OnInit {
   } 
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -181,7 +180,6 @@ export class EmissionsByScopeComponent implements OnInit {
       this.chart.update({
         series: this.series,
       }, true, true, true)
-      this.chart.hideLoading()
     } else {
       this.updateFlag = true
     }
@@ -190,9 +188,12 @@ export class EmissionsByScopeComponent implements OnInit {
   ngOnInit() {
     this.updateButtonText()
 
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (this.chart) this.chart.showLoading()
-    }, this.id)
+    this.subscriptions.push(this.dataService.loadingDatasets.subscribe((loading: DatasetKey[]) => {
+      if (this.chart) {
+        if (loading.indexOf(this.registry.endpointKey) === -1 ) this.chart.hideLoading()
+        else this.chart.showLoading()
+      }
+    }))
 
     this.dataService.registerDataset(this.registry)
     this.subscriptions.push(
@@ -206,6 +207,5 @@ export class EmissionsByScopeComponent implements OnInit {
     this.dataService.unregisterDataset(this.registry)
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 }

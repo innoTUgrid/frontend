@@ -57,7 +57,6 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   lineColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-color-0').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -123,16 +122,12 @@ export class YearlyCo2EmissionsChartComponent implements OnInit, HighchartsDiagr
   ngOnInit() {
     this.dataService.registerDataset(this.registry)
 
-    this.subscriptions.push(this.chartService.subscribeSeries(this, this.endpointKey, this.loadYearlyData.bind(this)))
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (this.chart) this.chart.showLoading()
-    }, this.id)
+    this.subscriptions.push(...this.chartService.subscribeSeries(this, this.endpointKey, this.loadYearlyData.bind(this)))
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
     this.dataService.unregisterDataset(this.registry)
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 }

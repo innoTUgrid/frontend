@@ -17,16 +17,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   Highcharts: typeof Highcharts = Highcharts;
   chart: Highcharts.Chart | undefined;
   updateFlag = false;
-
-  set loading(value: boolean) {
-    if (this.chart) {
-      if (value) {
-        this.chart.showLoading()
-      } else {
-        this.chart.hideLoading()
-      }
-    }
-  }
+  loading: boolean = false
 
   dataService: DataService = inject(DataService);
   chartService: ChartService = inject(ChartService);

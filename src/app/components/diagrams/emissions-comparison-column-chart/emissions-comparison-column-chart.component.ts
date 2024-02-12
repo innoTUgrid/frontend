@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts/highstock';
 import { ChartService } from '@app/services/chart.service';
 import { DataService } from '@app/services/data.service';
 import { Subscription, timeInterval } from 'rxjs';
-import { ArtificialDatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
+import { ArtificialDatasetKey, DatasetKey, HighchartsDiagram, SeriesTypes, TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { DataEvents, DatasetRegistry, EndpointUpdateEvent, Series, TimeUnit } from '@app/types/time-series-data.model';
 import { sumAllDataTypes } from '@app/services/data-utils';
 
@@ -71,18 +71,12 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
   meanColor = getComputedStyle(document.documentElement).getPropertyValue('--highcharts-neutral-color-40').trim();
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
   chartProperties: Highcharts.Options = {
     chart: {
       type: this.seriesType,
-      events: {
-        redraw: () => {
-          if (this.chart) this.chart.hideLoading()
-        }
-      }
     },
     title: {
       text: `Monthly CO₂ Emissions`,
@@ -173,18 +167,13 @@ export class EmissionsComparisonColumnChartComponent implements OnInit, Highchar
 
     const s0 = this.chartService.subscribeSeries(this, this.kpiName, this.splitYearlyData.bind(this), this.updateAverageLine.bind(this))
     const s1 = this.chartService.subscribeInterval(this)
-    this.subscriptions.push(s0, s1)
-
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (this.chart) this.chart.showLoading()
-    }, this.id)
+    this.subscriptions.push(...s0, s1)
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
     this.dataService.unregisterDataset(this.registry)
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
 
 }

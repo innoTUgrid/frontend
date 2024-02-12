@@ -30,7 +30,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   updateFlag = false
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
-    if (!chart.series) chart.showLoading()
     this.chart = chart;
   }
 
@@ -59,11 +58,6 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
   chartProperties: Highcharts.Options = {
     chart: {
       type: 'column',
-      events: {
-        redraw: () => {
-          if (this.chart) this.chart.hideLoading()
-        }
-      }
     },
     title: {
       text: 'Consumed Energy by Source',
@@ -143,19 +137,15 @@ readonly id = "EnergyConsumptionDiagramComponent." + Math.random().toString(36).
     this.dataService.registerDataset(this.registry)
 
     this.subscriptions.push(
-      this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this), this.updateAverageLine.bind(this))
+      ...this.chartService.subscribeSeries(this, this.kpiName, this.aggregateExternalData.bind(this), this.updateAverageLine.bind(this))
     )
     this.subscriptions.push(this.chartService.subscribeInterval(this))
-    this.dataService.on(DataEvents.BeforeUpdate, (event:EndpointUpdateEvent) => {
-      if (event.endpointKey === this.kpiName && this.chart) this.chart.showLoading()
-    }, this.id)
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = []
     this.dataService.unregisterDataset(this.registry)
-    this.dataService.off(DataEvents.BeforeUpdate, this.id)
   }
   
   constructor() {
