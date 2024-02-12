@@ -15,6 +15,12 @@
 
 <mtx-popover #popover="mtxPopover">
   <ng-template mtxPopoverContent>
-      Example explanation of the comparision page
+      <div class = "popup">
+        <p>This dashboard presents the CO₂ emissions caused by energy consumption within the microgrid, encompassing both direct emissions (Scope 1) and indirect emissions (Scope 2). Scope 1 emissions originate from sources owned or controlled by the entity, while Scope 2 emissions result from the generation of purchased electricity from the grid.  [TODO clarify if total co2 emissions are shown i.e. scope 1 plus scope 2]. It facilitates a comparison between the emissions of two selected years: a baseline year and a comparison year. The calculations currently utilize the lifecycle emission factors from 2014, as provided by the IPCC.</p>
+        
+        <p>The dashboard is organized into four main sections: The upper left bar chart illustrates the monthly emissions, allowing for an easy comparison over time. The upper right chart shows the percentage change in emissions between the two years, indicating whether there has been an increase or decrease. The lower left line chart presents the absolute numbers of CO₂ emissions for both years, offering a direct comparison. Finally, the lower right pie chart depicts the proportion of Scope 1 and Scope 2 emissions within the total CO₂ emissions, highlighting the sources of emissions. [Todo clarify trend]. By default, the dashboard displays the Scope values for the comparison year. Selecting 'Show Baseline Year' toggles the view to show emissions data for the baseline year.</p>
+
+        <p>For more information, visit the info page.</p>
+      </div>
   </ng-template>
 </mtx-popover>

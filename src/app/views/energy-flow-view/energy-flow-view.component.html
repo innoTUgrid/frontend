@@ -8,6 +8,15 @@
 
 <mtx-popover #popover="mtxPopover">
     <ng-template mtxPopoverContent>
-        Example explanation of the energy flow page
+        <div class = "popup">
+
+            <p>This page presents a visualization of the energy flow within the microgrid using a Sankey diagram. On the left, the diagram identifies all energy sources contributing to the grid's energy production, encompassing both internal and external sources. The line thickness throughout the diagram represents the volume of energy flow, offering a visual representation of the relative amounts of energy from each source.</p>
+
+            <p>In the center, the diagram categorizes the consumed energy into two main types: electricity and heat, providing a clear distinction between how energy is utilized within the microgrid.</p>
+
+            <p>On the right, the diagram details the specific amounts of energy utilized by consumers, illustrating the final distribution of energy within the microgrid.</p>
+            
+            <p>For more information, visit the info page.</p>
+        </div>
     </ng-template>
 </mtx-popover>

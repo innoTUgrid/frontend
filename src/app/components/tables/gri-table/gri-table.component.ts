@@ -151,7 +151,7 @@ export class TableBasicExample {
   list: Element[] = [
 
     // GRI 302-1
-    {gri_modul: "GRI 302-1 Energy consumption within the organization", description: "a. Total fuel consumption within the organization from non-renewable sources including fuel types used", unit: "-", year_first:"-", year_second:"-"}, // no data for this
+    {gri_modul: "GRI 302-1 Energy consumption within the organization", description: "a. Total fuel consumption within the organization from non-renewable sources including fuel types used", unit: "-", year_first:"-", year_second:"-"}, // no data
     {gri_modul: "", description: "b. Total fuel consumption within the organization from renewable sources including fuel types used", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // Biogas kwh (consumption endpoint)
     {gri_modul: "", description: "c. i. Electricity consumption", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION, [DataTypes.BIOGAS], false), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, // total consumption (consumption endpoint)
     {gri_modul: "", description: "c. ii. Heating consumption", unit:"-", year_first:"-", year_second:"-"}, // todo
@@ -161,18 +161,18 @@ export class TableBasicExample {
     {gri_modul: "", description: "d. ii. Heating sold", unit:"-", year_first:"-", year_second:"-"}, // no data
     {gri_modul: "", description: "d. iii. Cooling sold", unit:"-", year_first:"-", year_second:"-"}, // no data
     {gri_modul: "", description: "d. iv. Steam sold", unit:"-", year_first:"-", year_second:"-"}, // no data
-    {gri_modul: "", description: "e. Total energy consumption within the organization", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, 
+    {gri_modul: "", description: "e. Total energy consumption within the organization", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.ENERGY_CONSUMPTION), unit_loader:this.unitLoader(TimeSeriesEndpointKey.ENERGY_CONSUMPTION)}, 
     {gri_modul: "", description: "f. For standards, methodologies, assumptions, and/or calculation tools used see information page", unit:"-", year_first:"-", year_second:"-"}, 
     {gri_modul: "", description: "g. Source of the conversion factors used", unit:"-", year_first:"-", year_second:"-"}, // no data
 
     // GRI 305-1
-    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS], false)}, // total scope 1 emissions 
+    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS], false),unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // total scope 1 emissions 
     {gri_modul: "", description: "b. Gases included in the calculation", unit:"CO2", year_first:"-", year_second:"-"}, // fixed value 
     {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // emissions of biogas
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // no data
     {gri_modul: "", description: "e. Source of the emission factors and the global warming potential (GWP) rates used, or a reference to the GWP source", unit:"-", year_first:"-", year_second:"-"}, // source of emission factors, not yet implemented
     {gri_modul: "", description: "f. Consolidation approach for emissions; whether equity share, financial control, or operational control", unit:"-", year_first:"-", year_second:"-"}, // no data
-    {gri_modul: "", description: "g. For standards, methodologies, assumptions, and/or calculation tools used see information page", unit:"-", year_first:"-", year_second:"-"},
+    {gri_modul: "", description: "g. Standards, methodologies, assumptions, and/or calculation tools used", unit:"-", year_first:"See information page", year_second:"See information page"},
 
     // GRI 305-2
     {gri_modul: "GRI 305-2 Energy indirect (Scope 2) GHG emissions", description: "a. Gross location-based energy indirect (Scope 2) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_2_EMISSIONS)}, // total scope 2 emissions
@@ -181,7 +181,7 @@ export class TableBasicExample {
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // no data
     {gri_modul: "", description: "e. Source of the emission factors and the global warming potential (GWP) rates used, or a reference to the GWP source", unit:"-", year_first:"-", year_second:"-"}, // source of emission factors, not yet implemented
     {gri_modul: "", description: "f. Consolidation approach for emissions; whether equity share, financial control, or operational control", unit:"-", year_first:"-", year_second:"-"}, // no data
-    {gri_modul: "", description: "g. For standards, methodologies, assumptions, and/or calculation tools used see information page", unit:"-", year_first:"-", year_second:"-"}, 
+    {gri_modul: "", description: "g. Standards, methodologies, assumptions, and/or calculation tools used", unit:"-", year_first:"See information page", year_second:"See information page"},
 
 ];
 }

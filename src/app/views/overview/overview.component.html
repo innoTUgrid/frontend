@@ -36,6 +36,8 @@
         <p><b>Chart Consumed Energy by Source:</b> This bar chart illustrates the volume of energy consumption over various timestamps, categorizing it into two main groups: local and external energy sources. The external energy sources are further subdivided to highlight the proportions of renewable and non-renewable energy.</p>
 
         <p><b>Chart Energy Mix:</b> The primary view of this chart presents the distribution of emissions associated with the energy consumption within the microgrid, segmented by their respective sources. Upon selecting 'Show Consumption', it transitions to display the breakdown of the energy consumption, distinctly categorized by the different energy sources.</p>
+
+        <p>For more information, visit the info page.</p>
     </div>
     </ng-template>
 </mtx-popover>
@@ -43,7 +45,9 @@
 <mtx-popover #co2savingsPopover="mtxPopover">
     <ng-template mtxPopoverContent>
         <div class = "popup">
-        The formula of this metric calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid generated (i.e. summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts from this value the microgrid's own direct emissions caused by its energy generation.
+        <p>The formula of this metric calculates the CO₂ savings by first determining the total emissions that would have resulted from using external energy sources to generate the same amount of energy as the microgrid generated (i.e. summing across all the external energy sources considering their share in the energy mix and their respective emission factors). It then subtracts from this value the microgrid's own direct emissions caused by its energy generation.</p> 
+        <p>Current calculation use the lifecycle emission factors from 2014 by the IPCC.</p>
+        <p>For more information, visit the info page.</p>
     </div>
     </ng-template>
 </mtx-popover>
@@ -51,7 +55,9 @@
 <mtx-popover #costSavingsPopover="mtxPopover">
     <ng-template mtxPopoverContent>
         <div class = "popup">
-        The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices.
+        <p>The cost savings KPI measures the financial benefit of locally produced energy in a microgrid by calculating the savings achieved compared to purchasing the same amount of energy at external electricity prices. </p>
+        <p>For calculating cost savings the electricity prices from SMARD by the Bundesnetzagentur are used. These are day-ahead spot market prices, not consumer prices.</p>
+        <p>For more information, visit the info page.</p>
     </div>
     </ng-template>
 </mtx-popover>
