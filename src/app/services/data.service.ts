@@ -35,6 +35,7 @@ export class DataService {
 
   // this is the data that is fetched from the server
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
+  readonly loadingDatasets: BehaviorSubject<DatasetKey[]> = new BehaviorSubject<DatasetKey[]>([]);
   readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
   readonly emissionFactors: BehaviorSubject<EmissionFactorsResult[]> = new BehaviorSubject<EmissionFactorsResult[]>([]);
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
@@ -273,6 +274,15 @@ export class DataService {
     }
   }
 
+  setLoading(key: DatasetKey, value: boolean) {
+    if (value) {
+      this.loadingDatasets.next([...this.loadingDatasets.getValue(), key])
+    } else {
+      const index = this.loadingDatasets.getValue().findIndex((loadingKey) => loadingKey === key)
+      this.loadingDatasets.next(this.loadingDatasets.getValue().filter((loadingKey, i) => i !== index))
+    }
+  }
+
   fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()): Observable<Series[]>[] {
     const localData = this.getDataset(endpointKey).getValue()
     if ((this.fetchedEndpoints.has(endpointKey)) || registries.length == 0 || timeIntervals.length === 0) return [];
@@ -289,6 +299,7 @@ export class DataService {
 
     this.fetchedEndpoints.add(endpointKey)
     
+    this.setLoading(endpointKey, true)
     const observables: Observable<Series[]>[] = []
     if (endpointKey === TimeSeriesEndpointKey.TS_RAW) {
       const metaInfo = this.metaInfo.getValue() || []
@@ -296,6 +307,7 @@ export class DataService {
       const o = fetchTSRaw(this.http, identifiers, timeIntervals)
       o.subscribe((data) => {
         this.insertNewData(endpointKey, data, timeIntervals)
+        this.setLoading(endpointKey, false)
       })
       observables.push(o)
     } else if (this.combinedDatasets.has(endpointKey)) {
@@ -312,9 +324,11 @@ export class DataService {
                 series: data,
                 timeIntervals: [interval]
               })
+              this.setLoading(endpointKey, false)
             },
             error: (error) => {
               this.getDataset(endpointKey).next({series: [], timeIntervals: [interval]})
+              this.setLoading(endpointKey, false)
             }
           })
           observables.push(o)
@@ -333,12 +347,14 @@ export class DataService {
         )
         o.subscribe((data: Series[]) => {
           this.insertNewData(endpointKey, data, timeIntervals)
+          this.setLoading(endpointKey, false)
         })
         observables.push(o)
       }
 
     } else {
       this.getDataset(endpointKey).next(localData);
+      this.setLoading(endpointKey, false)
     }
     return observables
   }
@@ -374,6 +390,7 @@ export class DataService {
     )
     o.subscribe((data: Series[]) => {
       this.insertNewData(endpointKey, data, timeIntervals)
+      this.setLoading(endpointKey, false)
     })
     return [o]
   }
