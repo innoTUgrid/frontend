@@ -6,7 +6,7 @@ export enum KPIEndpointKey {
     TOTAL_CONSUMPTION = "kpi/total_consumption",
     TOTAL_PRODUCTION = "kpi/total_production",
     TOTAL_COSTS_PER_KWH = "kpi/total_costs",
-    TOTAL_CO2_EMISSIONS_PER_KWH = "kpi/total_co2",
+    TOTAL_CO2_EMISSIONS_PER_KWH = "kpi/total_co2_emissions",
 }
 
 export enum TimeSeriesEndpointKey {
