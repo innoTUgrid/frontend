@@ -37,6 +37,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   @Input() icon: string = '';
   @Input() units: string[] = [];
   @Input() outlined: boolean = true;
+  @Input() small: boolean = false;
 
   get unit(): string {
     if (this.units.length === 0) return '';
@@ -70,17 +71,6 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   get kpiName(): DatasetKey | undefined {
     return this._kpiName;
   }
-
-  isAdditionalInfo(): boolean {
-    const additionalInfoNames = [
-      'kpi/consumption_total_artificial',
-      'production_total_artificial',
-      'emissions_total_artificial',
-      'kpi/total_costs'
-    ];
-    console.log(this.kpiName);
-    return this.kpiName && additionalInfoNames.includes(this.kpiName.toString()) || false;
-  } 
 
   registry: DatasetRegistry = {
     id:this.id,

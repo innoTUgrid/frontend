@@ -12,6 +12,7 @@ export class KpiChartComponent {
   @Input() kpiName?: DatasetKey;
 
   @Input() popover?: MtxPopover;
+  @Input() small: boolean = false;
 
   unitsMap: Map<string, string[]> = new Map<string, string[]>([
     [KPIEndpointKey.CO2_SAVINGS, ['kg']],

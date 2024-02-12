@@ -7,11 +7,15 @@
 }
 
 #top-diagrams {
-  height: 70%;
+  height: 60%;
 }
 
-.kpi-container {
+#top-kpis {
   height: 20%;
+}
+
+#bottom-kpis {
+  height: 15%;
 }
 
 .page-container {
@@ -24,7 +28,6 @@
 .item{
   flex: 1 1 auto;
   height: 100%;
-  min-height: 200px;
 }
 
 .top-item{
@@ -34,6 +37,11 @@
 
 .bottom-item{
   width: 25%;
+  min-height: 100px;
+}
+
+.bottom-item-with-icon {
+  min-height: 200px;
 }
 
 .sub-kpi-container {
