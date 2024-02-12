@@ -8,6 +8,7 @@ import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, t
 import { fetchEmissionFactors, fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 import moment from 'moment';
 import { EmissionFactorsResult, MetaInfo } from '@app/types/api-result.model';
+import { environment } from '@env/environment';
 
 type Handler<E> = (event: E) => void;
 
@@ -276,7 +277,7 @@ export class DataService {
     const localData = this.getDataset(endpointKey).getValue()
     if ((this.fetchedEndpoints.has(endpointKey)) || registries.length == 0 || timeIntervals.length === 0) return [];
 
-    if (localData) {
+    if (localData && environment.caching) {
       // filter out time intervals that are already loaded
       timeIntervals = timeIntervals.filter((interval) => !localData.timeIntervals.some((localInterval) => timeIntervalIncludes(interval, localInterval)))
     }
