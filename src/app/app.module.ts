@@ -65,6 +65,7 @@ import { ExportButtonComponent } from './components/buttons/export-button/export
 import { KpiChartComponent } from './components/diagrams/KPIs/kpi-chart/kpi-chart.component';
 import { InfoButtonComponent } from './components/buttons/info-button/info-button.component';
 import { MathjaxComponent } from './components/mathjax/mathjax.component';
+import { EmissionFactorsTableComponent } from './components/tables/emission-factors-table/emission-factors-table.component';
 
 
 @NgModule({
@@ -97,6 +98,7 @@ import { MathjaxComponent } from './components/mathjax/mathjax.component';
     KpiChartComponent,
     InfoButtonComponent,
     MathjaxComponent,
+    EmissionFactorsTableComponent,
   ],
   imports: [
     BrowserModule,
