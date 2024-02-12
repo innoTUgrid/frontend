@@ -37,7 +37,7 @@ export class DataService {
   readonly timeSeriesData:TimeSeriesDataDictionary = new TimeSeriesDataDictionary();
   readonly loadingDatasets: BehaviorSubject<DatasetKey[]> = new BehaviorSubject<DatasetKey[]>([]);
   readonly metaInfo: BehaviorSubject<MetaInfo[]|undefined> = new BehaviorSubject<MetaInfo[]|undefined>(undefined);
-  readonly emissionFactors: BehaviorSubject<EmissionFactorsResult[]> = new BehaviorSubject<EmissionFactorsResult[]>([]);
+  readonly emissionFactors: BehaviorSubject<EmissionFactorsResult[]|undefined> = new BehaviorSubject<EmissionFactorsResult[]|undefined>(undefined);
   readonly timeInterval:BehaviorSubject<TimeInterval[]> = new BehaviorSubject<TimeInterval[]>([]);
 
   readonly fetchedEndpoints: Set<DatasetKey> = new Set<DatasetKey>();
@@ -105,7 +105,12 @@ export class DataService {
         },
       }
     )
-    fetchEmissionFactors(this.http).subscribe((factors: EmissionFactorsResult[]) => this.emissionFactors.next(factors))
+    fetchEmissionFactors(this.http).subscribe({
+      next:(factors: EmissionFactorsResult[]) => this.emissionFactors.next(factors),
+      error: (error) => {
+        this.emissionFactors.next([])
+      }
+    })
 
     this.metaInfo.subscribe((info: MetaInfo[]|undefined) => {
       const id = TimeSeriesEndpointKey.TS_RAW

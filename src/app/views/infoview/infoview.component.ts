@@ -22,9 +22,10 @@ export class InfoviewComponent implements OnInit {
     subscriptions: Subscription[] = [];
     ngOnInit(): void {
         this.subscriptions.push(this.dataService.emissionFactors.subscribe(
-            (emissionFactors: EmissionFactorsResult[]) => {
-                console.log('emissionFactors', emissionFactors);
-                this.emissionFactors = emissionFactors;
+            (emissionFactors: EmissionFactorsResult[]|undefined) => {
+                if (emissionFactors) {
+                    this.emissionFactors = emissionFactors;
+                }
             }
         ))
     }

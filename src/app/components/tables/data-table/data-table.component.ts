@@ -105,6 +105,7 @@ export class DataTableComponent {
   chartService: ChartService = inject(ChartService);
   themeService: ThemeService = inject(ThemeService);
   readonly id = "DataTableComponent." + Math.random().toString(36).substring(7);
+  loading: boolean = false
 
   @Input({required: true}) popover?: MtxPopover;
 
@@ -179,20 +180,27 @@ export class DataTableComponent {
   subsciptions: any[] = []
   ngOnInit() {
     if (this.kpiName) {
-      this.dataService.getDataset(this.kpiName).subscribe((dataset: Dataset) => {
+      const s0 = this.dataService.getDataset(this.kpiName).subscribe((dataset: Dataset) => {
         this.updateData(this.chartService.filterOtherStepUnits(dataset.series))
       })
-      this.dataService.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
+      const s1 = this.dataService.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
         this.data.forEach((series) => {
           series.filterDataOutsideInterval(this.dataService.getCurrentTimeInterval())
           series.updateDataPaginated()
         })
       })
+
+      const s2 = this.dataService.loadingDatasets.subscribe((loading) => {
+        this.loading = this.dataService.isLoading(this.registry.endpointKey)
+      })
+
+      this.subsciptions.push(s0, s1, s2)
     }
   }
 
   ngOnDestroy() {
     this.subsciptions.forEach((sub) => sub.unsubscribe())
+    this.subsciptions = []
     this.dataService.unregisterDataset(this.registry)
   }
 

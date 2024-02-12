@@ -16,6 +16,7 @@ export class EmissionFactorsTableComponent {
   chartService: ChartService = inject(ChartService);
   themeService: ThemeService = inject(ThemeService);
   readonly id = "EmisionFactorsTable." + Math.random().toString(36).substring(7);
+  loading: boolean = false
 
   @Input({required: true}) popover?: MtxPopover;
 
@@ -49,11 +50,17 @@ export class EmissionFactorsTableComponent {
 
   subsciptions: any[] = []
   ngOnInit() {
-    const s = this.dataService.emissionFactors.subscribe((data) => {
-      this.data = data
+    const s0 = this.dataService.emissionFactors.subscribe((data) => {
+      if (data) {
+        this.loading = false
+        this.data = data
+      }
+      else {
+        this.loading = true
+      }
     })
 
-    this.subsciptions.push(s)
+    this.subsciptions.push(s0)
   }
 
   ngOnDestroy() {
