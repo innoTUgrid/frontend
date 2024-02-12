@@ -274,13 +274,18 @@ export class DataService {
     }
   }
 
-  setLoading(key: DatasetKey, value: boolean) {
+  private setLoading(key: DatasetKey, value: boolean) {
     if (value) {
       this.loadingDatasets.next([...this.loadingDatasets.getValue(), key])
     } else {
       const index = this.loadingDatasets.getValue().findIndex((loadingKey) => loadingKey === key)
       this.loadingDatasets.next(this.loadingDatasets.getValue().filter((loadingKey, i) => i !== index))
     }
+  }
+
+  isLoading(key: DatasetKey): boolean {
+    const datasets = this.artificialDatasetToEndpoints.get(key) || [key]
+    return datasets.some((dataset) => this.loadingDatasets.getValue().includes(dataset))
   }
 
   fetchDataset(endpointKey: DatasetKey, registries: DatasetRegistry[], timeIntervals: TimeInterval[] = this.timeInterval.getValue()): Observable<Series[]>[] {

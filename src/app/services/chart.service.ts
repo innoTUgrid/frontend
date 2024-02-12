@@ -74,8 +74,12 @@ export class ChartService {
   subscribeLoading(diagram: {chart:{hideLoading: () => void, showLoading: () => void} | undefined}, datasetKey: DatasetKey): Subscription {
     return this.dataService.loadingDatasets.subscribe((loading: DatasetKey[]) => {
       if (diagram.chart) {
-        if (loading.indexOf(datasetKey as DatasetKey) === -1 ) diagram.chart.hideLoading()
-        else diagram.chart.showLoading()
+        if (this.dataService.isLoading(datasetKey as DatasetKey)) {
+          diagram.chart.showLoading()
+        } 
+        else {
+          diagram.chart.hideLoading()
+        }
       }
     })
   }
