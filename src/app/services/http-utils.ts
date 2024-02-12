@@ -23,6 +23,7 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
         params: {
             from: timeInterval.start.toISOString(),
             to: timeInterval.end.toISOString(),
+            interval: `1${timeInterval.stepUnit}`
         }
     })
     .pipe(
