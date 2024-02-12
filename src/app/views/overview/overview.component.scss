@@ -65,7 +65,7 @@
 @media (max-width: 1200px) {
   .diagram-container {
     flex-direction: column;
-    height: auto;
+    height: auto !important;
   }
 
   .item {
