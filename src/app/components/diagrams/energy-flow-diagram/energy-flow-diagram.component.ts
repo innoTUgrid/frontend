@@ -145,12 +145,20 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
             this.dataService.registerDataset(registry)
         })
 
-        const s = combineLatest(this.registries.map((registry) => this.dataService.getDataset(registry.endpointKey)))
+        const s0 = this.dataService.loadingDatasets.subscribe((loading) => {
+            if (  this.registries.some((registry) => this.dataService.isLoading(registry.endpointKey))  ) {
+                if (this.chart) this.chart.showLoading()                
+            } else {
+                if (this.chart) this.chart.hideLoading()
+            }
+        })
+
+        const s1 = combineLatest(this.registries.map((registry) => this.dataService.getDataset(registry.endpointKey)))
         .subscribe((datasets: Dataset[]) => {
             this.updateData(datasets)
         })
 
-        this.subscriptions.push(s)
+        this.subscriptions.push(s0, s1)
     }
 
     ngOnDestroy(): void {
