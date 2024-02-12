@@ -90,7 +90,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         const edges: Highcharts.SeriesSankeyPointOptionsObject[] = []
         for (const [index, series] of consumptionSeries.entries()) {
             const colorIndex = this.themeService.colors.indexOf(series.color || '')
-            if (series.type === DataTypes.BIOGAS || series.type === DataTypes.BIOMASS) {
+            if (series.type === DataTypes.BIOGAS) {
                 const electricity = consumptionTotalByCarrier[index] * 0.3
                 const heat = consumptionTotalByCarrier[index] * 0.7
 
