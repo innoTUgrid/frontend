@@ -16,6 +16,7 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   chartService: ChartService = inject(ChartService);
   dataService: DataService = inject(DataService);
   _value: number = 0;
+ 
 
   @Input() popover?: MtxPopover;
 
@@ -69,6 +70,17 @@ export class SingleValueChartComponent implements SingleValueDiagram {
   get kpiName(): DatasetKey | undefined {
     return this._kpiName;
   }
+
+  isAdditionalInfo(): boolean {
+    const additionalInfoNames = [
+      'kpi/consumption_total_artificial',
+      'production_total_artificial',
+      'emissions_total_artificial',
+      'kpi/total_costs'
+    ];
+    console.log(this.kpiName);
+    return this.kpiName && additionalInfoNames.includes(this.kpiName.toString()) || false;
+  } 
 
   registry: DatasetRegistry = {
     id:this.id,

@@ -1,3 +1,5 @@
+@import '/src/styles.scss';
+
 .kpi-card {
     display: flex;
     flex-direction: column;
@@ -43,4 +45,16 @@
 
 .spacer {
     width: 48px;
+}
+
+.additional-info-text{
+    font-size: 1.5em;
+    color: $subtle-black;
+    
+}
+
+.additional-info-footer{
+    font-size: 0.8em;
+    color: $subtle-black;
+    margin-top: -5vh;
 }
