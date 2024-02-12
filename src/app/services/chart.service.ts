@@ -185,7 +185,7 @@ export class ChartService {
             y: sum,
           },
           {
-            x: groupedData[groupedData.length - 1].x,
+            x: chart.xAxis[0].max || groupedData[groupedData.length - 1].x,
             y: sum,
             dataLabels: {
               enabled: true,
