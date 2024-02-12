@@ -1,28 +1,34 @@
-<div>
+<div class="page-container">
     <app-command-bar></app-command-bar>
     
     <div>
         <app-data-table title="Energy Consumption" [popover]="consumptionPopover" [kpiName]="TimeSeriesKey.ENERGY_CONSUMPTION"></app-data-table>        
         <app-data-table title="Scope 1 Emissions" [popover]="scope1EmissionsPopover" [kpiName]="TimeSeriesKey.SCOPE_1_EMISSIONS"></app-data-table>
         <app-data-table title="Scope 2 Emissions" [popover]="scope2EmissionsPopover" [kpiName]="TimeSeriesKey.SCOPE_2_EMISSIONS"></app-data-table>
+        <app-emission-factors-table title="Emission Factors" [popover]="emissionFactorsPopover"></app-emission-factors-table>
     </div>
 </div>
 
 
 <mtx-popover #consumptionPopover="mtxPopover">
     <ng-template mtxPopoverContent>
-        <div class = "popup">Example </div>
+        <div class = "popup">Example consumption</div>
     </ng-template>
 </mtx-popover>
 
 <mtx-popover #scope1EmissionsPopover="mtxPopover">
     <ng-template mtxPopoverContent>
-        <div class = "popup">Example</div>
+        <div class = "popup">Example scope 1 emisssions</div>
     </ng-template>
 </mtx-popover>
 
 <mtx-popover #scope2EmissionsPopover="mtxPopover">
     <ng-template mtxPopoverContent>
-        <div class = "popup">Example</div>
+        <div class = "popup">Example scope 2 emissions </div>
     </ng-template>
 </mtx-popover>
+
+<mtx-popover #emissionFactorsPopover="mtxPopover">
+    <ng-template mtxPopoverContent>
+        <div class = "popup">Example Emission Factors</div>
+    </ng-template>
