@@ -7,10 +7,6 @@ import { TimeSeriesEndpointKey } from '@app/types/kpi.model';
 import { sumAllDataTypes, toDatasetTotal } from '@app/services/data-utils';
 import { ChartService } from '@app/services/chart.service';
 
-
-const upwardTrendIcon = '<span style="color: var(--highcharts-color-15)">↑</span>'
-const downwardTrendIcon = '<span style="color: var(--highcharts-color-0)">↓</span>'
-
 @Component({
   selector: 'app-emissions-by-scope',
   templateUrl: './emissions-by-scope.component.html',
@@ -46,7 +42,6 @@ export class EmissionsByScopeComponent implements OnInit {
   subscriptions: Subscription[] = [];
 
 
-  upwardTrend: boolean[] = [false, false]
   value: number[] = [0, 0]
 
   get series(): Highcharts.SeriesOptionsType[] {
@@ -63,14 +58,12 @@ export class EmissionsByScopeComponent implements OnInit {
             y: this.value[0],
             colorIndex: 'var(--highcharts-color-4)',
             color: 'var(--highcharts-color-4)',
-            trend: (this.upwardTrend[0]) ? upwardTrendIcon : downwardTrendIcon,
           },
           {
             name: 'Scope 2',
             y: this.value[1],
             colorIndex: 'var(--highcharts-color-0)',
             color: 'var(--highcharts-color-0)',
-            trend: (this.upwardTrend[1]) ? upwardTrendIcon : downwardTrendIcon, 
           },
         ],
         type: 'pie',
@@ -152,7 +145,7 @@ export class EmissionsByScopeComponent implements OnInit {
         return `
           <b>${point.name}</b>:&nbsp;&nbsp;
           <span style="color: ${color};">${formattedY} kg</span>
-          &nbsp;${trend}&nbsp;
+          &nbsp;
           <span>${formattedPercentage}%</span>
         `;
       },
@@ -179,8 +172,6 @@ export class EmissionsByScopeComponent implements OnInit {
       const data = sumAllDataTypes(series, timeIntervals[this.timeIntervalIndex])
 
       if (data.length === 0) continue
-      const diff = data[data.length - 1][1] - data[0][1]
-      this.upwardTrend[index] = (diff > 0) ? true : false
   
       const newValue = this.chartService.calculateSingleValue(data, false)
       this.value[index] = newValue
