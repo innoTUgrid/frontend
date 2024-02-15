@@ -31,7 +31,7 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
         }
     })
     .pipe(
-        catchError(errorCatcher),
+        catchError((error) => of({} as KPIResult)),
         map((kpiValue) => {
             const series: Series[] = [
                 {
