@@ -7,10 +7,14 @@ import HC_More from 'highcharts/highcharts-more';
 import HC_sankey from 'highcharts/modules/sankey';
 import * as Highcharts from 'highcharts/highstock';
 import { AppModule } from './app/app.module';
+import { injectApiUrl } from './env';
 
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+// TODO: this is a workaround to avoid having to rebuild the app when the api url changes
+// the apiUrl is fetched from meta.json and injected into the environment, this may slow down the app start - but it should be fine for now
+injectApiUrl().then(() => {
+  platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.error(err));
+});
 
 HC_More(Highcharts);
 HC_exporting(Highcharts);

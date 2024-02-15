@@ -48,6 +48,22 @@ npm run build
 
 This will generate optimized production-ready files in the `dist/` directory.
 
+## Building for Production with Docker
+
+To build the application for production using Docker, you can use the following command:
+
+```bash
+docker build -t innotugrid-frontend .
+```
+
+This will create a Docker image with the name `innotugrid-frontend`. You can then run the image using the following command:
+
+```bash
+docker run -p 8080:80 -e API_URL=http://localhost:3000 innotugrid-frontend
+```
+
+This will start a container with the application running on port 8080. The `API_URL` environment variable is used to specify the URL of the backend API.
+
 ## Project Structure
 
 The project structure follows Angular CLI conventions. Key directories and files include:
