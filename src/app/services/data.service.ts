@@ -69,7 +69,7 @@ export class DataService {
       }
       this.fetchDatasets()
 
-      if (timeInterval.length === 0) return;
+      if (timeInterval.length === 0 && environment.queryTimeIntervals) return;
       this.updateQueryParams()
     })
 
