@@ -30,6 +30,18 @@ export class CommandBarComponent {
 
   @Input() enableGranularitySelection: boolean = true;
 
+  get maxTimeInterval() {
+    return this.dataService.getMaximumDatasetTimeInterval();
+  }
+
+  get minDate() {
+    return this.maxTimeInterval.start;
+  }
+
+  get maxDate() {
+    return this.maxTimeInterval.end;
+  }
+
   applyFilters(singleDate?: boolean) {
     if (!(this.timeInterval.start && this.timeInterval.end)) return;
     const diff = this.timeInterval.end.diff(this.timeInterval.start, 'days');

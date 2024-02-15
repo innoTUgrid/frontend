@@ -29,7 +29,7 @@
 
   <mat-form-field id="time-interval-selection" subscriptSizing="dynamic">
     <mat-label>Enter a Date Range</mat-label>
-    <mat-date-range-input [rangePicker]="pickerInterval">
+    <mat-date-range-input [rangePicker]="pickerInterval" [min]="minDate" [max]="maxDate">
       <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start">
       <input matEndDate placeholder="End date" [(ngModel)]="timeInterval.end" (ngModelChange)="applyFilters()">
     </mat-date-range-input>
