@@ -27,7 +27,8 @@ Highcharts.setOptions({
   },
   title: {
     style: {
-      fontSize: '1em'
+      fontSize: '1em',
+      fontFamily: 'var(--highcharts-font-family)'
     }
   },
   lang: {

@@ -14,8 +14,8 @@
             <span>{{valueFormatted}} {{unit}}</span>
         </mat-card-content>
             
-        <mat-card-footer class="kpi-footer" [class.additional-info-footer]="small">
-            <mat-card-title>{{title}}</mat-card-title>
+        <mat-card-footer class="kpi-footer">
+            <mat-card-title [class.additional-info-footer]="small">{{title}}</mat-card-title>
         </mat-card-footer>
     </mat-card>
 

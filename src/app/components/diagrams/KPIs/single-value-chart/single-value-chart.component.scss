@@ -31,12 +31,13 @@
     height: 100%;
 }
 
-.kpi-footer {
+.mat-mdc-card-title {
     margin-bottom: 1.2;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 1em;
     padding-bottom: 15px;
+    font-family: var(--highcharts-font-family);
 }
 
 .kpi-icon {
