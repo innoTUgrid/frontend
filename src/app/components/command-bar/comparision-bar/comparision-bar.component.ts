@@ -112,8 +112,8 @@ export class ComparisionBarComponent {
       if (timeIntervals.length > 0) this.firstYear.setValue(middleDate(timeIntervals[0]))
       if (timeIntervals.length > 1) this.secondYear.setValue(middleDate(timeIntervals[1]))
 
-      const currentTimeIntervals = this.dataService.timeInterval.value;
-      if (this.secondYear.value && currentTimeIntervals.length < 3) {
+      const currentTimeIntervals = this.dataService.timeInterval.getValue();
+      if (this.secondYear.value && currentTimeIntervals.length < 2 + this.additionalTimeIntervals.length) {
         this.dataService.timeInterval.next([
           (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
           this.toTimeInterval(this.secondYear.value),

@@ -70,21 +70,7 @@ export class DataService {
       this.fetchDatasets()
 
       if (timeInterval.length === 0) return;
-      const queryParams: Params = {
-        start: timeInterval.map((interval) => interval.start.toISOString()).join(','),
-        end: timeInterval.map((interval) => interval.end.toISOString()).join(','),
-        step: timeInterval.map((interval) => interval.step).join(','),
-        stepunit: timeInterval.map((interval) => interval.stepUnit).join(','),  
-      };
-      
-      this.router.navigate(
-        [], 
-        {
-          relativeTo: this.route,
-          queryParams,
-          queryParamsHandling: 'merge', // remove to replace all query params by provided
-        }
-      );
+      this.updateQueryParams()
     })
 
     this.route.queryParams.pipe(take(2)).subscribe((params) => {
@@ -142,6 +128,25 @@ export class DataService {
         this.fetchDatasets()
       }
     })
+  }
+
+  updateQueryParams() {
+    const timeInterval = this.timeInterval.getValue()
+    const queryParams: Params = {
+      start: timeInterval.map((interval) => interval.start.toISOString()).join(','),
+      end: timeInterval.map((interval) => interval.end.toISOString()).join(','),
+      step: timeInterval.map((interval) => interval.step).join(','),
+      stepunit: timeInterval.map((interval) => interval.stepUnit).join(','),  
+    };
+    
+    this.router.navigate(
+      [], 
+      {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: 'merge', // remove to replace all query params by provided
+      }
+    );
   }
 
   loadTimeIntervalsFromURL(params?: Params) {

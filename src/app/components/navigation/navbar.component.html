@@ -7,7 +7,7 @@
           </a>
         </div>
         <span *ngFor="let menuItem of menuItems" [class.selected-menu-item]="isSelected(menuItem.route)">
-            <a mat-list-item  [routerLink]="menuItem.route">
+            <a mat-list-item  [routerLink]="menuItem.route" queryParamsHandling="merge">
                 <span class="entry">
                   <span class="material-symbols-outlined">{{menuItem.icon}}</span>
                   <span class="item-name">{{menuItem.name}}</span>
