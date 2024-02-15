@@ -6,6 +6,10 @@
   margin: 0 2em;
 }
 
+.title {
+  height: 5%;
+}
+
 #top-diagrams {
   height: 60%;
 }
@@ -15,7 +19,7 @@
 }
 
 #bottom-kpis {
-  height: 15%;
+  height: 10%;
 }
 
 .page-container {
@@ -51,7 +55,7 @@
   gap: inherit;
 }
 
-@media (max-height: 1050px) {
+@media (max-height: 1000px) {
   .diagram-container {
     height: 100%;
   }
@@ -65,7 +69,19 @@
 
 }
 
-@media (max-width: 1200px) {
+@media (max-height: 1350px) {
+  #top-diagrams {
+    height: 55%;
+  }
+}
+
+@media (max-height: 1130px) {
+  #top-diagrams {
+    height: 50%;
+  }
+}
+
+@media (max-width: 1000px) {
   .diagram-container {
     flex-direction: column;
     height: auto !important;
