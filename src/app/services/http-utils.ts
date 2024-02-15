@@ -2,11 +2,15 @@ import { HttpClient } from "@angular/common/http";
 import { DatasetKey, TimeSeriesEndpointKey } from "@app/types/kpi.model";
 import { Series, TimeInterval } from "@app/types/time-series-data.model";
 import { environment } from "@env/environment";
-import { BehaviorSubject, Observable, forkJoin, map } from "rxjs";
+import { BehaviorSubject, Observable, catchError, forkJoin, map, of } from "rxjs";
 import { toSeriesId } from "./data-utils";
 import moment from "moment";
 import { time } from "highcharts";
 import { EmissionFactorsResult, KPIResult, MetaInfo, MetaValues, TSRawResult, TimeSeriesResult } from "@app/types/api-result.model";
+
+export function errorCatcher(error: any): Observable<any> {
+    return of([])
+}
 
 export function getURL(endpoint: string): string {
     let url = `${environment.apiUrl}`
@@ -27,6 +31,7 @@ export function fetchKPIData(http: HttpClient, endpointKey: DatasetKey, timeInte
         }
     })
     .pipe(
+        catchError(errorCatcher),
         map((kpiValue) => {
             const series: Series[] = [
                 {
@@ -54,7 +59,6 @@ export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, t
     let url = getURL(endpointKey)
     const calls: Observable<ReturnType>[] = []
     for (const timeInterval of timeIntervals) {
-        http.get<ReturnType>(url, {})
         calls.push(
             http.get<ReturnType>(url, {
                 params: {
@@ -72,6 +76,7 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
     const calls: Observable<TimeSeriesResult[]>[] = createCalls<TimeSeriesResult[]>(http, endpointKey, timeIntervals)
 
     const join = forkJoin(calls).pipe(
+        catchError(errorCatcher),
         map((timeSeriesResults: TimeSeriesResult[][]) => {
             const seriesMap: Map<string, Series> = new Map();
 
@@ -118,6 +123,7 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
     const url = getURL('meta/')
 
     const call = http.get<MetaValues>(url).pipe(
+        catchError(errorCatcher),
         map(({values}: MetaValues) => {
             return values
         })
@@ -129,7 +135,7 @@ export function fetchMetaInfo(http: HttpClient): Observable<MetaInfo[]> {
 export function fetchEmissionFactors(http: HttpClient): Observable<EmissionFactorsResult[]> {
     const url = getURL('emission_factors/')
 
-    const call = http.get<EmissionFactorsResult[]>(url)
+    const call = http.get<EmissionFactorsResult[]>(url).pipe(catchError(errorCatcher))
 
     return call
 }
@@ -145,6 +151,7 @@ export function fetchTSRaw(http:HttpClient, identifiers: string[], timeIntervals
             return forkJoin(callsPerIdentifier)
         })
     ).pipe(
+        catchError(errorCatcher),
         map((results: TSRawResult[][]) => {
             const allSeries: Series[] = []
             for (const resultsPerIdentifier of results) {
