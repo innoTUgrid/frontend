@@ -8,6 +8,10 @@ import { TimeInterval, TimeUnit } from '@app/types/time-series-data.model';
 import moment, { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 
+function middleDate(timeInterval: TimeInterval) {
+  return moment.utc((timeInterval.start.valueOf() + timeInterval.end.valueOf()) / 2)
+}
+
 export const MY_FORMATS = {
   parse: {
     dateInput: 'YYYY',
@@ -105,8 +109,8 @@ export class ComparisionBarComponent {
 
   ngOnInit() {
     this.subscriptions.push(this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
-      if (timeIntervals.length > 0) this.firstYear.setValue(timeIntervals[0].start)
-      if (timeIntervals.length > 1) this.secondYear.setValue(timeIntervals[1].start)
+      if (timeIntervals.length > 0) this.firstYear.setValue(middleDate(timeIntervals[0]))
+      if (timeIntervals.length > 1) this.secondYear.setValue(middleDate(timeIntervals[1]))
 
       const currentTimeIntervals = this.dataService.timeInterval.value;
       if (this.secondYear.value && currentTimeIntervals.length < 3) {
