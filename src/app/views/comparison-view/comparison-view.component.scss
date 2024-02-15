@@ -1,15 +1,5 @@
 @import '/src/styles.scss';
 
-.flex-container {
-  display: flex;
-  gap: 1%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1%;
-}
-
-
 .page-container {
   width: 100%;
   height: calc(100vh - 110px);
@@ -24,18 +14,17 @@
 }
 
 .left {
-  width: 60%;
+  width: 57.5%;
 }
 
 .right {
-  width: 40%;
+  width: 37.5%;
 }
 
 .diagram-container {
-  margin: 0 2em;
   display: flex;
-  gap: min(10vh, 10vw);
-  height: 45%;
+  gap: 5%;
+  height: 44%;
 }
 
 .divider {
@@ -53,6 +42,10 @@
 @media (max-width: 1000px) {
   .diagram-container {
     flex-direction: column;
+    height: 100%;
+  }
+
+  .page-container {
     height: auto;
   }
 

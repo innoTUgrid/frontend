@@ -134,7 +134,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
     credits: {enabled: false},
     pane: {
       center: ['50%', '85%'],
-      size: '100%',
+      size: '75%',
       startAngle: -90,
       endAngle: 90,
       background: undefined
