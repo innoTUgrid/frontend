@@ -47,6 +47,18 @@ export class ComparisionBarComponent {
   secondYear = new FormControl(moment.utc(moment().year().toString()));
   isDatepickerOpen = false;
 
+  get maxTimeInterval() {
+    return this.dataService.getMaximumDatasetTimeInterval();
+  }
+
+  get minDate() {
+    return this.maxTimeInterval.start;
+  }
+
+  get maxDate() {
+    return this.maxTimeInterval.end;
+  }
+
   setYear(normalizedYear: Moment, year: string) {
     if (year === 'first') {
       const ctrlValue = this.firstYear.value;
