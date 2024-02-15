@@ -27,7 +27,7 @@
     </mat-select>
   </mat-form-field>
 
-  <mat-form-field id="time-interval-selection"  *ngIf="!isSingleDatepickerDisabled()" subscriptSizing="dynamic">
+  <mat-form-field id="time-interval-selection" subscriptSizing="dynamic">
     <mat-label>Enter a Date Range</mat-label>
     <mat-date-range-input [rangePicker]="pickerInterval">
       <input matStartDate placeholder="Start date" [(ngModel)]="timeInterval.start">
@@ -37,12 +37,5 @@
     <mat-date-range-picker #pickerInterval></mat-date-range-picker>
   </mat-form-field>
   
-  <mat-form-field id="single-date-selection" *ngIf="isSingleDatepickerDisabled()" subscriptSizing="dynamic">
-    <mat-label>Choose a date</mat-label>
-    <input matInput [matDatepicker]="pickerDay" [(ngModel)]="timeInterval.start" (ngModelChange)="applyFilters(true)">
-    <mat-datepicker-toggle matIconSuffix [for]="pickerDay"></mat-datepicker-toggle>
-    <mat-datepicker #pickerDay></mat-datepicker>
-  </mat-form-field>
-
   <button mat-flat-button id="reset-filter-button" (click)="resetFilters()">Reset filter</button>
 </div>

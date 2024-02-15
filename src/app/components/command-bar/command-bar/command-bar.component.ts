@@ -74,12 +74,6 @@ export class CommandBarComponent {
     this.applyFilters();
   }
 
-  isSingleDatepickerDisabled(): boolean {
-    return (
-      this.recentPeriodToDisplay === 'today'
-    );
-  }
-
   subscriptions: any[] = [];
 
   constructor(private activatedRoute: ActivatedRoute, public observer: BreakpointObserver) {
