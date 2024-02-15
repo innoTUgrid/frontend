@@ -1,4 +1,5 @@
 import { MetaInfo } from "@app/types/api-result.model";
+import { Granularity } from "@app/types/granularity.model";
 import { ArtificialDatasetKey, DatasetKey } from "@app/types/kpi.model";
 import { Dataset, Series, TimeInterval, TimeUnit } from "@app/types/time-series-data.model";
 import moment from "moment";
@@ -101,6 +102,22 @@ export function sumAllDataTypes(data: Series[], interval?: TimeInterval): number
 
     const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
     return newDatapoints
+}
+
+export const granularityInHours: {[k: string]: number} = { 'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30, 'quarter': 24 * 30 * 3, 'year': 24 * 365};
+export function fitGranularity(timeInterval: TimeInterval, maxPoints: number = 50): TimeInterval {
+    const diff = timeInterval.end.diff(timeInterval.start, 'days');
+    // make sure granularity is sane
+    const granularity = Object.entries(granularityInHours).find(([key, entry]) => {
+      return (diff * 24 / entry) < maxPoints;
+    })?.[0] || Granularity.HOUR;
+
+    return {
+        start: timeInterval.start.clone(),
+        end: timeInterval.end.clone(),
+        step: (granularity == Granularity.QUARTER) ? 3 : 1,
+        stepUnit: (granularity == Granularity.QUARTER) ? TimeUnit.MONTH : granularity as TimeUnit
+    }
 }
 
 export function mergeDatasets(datasets: Dataset[]): Dataset {

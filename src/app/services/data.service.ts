@@ -1,14 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { DatasetKey, KPIList, TimeSeriesEndpointKey, ArtificialDatasetKey, EndpointKey } from '@app/types/kpi.model';
 import { DatasetRegistry, TimeInterval, Series, TimeSeriesDataDictionary, Dataset, TimeUnit, DataEvents as DataEvent, EndpointUpdateEvent } from '@app/types/time-series-data.model';
-import { BehaviorSubject, Observable, combineLatest, forkJoin, map, of, timeInterval } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, first, forkJoin, map, of, take, timeInterval } from 'rxjs';
 import { ThemeService } from './theme.service';
 import { HttpClient } from '@angular/common/http';
-import { mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
+import { fitGranularity, mergeDatasets, sortedMerge, timeIntervalEquals, timeIntervalIncludes, toDatasetTotal, toSeriesId } from './data-utils';
 import { fetchEmissionFactors, fetchKPIData, fetchMetaInfo, fetchTSRaw, fetchTimeSeriesData } from './http-utils';
 import moment from 'moment';
 import { EmissionFactorsResult, MetaInfo } from '@app/types/api-result.model';
 import { environment } from '@env/environment';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 type Handler<E> = (event: E) => void;
 
@@ -58,7 +59,7 @@ export class DataService {
     [DataEvent.BeforeUpdate, new EventDispatcher<EndpointUpdateEvent>()],
   ]);
 
-  constructor() {
+  constructor(  private router: Router, private route: ActivatedRoute) {
     this.timeInterval.subscribe((timeInterval: TimeInterval[]) => {
       this.fetchedEndpoints.clear()
       for (const [id, dataset] of this.timeSeriesData) {
@@ -67,7 +68,29 @@ export class DataService {
         if (KPIList.includes(id)) this.filterOutOldData(value.series, value.timeIntervals)
       }
       this.fetchDatasets()
+
+      if (timeInterval.length === 0) return;
+      const queryParams: Params = {
+        start: timeInterval.map((interval) => interval.start.toISOString()).join(','),
+        end: timeInterval.map((interval) => interval.end.toISOString()).join(','),
+        step: timeInterval.map((interval) => interval.step).join(','),
+        stepunit: timeInterval.map((interval) => interval.stepUnit).join(','),  
+      };
+      
+      this.router.navigate(
+        [], 
+        {
+          relativeTo: this.route,
+          queryParams,
+          queryParamsHandling: 'merge', // remove to replace all query params by provided
+        }
+      );
     })
+
+    this.route.queryParams.pipe(take(2)).subscribe((params) => {
+      this.loadTimeIntervalsFromURL(params)
+    })
+
 
     this.getDataset(TimeSeriesEndpointKey.ENERGY_CONSUMPTION).pipe(
       map((dataset) => toDatasetTotal(dataset, TimeSeriesEndpointKey.ENERGY_CONSUMPTION, 'Total Consumption', 'consumption-combined'))
@@ -121,6 +144,35 @@ export class DataService {
     })
   }
 
+  loadTimeIntervalsFromURL(params?: Params) {
+    params = params || this.route.snapshot.queryParamMap
+    const timeIntervals: TimeInterval[] = []
+    const start = params['start']?.split(',') as string[]
+    const end = params['end']?.split(',')
+    const step = params['step']?.split(',')
+    const stepUnit = params['stepunit']?.split(',')
+    if (start && end && start.length === end.length) { // if not undefined and not empty
+      start?.forEach((value, index) => {
+        let timeInterval = {
+          start: moment(value),
+          end: moment(end[index]),
+          step: 1,
+          stepUnit: TimeUnit.DAY
+        }
+        if (stepUnit && stepUnit[index]) {
+          timeInterval.stepUnit = stepUnit[index] as TimeUnit
+        } else {
+          timeInterval = fitGranularity(timeInterval)
+        }
+        if (step && step[index]) {
+          timeInterval.step = +step[index]
+        }
+        timeIntervals.push(timeInterval)
+      })
+      this.timeInterval.next(timeIntervals)
+    }
+  }
+
   getCurrentTimeInterval(timeInterval?: TimeInterval[]): TimeInterval {
     if (timeInterval) return timeInterval[0]
     return this.timeInterval.getValue()[0]
@@ -171,7 +223,7 @@ export class DataService {
     const newRegistries = [...registries.filter((r) => r.id !== registry.id), registry]
     this.datasetConfigurations.set(registry.endpointKey, newRegistries)
 
-    if (this.metaInfo.getValue()) this.fetchDataset(registry.endpointKey, newRegistries)
+    this.fetchDataset(registry.endpointKey, newRegistries)
 
     return registry
   }

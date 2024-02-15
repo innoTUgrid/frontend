@@ -104,27 +104,17 @@ export class ComparisionBarComponent {
   subscriptions: Subscription[] = [];
 
   ngOnInit() {
-    const currentTimeIntervals = this.dataService.timeInterval.value;
-    if (this.secondYear.value && currentTimeIntervals.length < 3) {
-      this.dataService.timeInterval.next([
-        (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
-        this.toTimeInterval(this.secondYear.value),
-        ...this.additionalTimeIntervals
-      ])
-    }
-
     this.subscriptions.push(this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
       if (timeIntervals.length > 0) this.firstYear.setValue(timeIntervals[0].start)
       if (timeIntervals.length > 1) this.secondYear.setValue(timeIntervals[1].start)
-    }))
 
-    this.subscriptions.push(this.dataService.metaInfo.subscribe((metaInfo) => {
-      if (metaInfo && metaInfo.length > 0) {
-        const maxTimeInterval = this.dataService.getMaximumDatasetTimeInterval()
-
-        this.setYear(maxTimeInterval.start, 'first')
-        this.setYear(maxTimeInterval.end, 'second')
-        this.updateTimeInterval()
+      const currentTimeIntervals = this.dataService.timeInterval.value;
+      if (this.secondYear.value && currentTimeIntervals.length < 3) {
+        this.dataService.timeInterval.next([
+          (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
+          this.toTimeInterval(this.secondYear.value),
+          ...this.additionalTimeIntervals
+        ])
       }
     }))
   }

@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'datasets', component: DatasetsComponent },
   { path: 'info', component:InfoviewComponent },
   { path: 'energyflow', component: EnergyFlowViewComponent },
-  { path : 'reporting', component: ReportingComponent },
+  { path: 'reporting', component: ReportingComponent },
   { path: 'comparison', component: ComparisonViewComponent},
  
 ];
