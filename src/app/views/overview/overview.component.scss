@@ -2,7 +2,7 @@
 
 .diagram-container{
   display: flex;
-  gap: min(5vh, 5vw);
+  gap: 5%;
   margin: 0 2em;
 }
 
@@ -32,11 +32,11 @@
 
 .top-item{
   min-height: 300px; //adjust to increase the height of the top diagramms ex 40vh
-  width: 50%;
+  width: 47.5%;
 }
 
 .bottom-item{
-  width: 25%;
+  width: 23.75%;
   min-height: 100px;
 }
 
@@ -46,13 +46,16 @@
 
 .sub-kpi-container {
   display: flex;
-  width: 50%;
+  width: 47.5%;
   height: 100%;
   gap: inherit;
 }
 
-@media (max-height: 1000px) {
+@media (max-height: 1050px) {
   .diagram-container {
+    height: 100%;
+  }
+  .page-container {
     height: 100%;
   }
 
@@ -68,8 +71,8 @@
     height: auto !important;
   }
 
-  .item {
-    width: 100% !important;
+  .top-item {
+    width: 100%;
   }
 
   #top-diagrams {
@@ -84,6 +87,10 @@
 @media (max-width: 850px) {
   .sub-kpi-container {
     flex-direction: column;
+  }
+
+  .item {
+    width: 100%;
   }
 
   #top-diagrams {
