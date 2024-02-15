@@ -113,7 +113,10 @@ export class PercentChartComponent implements HighchartsDiagram, SingleValueDiag
     
         title: {
             text: '',
-            verticalAlign: 'bottom'
+            verticalAlign: 'bottom',
+            style: {
+                fontSize: 'var(--font-size-kpi-chart-header)'
+            }
         },
     
         tooltip: {

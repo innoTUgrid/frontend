@@ -42,6 +42,7 @@ $custom-font-family: 'Nunito Sans', sans-serif;
 $font-size-default: 16px;
 $font-size-view-header: 1.5625em;
 $font-size-chart-header: 1.125em;
+$font-size-kpi-chart-header: 1.2em;
 $font-size-chart-legend: 0.625em;
 $font-size-navigation: 0.95em;
 $font-size-button: 0.95em;
@@ -168,6 +169,7 @@ $hc-kpi: $scientific-blue-tone; // scientific blue for kpis
     --highcharts-color-22: #{$hc-kpi};
 
     --highcharts-font-family: #{$custom-font-family};
+    --font-size-kpi-chart-header: #{$font-size-kpi-chart-header};
 
     // this is currently only used for the average line in column charts
     --highcharts-neutral-color-40: #{$power-red}; 
