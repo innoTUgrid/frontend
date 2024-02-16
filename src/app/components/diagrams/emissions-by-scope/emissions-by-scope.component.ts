@@ -82,7 +82,7 @@ export class EmissionsByScopeComponent implements OnInit {
   }
 
   updateButtonText() {
-    this.toggleInterval.text = (this.timeIntervalIndex === 0) ? 'Show Baseline Year' : 'Show Comparison Year'
+    this.toggleInterval.text = (this.timeIntervalIndex === 1) ? 'Show Baseline Year' : 'Show Comparison Year'
     this.chart?.update({
       exporting: {
         buttons: {
