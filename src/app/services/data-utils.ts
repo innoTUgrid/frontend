@@ -80,28 +80,18 @@ export function sumAllDataTypes(data: Series[], interval?: TimeInterval): number
     let relevantSeries: Series[] = data
     if (interval) relevantSeries = data.filter(series => series.timeUnit === interval.stepUnit)
 
+    let newData: number[][] = []
     const dataMap = new Map<number, number>()
     for (const series of relevantSeries) {
-        let i = 0;
-        const data_len = series.data.length
-
-        while (i < data_len) { // using this type of loop for performance reasons
-        const point = series.data[i]
-        if (!interval || (point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf())) {
-            const value = dataMap.get(point[0])
-            if (value) {
-            dataMap.set(point[0], value + point[1])
-            } else {
-            dataMap.set(point[0], point[1])
-            }
+        let data = series.data
+        if (interval) {
+            data = series.data.filter((point) => point[0] >= interval.start.valueOf() && point[0] <= interval.end.valueOf())
         }
-
-        i++;
-        }
+        newData = sortedMerge(newData, data, (values) => values.reduce((a, b) => a + b, 0))
     }
 
     const newDatapoints = Array.from(dataMap.entries()).sort((a, b) => a[0] - b[0]).map(entry => [entry[0], entry[1]])
-    return newDatapoints
+    return newData
 }
 
 export const granularityInHours: {[k: string]: number} = { 'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30, 'quarter': 24 * 30 * 3, 'year': 24 * 365};

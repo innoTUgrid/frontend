@@ -111,7 +111,6 @@ export class ChartService {
   }
 
   updateInterval(diagram: HighchartsDiagram, timeIntervals: TimeInterval[], redraw: boolean) {
-    console.log(timeIntervals)
     for (const [index, timeInterval] of timeIntervals.entries()) {
       if (index >= diagram.xAxis.length) break
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
