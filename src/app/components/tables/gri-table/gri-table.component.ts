@@ -170,7 +170,7 @@ export class TableBasicExample {
     {gri_modul: "", description: "g. Source of the conversion factors used", unit:"-", year_first:"-", year_second:"-"}, // no data
 
     // GRI 305-1
-    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS], false),unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // total scope 1 emissions 
+    {gri_modul: "GRI 305-1 Direct (Scope 1) GHG emissions", description: "a. Gross direct (Scope 1) GHG emissions", unit:"-", year_first:"-", year_second:"-", data_loader: this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS),unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // total scope 1 emissions 
     {gri_modul: "", description: "b. Gases included in the calculation", unit:"CO2", year_first:"-", year_second:"-"}, // fixed value 
     {gri_modul: "", description: "c. Biogenic CO2 emissions ", unit:"-", year_first:"-", year_second:"-", data_loader:this.calculateTotal(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS, [DataTypes.BIOGAS]), unit_loader:this.unitLoader(TimeSeriesEndpointKey.SCOPE_1_EMISSIONS)}, // emissions of biogas
     {gri_modul: "", description: "d. Base year for the calculation, if applicable", unit:"-", year_first:"-", year_second:"-"}, // no data
