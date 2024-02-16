@@ -106,6 +106,10 @@ export class CommandBarComponent {
         this.timeInterval = timeInterval[0];
         this.selectedGranularity = (timeInterval[0].stepUnit == 'month' && timeInterval[0].step == 3) ? Granularity.QUARTER : timeInterval[0].stepUnit;
       }
+
+      if (timeInterval.length > 1) {
+        this.dataService.timeInterval.next([timeInterval[0]]);
+      }
     });
     this.subscriptions.push(s0, s1);
   }
