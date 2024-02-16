@@ -3,8 +3,8 @@ import { ThemeService } from './theme.service';
 import { TimeInterval, Series, TimeSeriesDataDictionary, Dataset } from '@app/types/time-series-data.model';
 import { DataService } from './data.service';
 import { DatasetKey, HighchartsDiagram, SingleValueDiagram, TimeSeriesEndpointKey } from '@app/types/kpi.model';
-import { Subscription } from 'rxjs';
-import { sumAllDataTypes } from './data-utils';
+import { Subscription, timeInterval } from 'rxjs';
+import { filterTimeUnits, sumAllDataTypes } from './data-utils';
 
 function array2DEquals(a: number[][], b: number[][]): boolean {
   if (a.length !== b.length) return false
@@ -32,10 +32,15 @@ export class ChartService {
 
     const allSeries = []
     for (const [index, series] of data.entries()) {
+      // filter out data that is not in at least one of the time intervals
+      const dataFiltered = series.data.filter(
+        (value) => this.dataService.timeInterval.getValue().some(
+          (interval) => value[0] >= interval.start.valueOf() && value[0] <= interval.end.valueOf()
+      ))
       const newSeries: Highcharts.SeriesOptionsType = {
           name: series.name,
           id: series.id, 
-          data:series.data,
+          data:dataFiltered,
           type: diagram.seriesType,
           color: series.color,
           animation: true,
@@ -106,6 +111,7 @@ export class ChartService {
   }
 
   updateInterval(diagram: HighchartsDiagram, timeIntervals: TimeInterval[], redraw: boolean) {
+    console.log(timeIntervals)
     for (const [index, timeInterval] of timeIntervals.entries()) {
       if (index >= diagram.xAxis.length) break
       if (diagram.chart && diagram.chart.axes && diagram.chart.xAxis) {
