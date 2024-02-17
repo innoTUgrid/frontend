@@ -64,7 +64,8 @@ export function createCalls<ReturnType>(http: HttpClient, endpointKey: string, t
                 params: {
                     from: timeInterval.start.toISOString(),
                     to: timeInterval.end.toISOString(),
-                    interval: (timeUnit) ? timeUnit : `1${timeInterval.stepUnit}`
+                    interval: (timeUnit) ? timeUnit : `1${timeInterval.stepUnit}`,
+                    source: environment.emissionFactorSource
                 }
             })
         )
