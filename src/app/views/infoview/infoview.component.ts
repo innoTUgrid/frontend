@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { DataService } from '@app/services/data.service';
 import { EmissionFactorsResult } from '@app/types/api-result.model';
+import { environment } from '@env/environment';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,6 +18,10 @@ export class InfoviewComponent implements OnInit {
 
     get emissionFactorNames(): string {
         return [...new Set(this.emissionFactors.map(emissionFactor => emissionFactor.source))].join(', ');
+    }
+
+    get currentEmissionFactorSource(): string {
+        return environment.emissionFactorSource;
     }
 
     subscriptions: Subscription[] = [];
