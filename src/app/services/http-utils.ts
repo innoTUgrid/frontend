@@ -85,16 +85,19 @@ export function fetchTimeSeriesData(http: HttpClient, endpointKey: DatasetKey, t
                 const timeInterval = timeIntervals[index]
                 for (const entry of timeSeriesResult) {
                     let data: number[][];
-                    const carrierName = entry.carrier_name
-                    const seriesKey = toSeriesId(endpointKey, carrierName, entry.local, timeInterval.stepUnit)
+                    let type = entry.carrier_name
+                    if (endpointKey === TimeSeriesEndpointKey.LOCAL_CONSUMPTION) {
+                        type = (entry.consumer_name) ? entry.consumer_name : entry.carrier_name
+                    }
+                    const seriesKey = toSeriesId(endpointKey, type, entry.local, timeInterval.stepUnit)
 
                     const currentSeries = seriesMap.get(seriesKey)
                     if (!currentSeries) {
                         data = []
                         seriesMap.set(seriesKey, {
                             id: seriesKey,
-                            name: carrierName,
-                            type: carrierName,
+                            name: type,
+                            type: type,
                             data: data,
                             unit: entry.unit,
                             consumption: (endpointKey === TimeSeriesEndpointKey.ENERGY_CONSUMPTION) ? true : false,

@@ -11,6 +11,7 @@ export enum KPIEndpointKey {
 
 export enum TimeSeriesEndpointKey {
     ENERGY_CONSUMPTION = "kpi/consumption",
+    LOCAL_CONSUMPTION = "kpi/local_consumption",
     SCOPE_1_EMISSIONS = "kpi/scope_one_emissions",
     SCOPE_2_EMISSIONS = "kpi/scope_two_emissions",
     TS_RAW = 'ts',

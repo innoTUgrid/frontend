@@ -34,7 +34,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         },
         {
             id: this.id,
-            endpointKey: TimeSeriesEndpointKey.TS_RAW,
+            endpointKey: TimeSeriesEndpointKey.LOCAL_CONSUMPTION,
         },
     ]
     subscriptions: Subscription[] = [];
@@ -60,15 +60,15 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         if (datasets.length < 2) return;
         const consumption = datasets[0]
         const consumptionSeries = this.chartService.filterOtherStepUnits(consumption.series)
-        const raw = datasets[1]
+        const localConsumption = datasets[1]
         // series.consumption && !series.aggregate && series.local 
-        const rawSeries = this.chartService.filterOtherStepUnits(raw.series.filter((series: Series) => series.consumption && series.name.includes('trafo')))
+        const localConsumptionSeries = this.chartService.filterOtherStepUnits(localConsumption.series)
 
         const consumptionTotalByCarrier = consumptionSeries.map(
             (series: Series) => this.chartService.calculateSingleValue(series.data, false)
         )
         
-        const consumptionTotalByConsumer = rawSeries.map(
+        const consumptionTotalByConsumer = localConsumptionSeries.map(
             (series: Series) => this.chartService.calculateSingleValue(series.data, false)
         )
 
@@ -80,7 +80,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
         )
         nodes.push({id: 'Heat', colorIndex: 3, column: 1, })
         nodes.push({id: 'Electricity', colorIndex: 3, column: 1})
-        nodes.push(...rawSeries.map(
+        nodes.push(...localConsumptionSeries.map(
             (series: Series) => {return {id:series.name, column: 2}}
         ))
         nodes.push({id: 'Other Consumers', column: 2})
@@ -107,7 +107,7 @@ export class EnergyFlowDiagramComponent implements HighchartsDiagramMinimal {
 
         let heatTotalFromConsumer = 0
         let electricityTotalFromConsumer = 0 
-        for (const [index, series] of rawSeries.entries()) {
+        for (const [index, series] of localConsumptionSeries.entries()) {
             const heat = consumptionTotalByConsumer[index] * 0.7
             const electricity = consumptionTotalByConsumer[index] * 0.3
 
