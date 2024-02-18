@@ -142,7 +142,10 @@ export class EnergyMixDiagramComponent implements HighchartsDiagram {
   changeSeriesType(index: number) {
     const kpi = this.kpis[index]
     this.toggleSeries.text = index === 0 ? 'Show Consumption' : 'Show Emissions';
-    if (this.yAxis.title) this.yAxis.title.text = index === 0 ? 'CO₂ Emissions (kg)' : 'Consumption (kWh)';
+    this.chartProperties.subtitle = {
+      text: index === 1 ? 'Consumption' : 'Emissions'
+    }
+    if (this.yAxis.title) this.yAxis.title.text = index === 0 ? 'CO₂ Emissions (kg)' : 'Energy Consumption (kWh)';
     this.updateFlag = true;
     this.kpiName = kpi;
   }
