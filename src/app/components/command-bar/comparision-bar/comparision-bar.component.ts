@@ -43,7 +43,7 @@ export class ComparisionBarComponent {
   additionalTimeIntervals: TimeInterval[] = [];
   @Input() showArrow = false
 
-  firstYear = new FormControl(moment.utc(moment().year().toString()));
+  firstYear = new FormControl(moment.utc(moment().subtract(1, 'year').year().toString()));
   secondYear = new FormControl(moment.utc(moment().year().toString()));
   isDatepickerOpen = false;
 
@@ -121,13 +121,15 @@ export class ComparisionBarComponent {
 
   ngOnInit() {
     this.subscriptions.push(this.dataService.timeInterval.subscribe((timeIntervals: TimeInterval[]) => {
+      let maximumTimeInterval = (this.dataService.metaInfo.getValue()) ? this.dataService.getMaximumDatasetTimeInterval() : undefined;
       if (timeIntervals.length > 0) this.firstYear.setValue(middleDate(timeIntervals[0]))
+      else if (maximumTimeInterval) this.firstYear.setValue(maximumTimeInterval.start)
       if (timeIntervals.length > 1) this.secondYear.setValue(middleDate(timeIntervals[1]))
+      else if (maximumTimeInterval) this.secondYear.setValue(maximumTimeInterval.end)
 
-      const currentTimeIntervals = this.dataService.timeInterval.getValue();
-      if (this.secondYear.value && currentTimeIntervals.length < 2 + this.additionalTimeIntervals.length) {
+      if (this.firstYear.value && this.secondYear.value && timeIntervals.length < 2 + this.additionalTimeIntervals.length) {
         this.dataService.timeInterval.next([
-          (currentTimeIntervals.length >= 1) ? this.toTimeInterval(currentTimeIntervals[0].start) : this.toTimeInterval(this.secondYear.value),
+          this.toTimeInterval(this.firstYear.value),
           this.toTimeInterval(this.secondYear.value),
           ...this.additionalTimeIntervals
         ])
