@@ -169,8 +169,6 @@ export class EmissionsByScopeComponent implements OnInit {
     for (const [index, scopeId] of this.scopeEndpoints.entries()) {
       const series = dataset.series.filter(s => s.sourceDataset === scopeId)
       const data = sumAllDataTypes(series, timeIntervals[this.timeIntervalIndex])
-
-      if (data.length === 0) continue
   
       const newValue = this.chartService.calculateSingleValue(data, false)
       this.value[index] = newValue
