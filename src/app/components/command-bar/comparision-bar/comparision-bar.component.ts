@@ -91,7 +91,7 @@ export class ComparisionBarComponent {
     const firstYearValue = this.firstYear.value?.year() || 0;
     const secondYearValue = this.secondYear.value?.year() || 0;
   
-    if (firstYearValue > secondYearValue) {
+    if (firstYearValue < secondYearValue) {
       const temp = this.firstYear.value;
       this.firstYear.setValue(this.secondYear.value);
       this.secondYear.setValue(temp);
