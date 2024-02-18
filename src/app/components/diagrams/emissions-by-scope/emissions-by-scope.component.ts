@@ -73,6 +73,7 @@ export class EmissionsByScopeComponent implements OnInit {
 
   chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
     this.chart = chart;
+    this.updateButtonText()
   }
 
   toggleInterval: Highcharts.ExportingButtonsOptionsObject = {
@@ -89,7 +90,7 @@ export class EmissionsByScopeComponent implements OnInit {
           toggleInterval: this.toggleInterval,
         }
       }
-    }, false, true, true)
+    }, true, true, true)
   }
 
   pieChartProperties: Highcharts.Options = {
@@ -122,7 +123,6 @@ export class EmissionsByScopeComponent implements OnInit {
         showInLegend: true, 
       },
     },
-  
     legend: {
       enabled: true,
       align: 'center',
@@ -174,9 +174,14 @@ export class EmissionsByScopeComponent implements OnInit {
       this.value[index] = newValue
     }
 
+    const year = timeIntervals[this.timeIntervalIndex].start.year().toString()
+    this.pieChartProperties.subtitle = {
+      text: (this.timeIntervalIndex === 0) ? `Baseline Year (${year})` : `Comparison Year (${year})`
+    }
     if (this.chart) {
       this.chart.update({
         series: this.series,
+        subtitle: this.pieChartProperties.subtitle
       }, true, true, true)
     } else {
       this.updateFlag = true
@@ -184,8 +189,6 @@ export class EmissionsByScopeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateButtonText()
-
     this.subscriptions.push(this.dataService.loadingDatasets.subscribe((loading: DatasetKey[]) => {
       if (this.chart) {
         if (loading.indexOf(this.registry.endpointKey) === -1 ) this.chart.hideLoading()
