@@ -5,7 +5,7 @@ export enum KPIEndpointKey {
     CO2_SAVINGS = "kpi/co2_savings",
     TOTAL_CONSUMPTION = "kpi/total_consumption",
     TOTAL_PRODUCTION = "kpi/total_production",
-    TOTAL_COSTS_PER_KWH = "kpi/total_costs",
+    TOTAL_COSTS_PER_KWH = "kpi/total_grid_electricity_cost",
     TOTAL_CO2_EMISSIONS_PER_KWH = "kpi/total_co2_emissions",
 }
 
