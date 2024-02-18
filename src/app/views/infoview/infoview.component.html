@@ -18,19 +18,18 @@
       <p><b>Emission factors:</b> For the calculation of CO₂ emissions, the emission factors from <span style="font-style:italic;"> 
       {{currentEmissionFactorSource}}</span> are currently being used. The emission factors can be viewed in Datasets.</p>
         
-      <p><span style="font-style:italic;"> IPCC</span>: The Intergovernmental Panel on Climate Change provides emission factors from 2014. These factors represent lifecycle emissions for each energy source and are originally presented as minimum, median, and maximum values. For our calculations, the median values were used. We assume that biogas emissions are equivalent to those of biomass. The emission factors of coal are used for brown and hard coal, and the 'Solar PV - utility' factor from the IPCC's emission factor options were used for calculating the solar emissions. Reference: 
+      <p><span style="font-style:italic;"> IPCC</span>: The Intergovernmental Panel on Climate Change provides emission factors from 2014. These factors represent lifecycle emissions for each energy source and are originally presented as minimum, median, and maximum values. For our calculations, the median values were used. The 'Solar PV - utility' factor from the IPCC's emission factor options were used for calculating the solar emissions. Due to the absence of emission factors for certain energy carriers, we adopted the following assumptions to fill these gaps: Biogas emissions are considered equivalent to those from biomass. Emission factors for coal are applied uniformly to both brown and hard coal. For 'Other Renewables' and 'Pumped Storage,' we used the average emission factor of renewable energy sources. Similarly, for 'Other Conventional,' the average emission factor of conventional energy carriers was assigned. Reference: 
       <a href="https://www.ipcc.ch/site/assets/uploads/2018/02/ipcc_wg3_ar5_annex-iii.pdf#page=7">IPCC - Technology-specific Cost and Performance Parameters</a></p>
 
       <!-- Additional sources of emission factors can be listed here -->
   
-      <p><b>Grid energy mix:</b> Data of the energy mix within the 50 Hertz zone are used provided from SMARD by the Bundesnetzagentur.</p>
+      <p><b>Grid energy mix:</b> Data of the energy mix within the 50 Hertz zone are used provided from SMARD by the Bundesnetzagentur. The following energy carriers are defined as renewable: Biogas, Biomass, Hydropower, Pumped Storage, Solar, Wind Offshore and Wind Onshore. The following energy carriers are assumed as non-renewable: Brown Coal, Hard Coal and Natural Gas.</p>
   
       <p><b>Local consumed and  generated energy:</b> Sensor data for local consumption and generated energy is provided by inno2grid.</p>
   
       <p><b>Grid electricity prices: </b> For calculating cost savings the electricity prices from SMARD by the Bundesnetzagentur are used. These are day-ahead spot market prices, not consumer prices.</p> 
   
-      <p><b>Heating energy consumption:</b> Due to unavailable data, we are assuming for all calculations that locally produced biogas energy is utilized only for electricity generation and not for heating. </p> 
-      <p class = "comment">[Updates depending on the flow chart]</p>
+      <p><b>Heating energy consumption:</b> Due to the lack of available data, it is assumed in our calculations that locally produced biogas energy is exclusively used for electricity generation, and not for heating purposes. However, for the purposes of the energy flow chart, we assume that the produced biogas energy is allocated differently, with 70% being used for heating and 30% for electricity generation.</p> 
     </section>
   
     
