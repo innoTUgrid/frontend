@@ -48,8 +48,8 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
   }
 
   get percentageChange(): number | undefined {
-    const i1 = this.timeIntervalIndices[0]
-    const i2 = this.timeIntervalIndices[1]
+    const i2 = this.timeIntervalIndices[0]
+    const i1 = this.timeIntervalIndices[1]
     if (Math.max(i1,i2) >= this.value.length) {
       return undefined
     }
@@ -127,7 +127,7 @@ export class GaugeSeriesCo2ComparisonComponent implements OnInit, SingleValueDia
       type: 'gauge',
     },
     title: {
-      text: 'CO₂ Emissions Change in Comparison to Baseline Year',
+      text: 'CO₂ Emissions Change: Baseline vs. Comparison Year',
     },
     exporting: {enabled: true},
     tooltip: {enabled: false},
