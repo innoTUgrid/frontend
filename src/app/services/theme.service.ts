@@ -87,14 +87,14 @@ export class ThemeService {
     ['onwind', 'Onshore Wind'],
     ['solar', 'Solar (imported)'],
     ['solar-local', 'Solar (local)'],
-    ['brown-coal', 'Brown Coal'],
-    ['lignite', 'Brown Coal'],
+    ['brown-coal', 'Lignite'],
+    ['lignite', 'Lignite'],
     ['natural-gas', 'Natural Gas'],
     ['other_conventional', 'Other Conventionals'],
     ['hard-coal', 'Hard Coal'],
     ['coal', 'Hard Coal'],
-    ['pumped_storage', 'Pump Storage'],
-    ['gas', 'Gas'],
+    ['pumped_storage', 'Pumped Storage'],
+    ['gas', 'Natural Gas'],
   ])
 
   getExtendedType(type: string, local: boolean) {
