@@ -1,0 +1,36 @@
+
+
+a \ b
+
+
+i == 0 && j == 0
+if a[i] < b[i]
+    add a[i]
+else if a[i] > b[i]
+    do nothing
+else 
+    do nothing
+
+i == 1 && j == 0
+if a[i] < b[i]
+    add a[i]
+else if a[i] > b[i]
+    add b[i]
+else
+    add
+
+i == 0 && j == 1
+if a[i] < b[i]
+    do nothing
+else if a[i] > b[i]
+    do nothing
+else
+    add
+
+i == 1 && j == 1
+if a[i] < b[i]
+    do nothing
+else if a[i] > b[i]
+    add b[i]
+else 
+    do nothing
