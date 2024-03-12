@@ -76,7 +76,9 @@ class TimeIntervalSet {
                 j++;
             } else {
                 if (i % 2 != j % 2 ) {
-                    result.intervals.push(this.intervals[i]);
+                    result.intervals.push(
+                        set.intervals[j] + (result.intervals.length % 2 == 0 ? 1 : -1),
+                    );
                 }
                 i++;
                 j++;
@@ -125,11 +127,13 @@ function unionTest() {
 }
 
 const DifferenceTestCases = [
+    [[2,3], [1,2], [3,3]],
     [[1,4], [2,3], [1,1,4,4]],
     [[1,4], [3,5], [1,2]],
     [[1,5], [0,3], [4,5]],
     [[1,5], [6,7], [1,5]],
     [[1,5], [0,7], []],
+    [[1,2], [2,3], [1,1]],
 ]
 
 function differenceTest() {

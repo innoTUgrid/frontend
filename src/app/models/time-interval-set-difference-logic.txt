@@ -3,7 +3,7 @@
 a \ b
 
 
-i == 0 && j == 0
+i == 0 && j == 0        result.length % 2 = 0
 if a[i] < b[i]
     add a[i]
 else if a[i] > b[i]
@@ -11,7 +11,7 @@ else if a[i] > b[i]
 else 
     do nothing
 
-i == 1 && j == 0
+i == 1 && j == 0        result.length % 2 = 1
 if a[i] < b[i]
     add a[i]
 else if a[i] > b[i]
@@ -19,7 +19,7 @@ else if a[i] > b[i]
 else
     add
 
-i == 0 && j == 1
+i == 0 && j == 1        result.length % 2 = 0
 if a[i] < b[i]
     do nothing
 else if a[i] > b[i]
@@ -27,7 +27,7 @@ else if a[i] > b[i]
 else
     add
 
-i == 1 && j == 1
+i == 1 && j == 1        result.length % 2 = 0
 if a[i] < b[i]
     do nothing
 else if a[i] > b[i]
