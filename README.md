@@ -2,6 +2,9 @@
 
 Welcome to the Angular Frontend for Data Visualization of Microgrids! This project is set up using the Angular CLI and allows you to create interactive data visualizations for microgrids. Follow the instructions below to get started with development.
 
+![Bildschirmfoto vom 2024-02-06 11-09-30](https://github.com/innoTUgrid/frontend/assets/24190164/fa760016-706a-4d5d-9837-ceb11eb3788b)
+
+
 ## Prerequisites
 
 Before you begin, ensure you have the following prerequisites installed on your system:
